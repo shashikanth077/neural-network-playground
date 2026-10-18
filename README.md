@@ -100,11 +100,15 @@ Copy `.env.example` to `.env` to change limits. Never commit `.env`.
 ## Tests
 
 ```bash
-cd backend && pytest -q                        # 41 tests
+cd backend && pytest -q                        # 41 tests (+11 PyTorch cross-checks when torch is installed)
 cd frontend && npm test && npm run typecheck   # 46 tests (Lab 1 maths, registry, navigation, Playground UI)
 ```
 
 Backend tests cover forward propagation vs a manual computation, **finite-difference gradient checking** (3 activations × 3 depths), SGD/Adam update rules, loss decrease, XOR needing a hidden layer, stable sigmoid/BCE at extreme inputs, output shapes, and the API: parameters really change during training, pause truly freezes the epoch counter, reset restores seeded initial weights, independent sessions, validation/404/409 errors, dry-run trace leaves the model untouched, and session cleanup.
+
+### Verification against PyTorch
+
+`backend/tests/test_against_pytorch.py` runs the same weights through the NumPy network and through PyTorch autograd. It checks the loss, every gradient for each activation and depth, and 25 SGD steps and 30 Adam steps against `torch.optim`. Install `torch` (CPU wheel is enough) to run it; without torch those tests are skipped.
 
 ## The mathematics
 
@@ -158,7 +162,7 @@ The app is container-ready. The quickest route is the CloudFormation template in
 * Sessions live in process memory: run **one** backend worker/instance. Scaling out needs sticky sessions or an external store (Redis).
 * Training is intentionally small (≤ 2000 points, ≤ 2000 epochs, 2 input features). No auth or rate limiting yet.
 * Polling rather than WebSocket/SSE streaming.
-* Optional PyTorch comparison extension was **not** implemented.
+* PyTorch is used only to cross-check the NumPy maths in the tests; there is no PyTorch training mode in the app.
 * No end-to-end tests in CI (the Playwright scripts `scripts/capture-labs.mjs` and `scripts/capture-screenshots.mjs` are run manually).
 * Docker images were not built in the authoring environment; compose config is validated only.
 * Labs 2-4 on the home page and Labs index (CNN, attention, loss landscapes) are placeholders marked *Planned*.

@@ -60,7 +60,7 @@ input[type=search]{font:inherit;width:100%;padding:8px 10px;border:1px solid var
   <div class="card"><h2>Honest status</h2>
     <p><span class="ok">✔ Verified here:</span> backend tests, frontend tests, strict TypeScript build, and two Playwright suites that drive the real UI (Playground against the real API; Labs platform end to end including mobile layout and progress persistence).</p>
     <p><span class="warn">▲ Not verified:</span> Docker image builds (compose and CloudFormation template only linted/validated), any actual AWS deployment (the session's AWS keys were rejected), screen-reader testing, load behaviour.</p>
-    <p><span class="bad">✘ Not built:</span> optional PyTorch comparison; WebSocket streaming; auth/rate limiting; labs 2-4 (shown as “Planned”).</p>
+    <p><span class="bad">✘ Not built:</span> a PyTorch training mode (PyTorch is only used to verify the NumPy maths); WebSocket streaming; auth/rate limiting; labs 2-4 (shown as “Planned”).</p>
   </div>
 </section>
 
@@ -154,6 +154,7 @@ export const lab2: Lab = {
   </tbody></table></div>
   <div class="card"><h3 style="margin-top:0">Browser run: Playground (Playwright, real backend)</h3>
   <table><tbody>
+  <tr><td class="ok">✔</td><td>NumPy network matches PyTorch autograd: loss, gradients (3 activations × 3 depths), 25 SGD and 30 Adam steps (11 tests, run with torch installed);</td></tr>
   <tr><td class="ok">✔</td><td>Train XOR to epoch 200; pause froze the counter (78 → 78); resume completed; weights differ before vs after; reset returns to epoch 0</td></tr>
   <tr><td class="ok">✔</td><td>Preset, Learning Center iteration trace, custom dataset, dark/mobile, backend-down banner</td></tr>
   </tbody></table></div>
@@ -252,7 +253,7 @@ $('#gal').onclick=e=>{const b=e.target.closest('button');if(!b)return;$('#big').
 const tests=[["b","Forward pass equals manual computation for relu/sigmoid/tanh"],["b","Finite-difference gradient check: 3 activations × 3 architectures"],["b","SGD update equals w − η·g; Adam first step ≈ η·sign(g)"],["b","Loss decreases on separable data; XOR needs a hidden layer"],["b","Sigmoid and BCE stable at ±1000 logits; shapes, counts, seeds"],["b","API: parameters change; pause freezes the epoch counter; reset restores seeded weights"],["b","API: independent sessions; 404/409/422; divergence reported; trace is a dry run; cleanup"],["f","Lab 1 maths: imputation, z-score, Chauvenet, IQR, masking threshold, scaling"],["f","Lab 1 SmallNet: seeded, trains, 100 % accuracy at lr 0.5×1000, barely learns at lr 0.01×100"],["f","Lab 1 softmax, embedded MNIST digit, optimizer divergence"],["f","Registry: unique ids/numbers, live labs have unique steps, Lab 1 has 13 steps"],["f","LabsIndex lists available vs planned and filters"],["f","LabPage: redirect to first step, unknown lab redirect, Continue saves progress, stepper shows ticks"],["f","Real numbers rendered in anomaly step; browser-side training result in train step"],["f","NavBar Labs menu opens, lists labs, closes on Escape"],["f","Validation, formatting, presets, NetworkGraph, ErrorMessage, Home"]];
 const rt=()=>{const q=$('#tq').value.toLowerCase(),b=$('#tb').checked,f=$('#tf').checked;$('#tt').innerHTML=tests.filter(t=>(t[0]==='b'?b:f)&&t[1].toLowerCase().includes(q)).map(t=>`<tr><td><span class="chip">${t[0]==='b'?'pytest':'vitest'}</span></td><td>${esc(t[1])}</td></tr>`).join('')};['tq','tb','tf'].forEach(i=>$('#'+i).oninput=rt);rt();
 document.querySelectorAll('.copy').forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.parentElement.textContent.replace(/^Copy/,'').trim());b.textContent='Copied';setTimeout(()=>b.textContent='Copy',1200)}catch{b.textContent='Select & copy'}});
-const rm=[["Labs 2-4 (CNN, attention, loss landscapes)","Planned"],["Server-side lab progress and accounts (progress is per-browser today)","Planned"],["Optional PyTorch comparison model","<span class='bad'>Not built</span>"],["Streaming instead of polling in the Playground","Planned"],["Redis-backed Playground sessions for scaling","Planned"],["Authentication and rate limiting before public exposure","Planned"],["Playwright suites in CI","Planned"],["Docker image build verification","<span class='warn'>Unverified here</span>"],["AWS deployment with the CloudFormation template","<span class='warn'>Template linted; not deployed</span>"]];
+const rm=[["Labs 2-4 (CNN, attention, loss landscapes)","Planned"],["Server-side lab progress and accounts (progress is per-browser today)","Planned"],["PyTorch training mode in the app (PyTorch is used only to verify the maths)","<span class='bad'>Not built</span>"],["Streaming instead of polling in the Playground","Planned"],["Redis-backed Playground sessions for scaling","Planned"],["Authentication and rate limiting before public exposure","Planned"],["Playwright suites in CI","Planned"],["Docker image build verification","<span class='warn'>Unverified here</span>"],["AWS deployment with the CloudFormation template","<span class='warn'>Template linted; not deployed</span>"]];
 $('#rm').innerHTML=rm.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
 </script>
 </body>

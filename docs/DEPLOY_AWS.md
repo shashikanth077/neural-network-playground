@@ -1,5 +1,34 @@
 # Deploying to AWS (free-trial / credits friendly)
 
+## Option 0: CloudFormation template (recommended, no manual server setup)
+
+The template `infra/aws/nn-playground.yaml` creates a security group and one `t3.small` instance. On boot the instance installs Docker, clones this repository, and runs `docker compose up -d --build`. The stack reports `CREATE_COMPLETE` only after `/api/health` answers, so a failed build shows up as a failed stack.
+
+**Before you start**
+
+* An AWS account with permission to use CloudFormation, EC2 and SSM.
+* A default VPC in the region (new accounts have one).
+* An EC2 key pair in that region (only needed for SSH).
+* The repository must be publicly cloneable, or change `RepoUrl` to one you can reach.
+
+**Launch from the AWS console**
+
+1. Open **CloudFormation → Create stack → With new resources (standard)**.
+2. Choose **Upload a template file** and select `infra/aws/nn-playground.yaml`, or paste its URL.
+3. Fill in the parameters. Set `AllowedSshCidr` and `AllowedAppCidr` to your own IP as `x.x.x.x/32` if you want the app private.
+4. Accept the defaults for the rest and click **Submit**. The template creates no IAM resources, so no capability acknowledgement is needed.
+5. Wait about 10–15 minutes for `CREATE_COMPLETE`. Open the **Outputs** tab and click `AppUrl`.
+
+**Launch from VS Code (AWS Toolkit)**
+
+Open the template in VS Code. With the AWS Toolkit connected, right-click the file and choose the CloudFormation deploy option, then enter the parameters. The Toolkit uses the same template, so the result is identical.
+
+**Remove everything**
+
+CloudFormation → select the stack → **Delete**. This terminates the instance and removes the security group.
+
+**Updating the app** is a `git pull` plus `docker compose up -d --build` on the server (see the VS Code guide). Updating the stack itself is not needed for code changes.
+
 This is a plan; it has **not** been executed from this repository's authoring environment.
 
 ## Option A: one EC2 instance with Docker Compose (simplest, cheapest)

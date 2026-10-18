@@ -129,7 +129,7 @@ Use the presets in the UI. Observations below come from this implementation, but
 
 ## Deploying to AWS (planned)
 
-The app is container-ready. See [`docs/DEPLOY_AWS.md`](docs/DEPLOY_AWS.md) for a free-credit-friendly path (single EC2 instance with Docker Compose) and a more managed option (App Runner / ECS Fargate + S3/CloudFront).
+The app is container-ready. The quickest route is the CloudFormation template in [`infra/aws/nn-playground.yaml`](infra/aws/nn-playground.yaml): one stack creates the server, deploys the app and reports success only when it is healthy. See [`docs/DEPLOY_AWS.md`](docs/DEPLOY_AWS.md) for steps and alternatives (App Runner, ECS Fargate, S3/CloudFront).
 
 ## Limitations and future work
 

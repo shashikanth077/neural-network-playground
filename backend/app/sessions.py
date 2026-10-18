@@ -9,7 +9,8 @@ from typing import Optional
 import numpy as np
 
 from . import config as settings
-from .nn import NeuralNetwork, flatten, make_optimizer, sigmoid, bce_from_logits
+from .metrics import evaluate as evaluate_split
+from .nn import NeuralNetwork, batch_indices, flatten, loss_and_dlogits, make_optimizer, sigmoid
 from .schemas import ModelConfig
 
 
@@ -57,9 +58,18 @@ class TrainingSession:
 
     def _init_model(self) -> None:
         cfg = self.config
-        self.net = NeuralNetwork(cfg.hidden_layers, cfg.activation, cfg.init, cfg.seed)
+        self.net = NeuralNetwork(
+            cfg.hidden_layers, cfg.activation, cfg.init, cfg.seed,
+            loss=cfg.loss, l1=cfg.l1, l2=cfg.l2, dropout=cfg.dropout, batch_norm=cfg.batch_norm,
+        )
         self.opt = make_optimizer(cfg.optimizer, cfg.learning_rate)
         self.shuffle_rng = np.random.default_rng(cfg.seed + 1)
+        self.dropout_rng = np.random.default_rng(cfg.seed + 2)
+        self.best_state: Optional[dict] = None
+        self.best_val = float("inf")
+        self.wait = 0
+        self.stopped_early = False
+        self.restored_best = False
         self.history: list[dict] = []
         self.epoch = 0
         self.status = "ready"
@@ -130,24 +140,25 @@ class TrainingSession:
             bs = min(cfg.batch_size, n)
             while True:
                 with self.lock:
-                    if self.epoch >= cfg.epochs:
+                    if self.epoch >= cfg.epochs or self.stopped_early:
                         break
                 grad_norms: list[float] = []
-                order = self.shuffle_rng.permutation(n)
-                for start in range(0, n, bs):
+                for idx in batch_indices(n, bs, self.shuffle_rng, cfg.batch_norm):
                     self._run_flag.wait()
                     if self._stop_flag.is_set():
                         return
-                    idx = order[start : start + bs]
                     with self.lock:
-                        loss, dW, db = self.net.gradients(self.X_train[idx], self.y_train[idx])
-                        grads = [g for pair in zip(dW, db) for g in pair]
+                        _, grads = self.net.gradients(
+                            self.X_train[idx], self.y_train[idx], training=True, rng=self.dropout_rng
+                        )
                         self.opt.step(self.net.params, grads)
                         grad_norms.append(float(np.sqrt(sum(float(np.sum(g * g)) for g in grads))))
                 with self.lock:
                     if self._stop_flag.is_set():
                         return
-                    self._record_epoch(float(np.mean(grad_norms)))
+                    self._record_epoch(float(np.mean(grad_norms)) if grad_norms else 0.0)
+                if self.stopped_early:
+                    break
                 if cfg.epoch_delay_ms:
                     self._interruptible_sleep(cfg.epoch_delay_ms / 1000.0)
             with self.lock:
@@ -166,14 +177,15 @@ class TrainingSession:
             time.sleep(min(0.005, seconds))
 
     def _record_epoch(self, grad_norm: float) -> None:
-        net = self.net
-        train_loss = net.loss(self.X_train, self.y_train)
+        net, cfg = self.net, self.config
+        train_loss = net.loss(self.X_train, self.y_train)  # inference mode, data loss only
         entry = {
             "epoch": self.epoch + 1,
             "train_loss": train_loss,
             "train_acc": net.accuracy(self.X_train, self.y_train),
             "val_loss": None,
             "val_acc": None,
+            "penalty": net.penalty(),
             "grad_norm": grad_norm,
             "param_norm": net.param_norm(),
         }
@@ -187,6 +199,18 @@ class TrainingSession:
         self.epoch += 1
         entry["elapsed"] = self._elapsed + (time.time() - self._resumed_at if self._resumed_at else 0.0)
         self.history.append(entry)
+        if cfg.early_stopping and entry["val_loss"] is not None:
+            if entry["val_loss"] < self.best_val - 1e-9:
+                self.best_val = entry["val_loss"]
+                self.best_state = net.get_state()
+                self.wait = 0
+            else:
+                self.wait += 1
+                if self.wait >= cfg.patience:
+                    self.stopped_early = True
+                    if cfg.restore_best and self.best_state is not None:
+                        net.set_state(self.best_state)
+                        self.restored_best = True
 
     # -------------------------------------------------------------- reads
     def touch(self) -> None:
@@ -202,6 +226,10 @@ class TrainingSession:
                 "elapsed_seconds": self.elapsed(),
                 "error": self.error,
                 "n_parameters": self.net.n_parameters(),
+                "n_non_trainable": self.net.n_non_trainable(),
+                "best_epoch": self._best_epoch(),
+                "stopped_early": self.stopped_early,
+                "restored_best": self.restored_best,
                 "n_train": len(self.y_train),
                 "n_val": 0 if self.y_val is None else len(self.y_val),
                 "layer_sizes": list(self.net.layer_sizes),
@@ -209,9 +237,33 @@ class TrainingSession:
                 "latest": dict(self.history[-1]) if self.history else None,
             }
 
+    def _best_epoch(self) -> Optional[int]:
+        vals = [(h["val_loss"], h["epoch"]) for h in self.history if h["val_loss"] is not None]
+        return min(vals)[1] if vals else None
+
     def history_since(self, since: int = 0) -> list[dict]:
         with self.lock:
             return [dict(h) for h in self.history[since:]]
+
+    def _layer_params(self, l: int) -> dict:
+        net = self.net
+        out = {"weights": net.W[l].tolist(), "biases": net.b[l].reshape(-1).tolist()}
+        if net._has_bn(l):
+            out["gamma"] = net.gamma[l].reshape(-1).tolist()
+            out["beta"] = net.beta[l].reshape(-1).tolist()
+        return out
+
+    def evaluation(self, split: str, threshold: float) -> dict:
+        with self.lock:
+            if split == "val":
+                if self.X_val is None:
+                    raise ValueError("This session has no validation set (validation split is 0).")
+                X, y = self.X_val, self.y_val
+            else:
+                X, y = self.X_train, self.y_train
+            probs = self.net.predict_proba(X)
+            epoch = self.epoch
+        return {"session_id": self.id, "split": split, "epoch": epoch, **evaluate_split(y, probs, threshold)}
 
     def parameters(self) -> dict:
         with self.lock:
@@ -220,10 +272,7 @@ class TrainingSession:
                 "epoch": self.epoch,
                 "layer_sizes": list(self.net.layer_sizes),
                 "activation": self.net.activation_name,
-                "layers": [
-                    {"weights": w.tolist(), "biases": b.reshape(-1).tolist()}
-                    for w, b in zip(self.net.W, self.net.b)
-                ],
+                "layers": [self._layer_params(l) for l in range(len(self.net.W))],
             }
 
     def predict(self, X: np.ndarray, with_activations: bool = False):
@@ -244,21 +293,23 @@ class TrainingSession:
             x = self.X_train[idx : idx + 1]
             y = self.y_train[idx : idx + 1]
             logits, cache = self.net.forward(x)
-            dW, db = self.net.backward(y, cache)
+            grads = self.net.backward(y, logits, cache)
             prob = float(sigmoid(logits).reshape(-1)[0])
-            loss = bce_from_logits(logits, y)
-            layers = [
-                {
-                    "layer": l + 1,
-                    "pre_activation": cache["z"][l].reshape(-1).tolist(),
-                    "activation": cache["a"][l + 1].reshape(-1).tolist(),
-                    "weight_grad_norm": float(np.linalg.norm(dW[l])),
-                    "bias_grad_norm": float(np.linalg.norm(db[l])),
-                }
-                for l in range(len(self.net.W))
-            ]
+            loss = loss_and_dlogits(self.net.loss_name, logits, y)[0]
+            layers = []
+            for l in range(len(self.net.W)):
+                ix = self.net.param_index(l)
+                layers.append(
+                    {
+                        "layer": l + 1,
+                        "pre_activation": cache["z"][l].reshape(-1).tolist(),
+                        "activation": cache["a"][l + 1].reshape(-1).tolist(),
+                        "weight_grad_norm": float(np.linalg.norm(grads[ix["W"]])),
+                        "bias_grad_norm": float(np.linalg.norm(grads[ix["b"]])),
+                    }
+                )
             w0 = float(self.net.W[0][0, 0])
-            g0 = float(dW[0][0, 0])
+            g0 = float(grads[self.net.param_index(0)["W"]][0, 0])
             lr = self.config.learning_rate
             return {
                 "session_id": self.id,
@@ -277,8 +328,9 @@ class TrainingSession:
                 },
                 "optimizer": self.config.optimizer,
                 "learning_rate": lr,
-                "note": "Single-sample dry run: the optimizer is not applied. "
-                "'sgd_update' shows what plain SGD would do to this weight; Adam rescales the step.",
+                "note": "Single-sample dry run in inference mode (no dropout, batch norm uses running statistics); "
+                "the optimizer is not applied. 'sgd_update' shows what plain SGD would do to this weight; "
+                "other optimizers rescale the step.",
             }
 
 

@@ -2,7 +2,10 @@ import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import { NavBar } from "./components/NavBar";
 import { Home } from "./pages/Home";
+import { LabsIndex } from "./pages/LabsIndex";
+
 const Playground = lazy(() => import("./pages/Playground").then((m) => ({ default: m.Playground })));
+const LabPage = lazy(() => import("./pages/LabPage").then((m) => ({ default: m.LabPage })));
 
 export default function App() {
   return (
@@ -12,12 +15,15 @@ export default function App() {
       </a>
       <NavBar />
       <div id="main">
-        <Suspense fallback={<p className="p-8 text-center text-sm text-muted">Loading…</p>}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/playground" element={<Playground />} />
-          <Route path="*" element={<Home />} />
-        </Routes>
+        <Suspense fallback={<p className="p-8 text-center text-sm text-muted" role="status">Loading…</p>}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/labs" element={<LabsIndex />} />
+            <Route path="/labs/:labId" element={<LabPage />} />
+            <Route path="/labs/:labId/:stepId" element={<LabPage />} />
+            <Route path="/playground" element={<Playground />} />
+            <Route path="*" element={<Home />} />
+          </Routes>
         </Suspense>
       </div>
     </div>

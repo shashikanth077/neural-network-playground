@@ -16,6 +16,9 @@ export default {
         neg: "rgb(var(--neg) / <alpha-value>)",
         ok: "rgb(var(--ok) / <alpha-value>)",
         bad: "rgb(var(--bad) / <alpha-value>)",
+        "c-teal": "rgb(var(--c-teal) / <alpha-value>)",
+        "c-amber": "rgb(var(--c-amber) / <alpha-value>)",
+        "c-purple": "rgb(var(--c-purple) / <alpha-value>)",
       },
       fontFamily: {
         sans: ["Inter", "ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"],

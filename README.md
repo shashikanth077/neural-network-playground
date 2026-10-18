@@ -1,6 +1,11 @@
-# AI Lab · Neural Network Playground
+# AI Lab
 
-An interactive platform for learning how neural networks work by training real ones. **AI Lab** is the product shell (home page + feature registry); the **Neural Network Playground** is its first feature, with more labs planned.
+An interactive platform of **guided labs** and **interactive tools** for learning how machine-learning systems really work. Today it ships:
+
+* **Lab 1 · From messy data to a working neural network**: 13 step-by-step lessons with 9 live demos (missing values, three anomaly methods, scaling, a from-scratch network, MNIST, activations, optimizers, results, checklist and Q&A).
+* **Neural Network Playground**: design and train networks on a NumPy/FastAPI back end and watch the weights, loss and decision boundary change.
+
+New labs plug in through a registry (see *Adding a lab*). Navigation: **Home · Labs ▾ · Playground**.
 
 ![Playground](screenshots/playground-trained.png)
 
@@ -8,7 +13,22 @@ Everything on screen comes from a real NumPy network training on the server: los
 
 > 📘 An interactive end-to-end walkthrough of the project lives in [`docs/project-report.html`](docs/project-report.html) (open it in a browser).
 
-## Features
+## Labs platform
+
+| Piece | What it does |
+|---|---|
+| Labs menu + `/labs` index | Lists every lab (available / planned) with per-lab progress |
+| Lab shell `/labs/:labId/:stepId` | Sidebar stepper grouped by topic, lab switcher, progress %, previous/next, “mark complete”, mobile drawer |
+| Progress | Saved per lab in the browser; resumes at the last step |
+| Lab 1 | Ported from the uploaded *Lab1_Visual_Guide.html*; every demo computes for real and the quoted numbers are asserted by unit tests |
+
+![Lab 1](screenshots/lab1-anomalies.png)
+
+**Adding a lab:** create `frontend/src/labs/<name>/index.ts` exporting a `Lab` (id, number, title, steps with lazy React components), then add it to `LABS` in `frontend/src/labs/registry.ts`. The menu, index, home page, routes, stepper and progress tracking pick it up. Shared demo primitives live in `labs/ui.tsx`.
+
+> **Correction made while porting Lab 1.** The original guide said the Z-score rule (threshold 3) stops catching the suspicious age at about 30–40. Measured on the 30 ages it only stops below ≈ 21 (z = 4.3 at 30, 4.8 at 40). The lab text, the Q&A answer and a regression test now reflect the real behaviour.
+
+## Playground features
 
 | Area | What you get |
 |---|---|
@@ -48,6 +68,8 @@ flowchart LR
 backend/app/    nn.py (network, losses, optimizers) · datasets.py · sessions.py · schemas.py · main.py
 backend/tests/  27 numerical tests + 14 API tests
 frontend/src/   api/ · hooks/ · lib/ · components/ · pages/ · test/
+frontend/src/labs/  registry.ts · progress.ts · ui.tsx · lab1/ (math, data, 13 steps)
+infra/aws/      nn-playground.yaml (CloudFormation)
 docs/           API.md · DEPLOY_AWS.md · project-report.html
 scripts/        capture-screenshots.mjs (Playwright drives the real app)
 ```
@@ -69,7 +91,7 @@ npm install
 npm run dev
 ```
 
-The dev server proxies `/api` to `localhost:8000` (override with `VITE_API_PROXY`).
+The dev server proxies `/api` to `localhost:8000` (override with `VITE_API_PROXY`). **The Labs need no backend**; only the Playground does.
 
 **Docker:** `docker compose up --build` → http://localhost:8080 (nginx serves the SPA and proxies `/api`).
 
@@ -79,7 +101,7 @@ Copy `.env.example` to `.env` to change limits. Never commit `.env`.
 
 ```bash
 cd backend && pytest -q                        # 41 tests
-cd frontend && npm test && npm run typecheck   # 15 tests
+cd frontend && npm test && npm run typecheck   # 46 tests (Lab 1 maths, registry, navigation, Playground UI)
 ```
 
 Backend tests cover forward propagation vs a manual computation, **finite-difference gradient checking** (3 activations × 3 depths), SGD/Adam update rules, loss decrease, XOR needing a hidden layer, stable sigmoid/BCE at extreme inputs, output shapes, and the API: parameters really change during training, pause truly freezes the epoch counter, reset restores seeded initial weights, independent sessions, validation/404/409 errors, dry-run trace leaves the model untouched, and session cleanup.
@@ -137,9 +159,10 @@ The app is container-ready. The quickest route is the CloudFormation template in
 * Training is intentionally small (≤ 2000 points, ≤ 2000 epochs, 2 input features). No auth or rate limiting yet.
 * Polling rather than WebSocket/SSE streaming.
 * Optional PyTorch comparison extension was **not** implemented.
-* No end-to-end tests in CI (the Playwright script is run manually).
+* No end-to-end tests in CI (the Playwright scripts `scripts/capture-labs.mjs` and `scripts/capture-screenshots.mjs` are run manually).
 * Docker images were not built in the authoring environment; compose config is validated only.
-* Roadmap labs on the home page (loss landscape, convolution, attention) are not built yet.
+* Labs 2-4 on the home page and Labs index (CNN, attention, loss landscapes) are placeholders marked *Planned*.
+* Lab progress is stored per browser only (no accounts).
 
 ## License
 

@@ -51,9 +51,10 @@ describe("NetworkGraph", () => {
 });
 
 describe("Home", () => {
-  it("links to the playground and lists roadmap labs as non-interactive", () => {
+  it("links to Lab 1 and the playground and lists planned labs as non-interactive", () => {
     render(<MemoryRouter><Home /></MemoryRouter>);
+    expect(screen.getAllByRole("link", { name: /Lab 1/ })[0]).toHaveAttribute("href", "/labs/lab1");
     expect(screen.getAllByRole("link", { name: /Playground/ })[0]).toHaveAttribute("href", "/playground");
-    expect(screen.getAllByText("Roadmap").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Planned").length).toBeGreaterThan(0);
   });
 });

@@ -46,6 +46,7 @@ export function Home() {
             <div className="mt-7 flex flex-wrap gap-3">
               <Link to="/labs" className="btn-primary !px-5 !py-2.5 !text-base">Explore labs →</Link>
               <Link to="/tools" className="btn-ghost !px-5 !py-2.5 !text-base">Open a tool</Link>
+              <Link to="/cheatsheets" className="btn-ghost !px-5 !py-2.5 !text-base">Cheatsheets</Link>
             </div>
             <dl className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-sm">
               {[[String(DOMAINS.length), "domains"], [String(live.length), live.length === 1 ? "lab available" : "labs available"], [String(TOOLS.length), TOOLS.length === 1 ? "interactive tool" : "interactive tools"], [String(totalSteps), "guided steps"]].map(([a, b]) => (

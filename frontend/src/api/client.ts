@@ -1,6 +1,8 @@
 import type {
   DataPayload,
+  CrossValidation,
   DatasetSpec,
+  Evaluation,
   EpochMetrics,
   GridBounds,
   IterationTrace,
@@ -8,6 +10,7 @@ import type {
   ModelParameters,
   PredictResponse,
   SessionStatus,
+  ValidationMethod,
 } from "../types";
 
 const BASE = (import.meta.env.VITE_API_BASE as string | undefined) ?? "/api";
@@ -80,6 +83,10 @@ export const api = {
     post<PredictResponse>(`/training/${id}/predict`, { grid: { ...bounds, resolution } }),
   predictPoint: (id: string, point: [number, number]) =>
     post<PredictResponse>(`/training/${id}/predict`, { points: [point], include_activations: true }),
+  evaluation: (id: string, split: "train" | "val", threshold: number) =>
+    request<Evaluation>(`/training/${id}/evaluation?split=${split}&threshold=${threshold}`),
+  crossValidate: (dataset: DataPayload, config: ModelConfig, method: ValidationMethod, k: number, valFraction: number) =>
+    post<CrossValidation>("/cross-validation", { dataset, config, method, k, val_fraction: valFraction }),
   trace: (id: string, sample: number) =>
     request<IterationTrace>(`/training/${id}/iteration-trace?sample=${sample}`),
 };

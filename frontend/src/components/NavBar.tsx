@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useThemeToggle } from "../hooks/useTheme";
 import { DOMAINS } from "../labs/domains";
+import { SHEETS } from "../cheatsheets/registry";
 import { LABS } from "../labs/registry";
 import { TOOLS } from "../lib/features";
 
@@ -131,6 +132,26 @@ export function NavBar() {
               );
             })}
             <Link to="/tools" className="mt-1 block rounded-xl border-t border-line px-3 pt-2.5 pb-1.5 text-sm font-semibold text-brand hover:underline">Browse all tools →</Link>
+          </NavMenu>
+
+          <NavMenu label="Cheatsheets" id="sheets-menu" prefix="/cheatsheets">
+            {DOMAINS.map((d) => {
+              const sheets = SHEETS.filter((s) => s.domain === d.id);
+              if (!sheets.length) return null;
+              return (
+                <div key={d.id}>
+                  <DomainHeading glyph={d.glyph} name={d.name} text={d.text} />
+                  <ul>
+                    {sheets.map((s) => (
+                      <li key={s.id}>
+                        <MenuRow badge={d.short} title={s.title} meta={s.status === "live" ? `${s.sections.length} sections` : "Planned"} to={s.status === "live" ? `/cheatsheets/${s.id}` : undefined} />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+            <Link to="/cheatsheets" className="mt-1 block rounded-xl border-t border-line px-3 pt-2.5 pb-1.5 text-sm font-semibold text-brand hover:underline">Browse all cheatsheets →</Link>
           </NavMenu>
 
           <button

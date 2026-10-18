@@ -4,8 +4,10 @@ import { NavBar } from "./components/NavBar";
 import { Home } from "./pages/Home";
 import { LabsIndex } from "./pages/LabsIndex";
 import { ToolsIndex } from "./pages/ToolsIndex";
+import { CheatsheetsIndex } from "./pages/CheatsheetsIndex";
 
 const Playground = lazy(() => import("./pages/Playground").then((m) => ({ default: m.Playground })));
+const CheatsheetPage = lazy(() => import("./pages/CheatsheetPage").then((m) => ({ default: m.CheatsheetPage })));
 const LabPage = lazy(() => import("./pages/LabPage").then((m) => ({ default: m.LabPage })));
 
 export default function App() {
@@ -23,6 +25,8 @@ export default function App() {
             <Route path="/labs/:labId" element={<LabPage />} />
             <Route path="/labs/:labId/:stepId" element={<LabPage />} />
             <Route path="/tools" element={<ToolsIndex />} />
+            <Route path="/cheatsheets" element={<CheatsheetsIndex />} />
+            <Route path="/cheatsheets/:sheetId" element={<CheatsheetPage />} />
             <Route path="/playground" element={<Playground />} />
             <Route path="*" element={<Home />} />
           </Routes>

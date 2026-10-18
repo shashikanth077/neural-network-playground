@@ -51,10 +51,19 @@ describe("NetworkGraph", () => {
 });
 
 describe("Home", () => {
-  it("links to Lab 1 and the playground and lists planned labs as non-interactive", () => {
-    render(<MemoryRouter><Home /></MemoryRouter>);
-    expect(screen.getAllByRole("link", { name: /Lab 1/ })[0]).toHaveAttribute("href", "/labs/lab1");
-    expect(screen.getAllByRole("link", { name: /Playground/ })[0]).toHaveAttribute("href", "/playground");
-    expect(screen.getAllByText("Planned").length).toBeGreaterThan(0);
+  const renderHome = () => render(<MemoryRouter><Home /></MemoryRouter>);
+  it("presents the platform across all three domains", () => {
+    renderHome();
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/machine learning.*deep learning.*NLP/i);
+    for (const d of ["ml", "dl", "nlp"]) {
+      expect(document.querySelector(`a[href="/labs?domain=${d}"]`)).not.toBeNull();
+    }
+  });
+  it("links to the available lab and tool, and shows planned labs as non-interactive", () => {
+    renderHome();
+    expect(screen.getByRole("link", { name: /From messy data/ })).toHaveAttribute("href", "/labs/lab1");
+    expect(screen.getByRole("link", { name: /Neural Network Playground/ })).toHaveAttribute("href", "/playground");
+    expect(screen.getAllByText(/planned/i).length).toBeGreaterThan(0);
+    expect(screen.queryByRole("link", { name: /Convolutional networks/ })).not.toBeInTheDocument();
   });
 });

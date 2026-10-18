@@ -49,9 +49,9 @@ input[type=search]{font:inherit;width:100%;padding:8px 10px;border:1px solid var
 
 <section data-tab="Overview">
   <h1>What was built, end to end</h1>
-  <p class="mu"><b>AI Lab</b> is a platform for guided labs and interactive tools. It currently ships <b>Lab 1</b> (data cleaning → neural networks → MNIST, 13 interactive steps) and the <b>Neural Network Playground</b> (real NumPy training behind FastAPI), with a registry that makes the next lab a one-folder addition.</p>
+  <p class="mu"><b>AI Lab</b> is a multi-domain platform (<b>Machine Learning · Deep Learning · NLP</b>) of guided labs and interactive tools, each a separate project. It currently ships <b>Lab 1</b> (data cleaning → neural networks → MNIST, 13 interactive steps) and the <b>Neural Network Playground</b> (real NumPy training behind FastAPI), with a registry that makes the next lab a one-folder addition.</p>
   <div class="grid">
-    <div class="card"><div class="kpi">87</div><div class="mu">automated tests passing (41 pytest + 46 Vitest)</div></div>
+    <div class="card"><div class="kpi">94</div><div class="mu">automated tests passing (41 pytest + 53 Vitest), plus 11 PyTorch cross-checks</div></div>
     <div class="card"><div class="kpi">13</div><div class="mu">steps in Lab 1, 9 interactive demos</div></div>
     <div class="card"><div class="kpi">14</div><div class="mu">REST endpoints for the Playground</div></div>
     <div class="card"><div class="kpi">0</div><div class="mu">console errors across both browser suites</div></div>
@@ -66,18 +66,21 @@ input[type=search]{font:inherit;width:100%;padding:8px 10px;border:1px solid var
 
 <section data-tab="Platform" hidden>
   <h2>The AI Lab platform</h2>
-  <p class="mu">One shell, many labs. Navigation: <b>Home</b> · <b>Labs ▾</b> (menu listing every lab) · <b>Playground</b>.</p>
+  <p class="mu">One shell, many projects across domains. Navigation: <b>Home</b> · <b>Labs ▾</b> · <b>Tools ▾</b>; both menus are grouped by domain.</p>
   <div class="grid">
-    <div class="card"><h3 style="margin-top:0">Home</h3><p>Hero, <i>Guided labs</i> grid (from the registry), <i>Interactive tools</i>, principles.</p></div>
-    <div class="card"><h3 style="margin-top:0">Labs index</h3><p>Filter All / Available / Planned; per-lab progress bar with “Start” or “Continue”.</p></div>
+    <div class="card"><h3 style="margin-top:0">Domains</h3><p>ML, DL and NLP in <code>labs/domains.ts</code>. Every lab and tool declares one; add a domain by adding an entry.</p></div>
+    <div class="card"><h3 style="margin-top:0">Home</h3><p>Platform hero, <i>Explore by domain</i> tiles with counts, <i>Available now</i>, <i>Coming next</i>.</p></div>
+    <div class="card"><h3 style="margin-top:0">Labs index</h3><p>Filter by domain (<code>?domain=ml</code>) and status; per-lab progress with “Start” or “Continue”; empty state with a way out.</p></div>
+    <div class="card"><h3 style="margin-top:0">Tools index</h3><p><code>/tools</code> lists stand-alone apps (the Playground) grouped by domain, with honest empty domains.</p></div>
     <div class="card"><h3 style="margin-top:0">Lab shell</h3><p>Sidebar stepper grouped by topic, lab switcher, progress %, breadcrumbs, previous/next, “mark complete”, mobile drawer.</p></div>
     <div class="card"><h3 style="margin-top:0">Progress</h3><p>Saved per lab in this browser (localStorage); the lab resumes at the last visited step.</p></div>
   </div>
   <div class="card"><h3 style="margin-top:0">Add a new lab (4 steps)</h3>
     <div id="addlab"></div>
+    <p class="mu">A <b>tool</b> instead of a guided lab: add it to <code>TOOLS</code> in <code>lib/features.ts</code> (with a domain) and add a route.</p>
     <pre><button class="btn copy">Copy</button>// frontend/src/labs/lab2/index.ts
 export const lab2: Lab = {
-  id: "lab2", number: 2, title: "…", subtitle: "…", status: "live", accent: "brand", tags: ["…"],
+  id: "lab2", number: 2, domain: "ml", title: "…", subtitle: "…", status: "live", tags: ["…"],
   steps: [{ id: "intro", group: "Basics", minutes: 5, title: "…", summary: "…",
             Component: lazy(() => import("./steps/Intro")) }],
 };
@@ -145,6 +148,8 @@ export const lab2: Lab = {
   <h2>Verification</h2>
   <div class="card"><h3 style="margin-top:0">Browser run: Labs platform (Playwright)</h3>
   <table><tbody>
+  <tr><td class="ok">✔</td><td>Home headline names ML, DL and NLP and shows three domain tiles; the ML tile opens the ML-filtered Labs page; NLP + Available shows the empty state</td></tr>
+  <tr><td class="ok">✔</td><td>Labs menu grouped by domain; Tools menu and /tools list the Playground; both menus stay inside the viewport at 320, 390, 768, 1024 and 1440 px</td></tr>
   <tr><td class="ok">✔</td><td>Labs index lists Lab 1 as available and the others as planned; Escape closes the Labs menu</td></tr>
   <tr><td class="ok">✔</td><td>Lab 1 opens on step 1; “Continue” marks it complete and the tick survives a page reload</td></tr>
   <tr><td class="ok">✔</td><td>Anomaly lab: Z-score flags 88 and 35, misses 20; IQR still catches 20</td></tr>
@@ -158,7 +163,7 @@ export const lab2: Lab = {
   <tr><td class="ok">✔</td><td>Train XOR to epoch 200; pause froze the counter (78 → 78); resume completed; weights differ before vs after; reset returns to epoch 0</td></tr>
   <tr><td class="ok">✔</td><td>Preset, Learning Center iteration trace, custom dataset, dark/mobile, backend-down banner</td></tr>
   </tbody></table></div>
-  <div class="card"><h3 style="margin-top:0">Automated tests (87)</h3>
+  <div class="card"><h3 style="margin-top:0">Automated tests (94)</h3>
   <input type="search" id="tq" placeholder="Filter tests…" aria-label="Filter tests">
   <label class="cb"><input type="checkbox" id="tb" checked> pytest</label> <label class="cb"><input type="checkbox" id="tf" checked> vitest</label>
   <table><thead><tr><th>Suite</th><th>What it proves</th></tr></thead><tbody id="tt"></tbody></table></div>
@@ -195,14 +200,14 @@ function show(i){secs.forEach((s,j)=>{s.hidden=i!==j;tabs.children[j].setAttribu
 const hi=secs.findIndex(s=>s.dataset.tab===decodeURIComponent(location.hash.slice(1)));if(hi>0)show(hi);
 
 const dod=[
-["Home page that can host many features","Home lists guided labs and tools from registries; adding one is a registry entry."],
-["Separate Labs menu with multiple labs","Nav “Labs ▾” menu, /labs index, in-lab switcher; labs 2-4 are shown as planned."],
+["Platform home for ML, DL and NLP","Home presents three domains with counts, available labs and tools, and planned work; all from registries."],
+["Separate Labs and Tools menus, grouped by domain","Nav menus per domain, /labs with domain + status filters, /tools index, in-lab switcher; labs 2-4 are placeholders marked Planned."],
 ["Lab 1 implemented with proper UI steps","13 steps in a sidebar stepper with progress, previous/next, mobile drawer."],
 ["Every Lab 1 demo is real","Imputation, three anomaly methods, scaling, a from-scratch 2-2-1 network trained in the browser, softmax calculator, optimizers: all computed live; numbers asserted by tests."],
 ["Content faithful to the uploaded guide","All 13 sections, tables, Q&A and checklist ported; the real MNIST digit and learning-curve image extracted from the file. One inaccurate claim was corrected (see Lab 1 guide)."],
 ["Playground still works","41 backend tests + the full Playground browser run were re-executed after the platform change."],
 ["Responsive and accessible","No overflow at 390 px; labelled controls, aria-current steps, live regions."],
-["Automated tests","87 passing (41 pytest, 46 Vitest) plus two Playwright suites."],
+["Automated tests","94 passing (41 pytest, 53 Vitest), 11 PyTorch cross-checks when torch is installed, a 20-step API flow script and two Playwright suites."],
 ["Documentation","README, docs/API.md, docs/DEPLOY_AWS.md, this report."],
 ["No mock data or placeholder buttons","Planned labs are labelled and non-interactive; nothing is simulated."]];
 $('#dod').innerHTML=dod.map(([t,d])=>`<details><summary style="cursor:pointer;padding:6px 0"><span class="ok">✔</span> ${esc(t)}</summary><p class="mu" style="margin-left:22px">${esc(d)}</p></details>`).join('');
@@ -245,15 +250,18 @@ const rend=()=>{const q=$('#epq').value.toLowerCase();$('#ep').innerHTML=eps.fil
 $('#comps').innerHTML=["NavBar (Labs menu)","LabPage (stepper shell)","LabsIndex","Home","Header","DatasetSelector","NetworkArchitectureEditor","NetworkGraph","TrainingControls","TrainingMetrics","LossChart","AccuracyChart","GradientChart","DecisionBoundary","ExperimentPresets","LearningCenter","ErrorMessage","labs/ui primitives"].map(c=>`<span class="chip">${c}</span>`).join('');
 
 /* gallery */
-const shots=[["home-labs.png","Home: labs and tools"],["labs-menu.png","Labs menu in the top bar"],["labs-index.png","Labs index"],["lab1-step1.png","Lab 1 · step 1"],["lab1-missing.png","Task 1 · imputation"],["lab1-anomalies.png","Anomaly lab (masking at 20)"],["lab1-train.png","Train the 2-2-1 network"],["lab1-mnist.png","MNIST: pixels, architecture, softmax"],["lab1-optimizers.png","Optimizer race"],["lab1-results.png","Notebook results"],["lab1-defense.png","Defense Q&A"],["lab1-dark.png","Dark theme"],["lab1-mobile.png","Mobile (390 px)"],["lab1-mobile-drawer.png","Mobile step drawer"],["playground-trained.png","Playground: XOR after training"],["playground-full.png","Playground: full page"],["playground-overfitting.png","Playground: overfitting preset"],["learning-center.png","Playground: iteration trace"],["error-backend-down.png","Backend unreachable state"]];
+const shots=[["home.png","Home: the multi-domain platform"],["labs-menu.png","Labs menu grouped by domain"],["labs-menu-mobile.png","Labs menu on a phone"],["tools-menu.png","Tools menu"],["labs-index.png","Labs index"],["labs-domain-ml.png","Labs filtered to Machine Learning"],["tools-index.png","Tools index by domain"],["lab1-step1.png","Lab 1 · step 1"],["lab1-missing.png","Task 1 · imputation"],["lab1-anomalies.png","Anomaly lab (masking at 20)"],["lab1-train.png","Train the 2-2-1 network"],["lab1-mnist.png","MNIST: pixels, architecture, softmax"],["lab1-optimizers.png","Optimizer race"],["lab1-results.png","Notebook results"],["lab1-defense.png","Defense Q&A"],["lab1-dark.png","Dark theme"],["lab1-mobile.png","Mobile (390 px)"],["lab1-mobile-drawer.png","Mobile step drawer"],["playground-trained.png","Playground: XOR after training"],["playground-full.png","Playground: full page"],["playground-overfitting.png","Playground: overfitting preset"],["learning-center.png","Playground: iteration trace"],["error-backend-down.png","Backend unreachable state"]];
 $('#gal').innerHTML=shots.map(([f,c])=>`<figure><button data-f="${f}" aria-label="Enlarge: ${c}"><img loading="lazy" src="../screenshots/${f}" alt="${c}"></button><figcaption>${c}</figcaption></figure>`).join('');
 $('#gal').onclick=e=>{const b=e.target.closest('button');if(!b)return;$('#big').src='../screenshots/'+b.dataset.f;$('#big').alt=b.getAttribute('aria-label');$('#dlg').showModal()};$('#dlg').onclick=()=>$('#dlg').close();
 
 /* tests */
-const tests=[["b","Forward pass equals manual computation for relu/sigmoid/tanh"],["b","Finite-difference gradient check: 3 activations × 3 architectures"],["b","SGD update equals w − η·g; Adam first step ≈ η·sign(g)"],["b","Loss decreases on separable data; XOR needs a hidden layer"],["b","Sigmoid and BCE stable at ±1000 logits; shapes, counts, seeds"],["b","API: parameters change; pause freezes the epoch counter; reset restores seeded weights"],["b","API: independent sessions; 404/409/422; divergence reported; trace is a dry run; cleanup"],["f","Lab 1 maths: imputation, z-score, Chauvenet, IQR, masking threshold, scaling"],["f","Lab 1 SmallNet: seeded, trains, 100 % accuracy at lr 0.5×1000, barely learns at lr 0.01×100"],["f","Lab 1 softmax, embedded MNIST digit, optimizer divergence"],["f","Registry: unique ids/numbers, live labs have unique steps, Lab 1 has 13 steps"],["f","LabsIndex lists available vs planned and filters"],["f","LabPage: redirect to first step, unknown lab redirect, Continue saves progress, stepper shows ticks"],["f","Real numbers rendered in anomaly step; browser-side training result in train step"],["f","NavBar Labs menu opens, lists labs, closes on Escape"],["f","Validation, formatting, presets, NetworkGraph, ErrorMessage, Home"]];
+const tests=[["b","Forward pass equals manual computation for relu/sigmoid/tanh"],["b","Finite-difference gradient check: 3 activations × 3 architectures"],["b","SGD update equals w − η·g; Adam first step ≈ η·sign(g)"],["b","Loss decreases on separable data; XOR needs a hidden layer"],["b","Sigmoid and BCE stable at ±1000 logits; shapes, counts, seeds"],["b","API: parameters change; pause freezes the epoch counter; reset restores seeded weights"],["b","API: independent sessions; 404/409/422; divergence reported; trace is a dry run; cleanup"],["f","Lab 1 maths: imputation, z-score, Chauvenet, IQR, masking threshold, scaling"],["f","Lab 1 SmallNet: seeded, trains, 100 % accuracy at lr 0.5×1000, barely learns at lr 0.01×100"],["f","Lab 1 softmax, embedded MNIST digit, optimizer divergence"],["f","Registry: unique ids/numbers, live labs have unique steps, Lab 1 has 13 steps; every lab and tool has a known domain; domains are ml, dl, nlp"],
+["f","Labs filters: by domain from the URL and chips, by status, empty state with Clear filters"],
+["f","Tools index groups by domain and shows empty domains; Labs and Tools menus are grouped and close on Escape"],
+["f","Home presents all three domains, links to the available lab and tool, and planned labs are not links"],["f","LabsIndex lists available vs planned and filters"],["f","LabPage: redirect to first step, unknown lab redirect, Continue saves progress, stepper shows ticks"],["f","Real numbers rendered in anomaly step; browser-side training result in train step"],["f","NavBar Labs menu opens, lists labs, closes on Escape"],["f","Validation, formatting, presets, NetworkGraph, ErrorMessage, Home"]];
 const rt=()=>{const q=$('#tq').value.toLowerCase(),b=$('#tb').checked,f=$('#tf').checked;$('#tt').innerHTML=tests.filter(t=>(t[0]==='b'?b:f)&&t[1].toLowerCase().includes(q)).map(t=>`<tr><td><span class="chip">${t[0]==='b'?'pytest':'vitest'}</span></td><td>${esc(t[1])}</td></tr>`).join('')};['tq','tb','tf'].forEach(i=>$('#'+i).oninput=rt);rt();
 document.querySelectorAll('.copy').forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.parentElement.textContent.replace(/^Copy/,'').trim());b.textContent='Copied';setTimeout(()=>b.textContent='Copy',1200)}catch{b.textContent='Select & copy'}});
-const rm=[["Labs 2-4 (CNN, attention, loss landscapes)","Planned"],["Server-side lab progress and accounts (progress is per-browser today)","Planned"],["PyTorch training mode in the app (PyTorch is used only to verify the maths)","<span class='bad'>Not built</span>"],["Streaming instead of polling in the Playground","Planned"],["Redis-backed Playground sessions for scaling","Planned"],["Authentication and rate limiting before public exposure","Planned"],["Playwright suites in CI","Planned"],["Docker image build verification","<span class='warn'>Unverified here</span>"],["AWS deployment with the CloudFormation template","<span class='warn'>Template linted; not deployed</span>"]];
+const rm=[["Your next lab work to replace the placeholder Lab 2 (planned ML, DL and NLP cards are placeholders)","Waiting for content"],["Server-side lab progress and accounts (progress is per-browser today)","Planned"],["PyTorch training mode in the app (PyTorch is used only to verify the maths)","<span class='bad'>Not built</span>"],["Streaming instead of polling in the Playground","Planned"],["Redis-backed Playground sessions for scaling","Planned"],["Authentication and rate limiting before public exposure","Planned"],["Playwright suites in CI","Planned"],["Docker image build verification","<span class='warn'>Unverified here</span>"],["AWS deployment with the CloudFormation template","<span class='warn'>Template linted; not deployed</span>"]];
 $('#rm').innerHTML=rm.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
 </script>
 </body>

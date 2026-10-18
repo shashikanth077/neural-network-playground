@@ -27,12 +27,12 @@ const epoch = async (page) => Number((await page.locator("dl >> text=Epoch").fir
 // ---- home
 let page = await newPage();
 await page.goto(BASE);
-await page.waitForSelector("text=Understand AI by");
-await page.screenshot({ path: OUT + "home.png" });
+await page.waitForSelector("text=Explore by domain");
 log("home ok");
 
 // ---- playground: initial state
-await page.getByRole("link", { name: "Open the Playground" }).click();
+await page.getByRole("button", { name: /^Tools/ }).click();
+await page.locator("#tools-menu").getByRole("link", { name: /Neural Network Playground/ }).click();
 await page.waitForSelector("text=Network designer");
 await page.waitForFunction(() => [...document.querySelectorAll("button")].some((b) => /^▶ Train/.test(b.textContent) && !b.disabled), null, { timeout: 15000 });
 await page.screenshot({ path: OUT + "playground-initial.png", fullPage: false });

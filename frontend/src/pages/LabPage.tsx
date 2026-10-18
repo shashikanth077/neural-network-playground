@@ -1,6 +1,7 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { useLabProgress } from "../labs/progress";
+import { getDomain } from "../labs/domains";
 import { getLab, LABS } from "../labs/registry";
 import type { Lab } from "../labs/types";
 
@@ -143,6 +144,7 @@ export function LabPage() {
       <div ref={main} tabIndex={-1} className="min-w-0 outline-none focus:outline-none focus-visible:ring-0 lg:col-start-2 lg:row-start-1">
         <nav aria-label="Breadcrumb" className="text-xs text-muted">
           <Link className="hover:text-ink" to="/labs">Labs</Link> <span aria-hidden>/</span>{" "}
+          <Link className="hover:text-ink" to={`/labs?domain=${lab.domain}`}>{getDomain(lab.domain).name}</Link> <span aria-hidden>/</span>{" "}
           <Link className="hover:text-ink" to={`/labs/${lab.id}`}>Lab {lab.number}</Link> <span aria-hidden>/</span> <span>{step.group}</span>
         </nav>
         <header className="mt-2 mb-5">
@@ -176,7 +178,7 @@ function LabSwitcher({ lab }: { lab: Lab }) {
   const navigate = useNavigate();
   return (
     <div className="card p-3">
-      <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">Lab {lab.number}</p>
+      <p className={`text-[11px] font-semibold uppercase tracking-wider ${getDomain(lab.domain).text}`}>{getDomain(lab.domain).glyph} {getDomain(lab.domain).short} · Lab {lab.number}</p>
       <p className="mt-0.5 text-sm font-semibold leading-snug">{lab.title}</p>
       <label htmlFor={`switch-${lab.id}`} className="sr-only">Switch lab</label>
       <select

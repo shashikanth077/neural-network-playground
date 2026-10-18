@@ -20,13 +20,34 @@ async function open(opts = {}) {
 
 let { ctx, page } = await open();
 await page.goto(BASE);
-await page.waitForSelector("text=Understand AI by");
-await page.screenshot({ path: OUT + "home-labs.png", fullPage: true });
+await page.waitForSelector("text=Explore by domain");
+check((await page.getByRole("heading", { level: 1 }).innerText()).match(/machine learning.*deep learning.*NLP/is) !== null, "home headline names ML, DL and NLP");
+check((await page.locator('a[href^="/labs?domain="]').count()) === 3, "home has three domain tiles");
+await page.screenshot({ path: OUT + "home.png", fullPage: true });
 
-// ---- labs menu + index
+// ---- domain tile -> filtered labs
+await page.locator('a[href="/labs?domain=ml"]').click();
+await page.waitForSelector("h1:has-text('Guided labs')");
+check(page.url().includes("domain=ml"), "ML tile opens the ML-filtered Labs page");
+check((await page.getByText("Classical machine learning").count()) > 0 && (await page.getByText("From messy data").count()) === 0, "ML filter shows only ML labs");
+await page.screenshot({ path: OUT + "labs-domain-ml.png" });
+await page.getByRole("radio", { name: /NLP/ }).click();
+await page.getByRole("radio", { name: "Available" }).click();
+check((await page.getByText("No labs match these filters yet.").count()) === 1, "NLP + Available shows the empty state");
+await page.goto(BASE + "/labs");
+
+// ---- labs menu (grouped by domain) + index
 await page.getByRole("button", { name: /^Labs/ }).click();
-await page.screenshot({ path: OUT + "labs-menu.png", clip: { x: 0, y: 0, width: 1440, height: 420 } });
-await page.getByRole("link", { name: "Browse all labs →" }).click();
+check((await page.locator("#labs-menu").innerText()).toLowerCase().includes("natural language processing"), "Labs menu is grouped by domain");
+await page.screenshot({ path: OUT + "labs-menu.png", clip: { x: 0, y: 0, width: 1440, height: 520 } });
+await page.keyboard.press("Escape");
+await page.getByRole("button", { name: /^Tools/ }).click();
+await page.screenshot({ path: OUT + "tools-menu.png", clip: { x: 0, y: 0, width: 1440, height: 320 } });
+await page.getByRole("link", { name: "Browse all tools →" }).click();
+await page.waitForSelector("h1:has-text('Interactive tools')");
+check((await page.getByRole("link", { name: /Neural Network Playground/ }).count()) > 0, "Tools page lists the Playground");
+await page.screenshot({ path: OUT + "tools-index.png" });
+await page.goto(BASE + "/labs");
 await page.waitForSelector("h1:has-text('Guided labs')");
 await page.screenshot({ path: OUT + "labs-index.png" });
 check((await page.getByText("Planned").count()) >= 3, "index shows planned labs");
@@ -130,6 +151,21 @@ await page.goto(BASE + "/labs/lab1/train");
 await page.waitForSelector("text=Train the 2-2-1");
 await page.screenshot({ path: OUT + "lab1-mobile.png" });
 await ctx.close();
+
+// ---- nav dropdowns must stay inside the viewport at every width
+for (const w of [320, 390, 768, 1024, 1440]) {
+  const { ctx: c2, page: p2 } = await open({ viewport: { width: w, height: 760 } });
+  await p2.goto(BASE);
+  await p2.waitForSelector("text=Explore by domain");
+  for (const [btn, id] of [["Labs", "labs-menu"], ["Tools", "tools-menu"]]) {
+    await p2.getByRole("button", { name: new RegExp("^" + btn) }).click();
+    const box = await p2.locator("#" + id).boundingBox();
+    check(box.x >= 0 && box.x + box.width <= w, `${btn} menu inside viewport at ${w}px (x=${Math.round(box.x)}..${Math.round(box.x + box.width)})`);
+    if (btn === "Labs" && w === 390) await p2.screenshot({ path: OUT + "labs-menu-mobile.png", clip: { x: 0, y: 0, width: w, height: 700 } });
+    await p2.keyboard.press("Escape");
+  }
+  await c2.close();
+}
 
 await browser.close();
 console.log(errors.length ? "FAILURES:\n" + errors.join("\n") : "ALL CHECKS PASSED, no console errors");

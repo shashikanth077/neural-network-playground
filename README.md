@@ -1,11 +1,11 @@
 # AI Lab
 
-An interactive platform of **guided labs** and **interactive tools** for learning how machine-learning systems really work. Today it ships:
+A multi-domain platform of **guided labs** and **interactive tools** covering **Machine Learning, Deep Learning and Natural Language Processing**. Every project is its own self-contained lab or tool and belongs to one domain. Today it ships:
 
 * **Lab 1 · From messy data to a working neural network**: 13 step-by-step lessons with 9 live demos (missing values, three anomaly methods, scaling, a from-scratch network, MNIST, activations, optimizers, results, checklist and Q&A).
 * **Neural Network Playground**: design and train networks on a NumPy/FastAPI back end and watch the weights, loss and decision boundary change.
 
-New labs plug in through a registry (see *Adding a lab*). Navigation: **Home · Labs ▾ · Playground**.
+New labs plug in through a registry (see *Adding a lab*). Navigation: **Home · Labs ▾ · Tools ▾**, with both menus grouped by domain.
 
 ![Playground](screenshots/playground-trained.png)
 
@@ -17,14 +17,17 @@ Everything on screen comes from a real NumPy network training on the server: los
 
 | Piece | What it does |
 |---|---|
-| Labs menu + `/labs` index | Lists every lab (available / planned) with per-lab progress |
+| Domains (`labs/domains.ts`) | ML, DL and NLP; every lab and tool declares one. Menus, filters and the home page group by domain |
+| Home | Platform overview, *Explore by domain* tiles, *Available now*, *Coming next* |
+| Labs menu + `/labs` index | Lists every lab grouped by domain; filter by domain (`?domain=ml`) and status; per-lab progress |
+| Tools menu + `/tools` index | Stand-alone apps such as the Playground, grouped by domain |
 | Lab shell `/labs/:labId/:stepId` | Sidebar stepper grouped by topic, lab switcher, progress %, previous/next, “mark complete”, mobile drawer |
 | Progress | Saved per lab in the browser; resumes at the last step |
 | Lab 1 | Ported from the uploaded *Lab1_Visual_Guide.html*; every demo computes for real and the quoted numbers are asserted by unit tests |
 
 ![Lab 1](screenshots/lab1-anomalies.png)
 
-**Adding a lab:** create `frontend/src/labs/<name>/index.ts` exporting a `Lab` (id, number, title, steps with lazy React components), then add it to `LABS` in `frontend/src/labs/registry.ts`. The menu, index, home page, routes, stepper and progress tracking pick it up. Shared demo primitives live in `labs/ui.tsx`.
+**Adding a lab:** create `frontend/src/labs/<name>/index.ts` exporting a `Lab` (id, number, **domain**, title, steps with lazy React components), then add it to `LABS` in `frontend/src/labs/registry.ts` (a planned placeholder is simply replaced). The menus, domain filters, index, home page, routes, stepper and progress tracking pick it up. **Adding a tool:** add an entry to `TOOLS` in `src/lib/features.ts` (with its domain) and a route in `App.tsx`. **Adding a domain:** add it to `DOMAINS` in `labs/domains.ts`. Shared demo primitives live in `labs/ui.tsx`.
 
 > **Correction made while porting Lab 1.** The original guide said the Z-score rule (threshold 3) stops catching the suspicious age at about 30–40. Measured on the 30 ages it only stops below ≈ 21 (z = 4.3 at 30, 4.8 at 40). The lab text, the Q&A answer and a regression test now reflect the real behaviour.
 
@@ -101,7 +104,7 @@ Copy `.env.example` to `.env` to change limits. Never commit `.env`.
 
 ```bash
 cd backend && pytest -q                        # 41 tests (+11 PyTorch cross-checks when torch is installed)
-cd frontend && npm test && npm run typecheck   # 46 tests (Lab 1 maths, registry, navigation, Playground UI)
+cd frontend && npm test && npm run typecheck   # 53 tests (Lab 1 maths, registry/domains, filters, navigation, Playground UI)
 ```
 
 Backend tests cover forward propagation vs a manual computation, **finite-difference gradient checking** (3 activations × 3 depths), SGD/Adam update rules, loss decrease, XOR needing a hidden layer, stable sigmoid/BCE at extreme inputs, output shapes, and the API: parameters really change during training, pause truly freezes the epoch counter, reset restores seeded initial weights, independent sessions, validation/404/409 errors, dry-run trace leaves the model untouched, and session cleanup.

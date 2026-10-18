@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import type { DomainId } from "./domains";
 
 export interface LabStep {
   id: string;
@@ -12,15 +13,15 @@ export interface LabStep {
   Component: ComponentType;
 }
 
+/** A guided, step-by-step project. Stand-alone apps are `Tool`s (see lib/features.ts). */
 export interface Lab {
   id: string;
   number: number;
+  domain: DomainId;
   title: string;
   subtitle: string;
   course?: string;
   status: "live" | "planned";
   tags: string[];
-  /** Tailwind text/background token used for the lab's accent chip. */
-  accent: "brand" | "c-teal" | "c-purple" | "c-amber";
   steps: LabStep[];
 }

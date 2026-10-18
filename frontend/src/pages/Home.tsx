@@ -1,93 +1,141 @@
 import { Link } from "react-router-dom";
 import { HeroArt } from "../components/HeroArt";
+import { DOMAINS, getDomain } from "../labs/domains";
+import { domainSummary, labMinutes, LABS, liveLabs } from "../labs/registry";
 import { TOOLS } from "../lib/features";
-import { labMinutes, LABS } from "../labs/registry";
 
-const PILLARS = [
-  { t: "Real calculations, no mock data", d: "Every demo runs the real maths: lab numbers are checked by tests, and Playground training happens in a NumPy network on the server." },
-  { t: "See inside the model", d: "Hover neurons and connections, watch activations light up and the decision boundary bend as epochs pass." },
-  { t: "Learn the math as you go", d: "Formulas for forward pass, backprop and optimizers are tied to the numbers of your current experiment." },
-  { t: "Cloud-ready by design", d: "Stateless React front-end, containerised FastAPI back-end, session cleanup and health checks for AWS." },
+const STEPS = [
+  ["Pick a domain", "Machine learning, deep learning or language. Every project belongs to one."],
+  ["Open a lab or a tool", "Labs are guided step-by-step paths; tools are open-ended sandboxes."],
+  ["Run real experiments", "Drag sliders, train models and watch the numbers and pictures respond."],
+  ["Track your progress", "Mark steps complete; the platform remembers where you stopped."],
 ];
 
+const PRINCIPLES = [
+  { t: "Real calculations, no mock data", d: "Every demo runs the real maths. Lab numbers are checked by tests; Playground training happens in a NumPy network on the server." },
+  { t: "One project, one purpose", d: "Each lab or tool is its own self-contained project, so very different kinds of work live side by side." },
+  { t: "Learn the math as you go", d: "Formulas for forward pass, backprop, scaling and outlier tests are tied to live numbers." },
+  { t: "Cloud-ready by design", d: "Static React front end, containerised FastAPI back end, health checks and a CloudFormation template." },
+];
+
+function DomainChip({ id }: { id: Parameters<typeof getDomain>[0] }) {
+  const d = getDomain(id);
+  return <span className={`chip !border-transparent ${d.tint} ${d.text}`}>{d.glyph} {d.short}</span>;
+}
+
 export function Home() {
+  const summary = domainSummary();
+  const live = liveLabs();
+  const planned = LABS.filter((l) => l.status === "planned");
+  const totalSteps = live.reduce((n, l) => n + l.steps.length, 0);
+
   return (
     <div>
       <section className="relative overflow-hidden border-b border-line">
         <div aria-hidden className="pointer-events-none absolute inset-0 opacity-70"
-          style={{ background: "radial-gradient(60% 50% at 80% 0%, rgb(var(--brand) / .16), transparent), radial-gradient(40% 40% at 0% 100%, rgb(var(--pos) / .10), transparent)" }} />
-        <div className="relative mx-auto grid max-w-[1200px] items-center gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.1fr_.9fr] md:py-20">
+          style={{ background: "radial-gradient(60% 50% at 80% 0%, rgb(var(--brand) / .16), transparent), radial-gradient(40% 40% at 0% 100%, rgb(var(--c-teal) / .12), transparent)" }} />
+        <div className="relative mx-auto grid max-w-[1200px] items-center gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.15fr_.85fr] md:py-20">
           <div>
             <span className="chip !text-brand">Interactive AI learning platform</span>
             <h1 className="mt-4 text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-5xl">
-              Understand AI by <span className="text-brand">building</span> it, one experiment at a time.
+              Learn <span className="text-c-teal">machine learning</span>, <span className="text-brand">deep learning</span> and <span className="text-c-purple">NLP</span> by running real experiments.
             </h1>
             <p className="mt-4 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
-              AI Lab is a growing platform of guided labs and interactive tools that teach how machine-learning systems really work. Start Lab 1, or jump straight into the Neural Network Playground.
+              AI Lab is a growing platform of guided labs and interactive tools. Each project has its own step-by-step path, live demos and numbers you can trust, whatever the domain.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
-              <Link to="/labs/lab1" className="btn-primary !px-5 !py-2.5 !text-base">Start Lab 1 →</Link>
-              <Link to="/playground" className="btn-ghost !px-5 !py-2.5 !text-base">Open the Playground</Link>
+              <Link to="/labs" className="btn-primary !px-5 !py-2.5 !text-base">Explore labs →</Link>
+              <Link to="/tools" className="btn-ghost !px-5 !py-2.5 !text-base">Open a tool</Link>
             </div>
             <dl className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-sm">
-              {[["1", "guided lab live"], ["13", "step-by-step lessons"], ["9", "interactive demos"]].map(([a, b]) => (
+              {[[String(DOMAINS.length), "domains"], [String(live.length), live.length === 1 ? "lab available" : "labs available"], [String(TOOLS.length), TOOLS.length === 1 ? "interactive tool" : "interactive tools"], [String(totalSteps), "guided steps"]].map(([a, b]) => (
                 <div key={b}><dt className="font-mono text-lg font-semibold">{a}</dt><dd className="text-muted">{b}</dd></div>
               ))}
             </dl>
           </div>
-          <div className="card p-4"><HeroArt /></div>
+          <HeroArt />
         </div>
       </section>
 
-      <section id="labs" className="mx-auto max-w-[1200px] px-4 py-14 sm:px-6" aria-labelledby="labs-title">
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <h2 id="labs-title" className="text-2xl font-bold tracking-tight">Guided labs</h2>
-            <p className="mt-1 text-sm text-muted">Step-by-step paths with live demos. Progress is saved in your browser.</p>
-          </div>
-          <Link to="/labs" className="text-sm font-semibold text-brand hover:underline">All labs →</Link>
-        </div>
-        <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {LABS.map((lab) => {
-            const live = lab.status === "live";
-            const body = (
-              <>
-                <div className="flex items-center justify-between">
-                  <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand/10 font-mono font-bold text-brand">{lab.number}</span>
-                  <span className={`chip ${live ? "!border-ok/40 !bg-ok/10 !text-ok" : ""}`}>{live ? "Available" : "Planned"}</span>
-                </div>
-                <h3 className="mt-3 text-base font-semibold leading-snug tracking-tight">{lab.title}</h3>
-                <p className="mt-1.5 text-sm text-muted">{lab.subtitle}</p>
-                {live && <p className="mt-3 text-xs text-muted">{lab.steps.length} steps · ~{labMinutes(lab)} min</p>}
-                {live && <span className="mt-3 inline-block text-sm font-semibold text-brand">Start →</span>}
-              </>
-            );
+      <section className="mx-auto max-w-[1200px] px-4 py-14 sm:px-6" aria-labelledby="dom-title">
+        <h2 id="dom-title" className="text-2xl font-bold tracking-tight">Explore by domain</h2>
+        <p className="mt-1 text-sm text-muted">Projects are grouped by what they teach.</p>
+        <ul className="mt-6 grid gap-4 md:grid-cols-3">
+          {DOMAINS.map((d) => {
+            const s = summary.find((x) => x.id === d.id)!;
             return (
-              <li key={lab.id}>
-                {live ? (
-                  <Link to={`/labs/${lab.id}`} className="card block h-full p-5 transition hover:-translate-y-0.5 hover:border-brand/50">{body}</Link>
-                ) : (
-                  <div className="card h-full border-dashed p-5 opacity-75" aria-disabled="true">{body}</div>
-                )}
+              <li key={d.id}>
+                <Link to={`/labs?domain=${d.id}`} className={`card block h-full p-5 transition hover:-translate-y-0.5 hover:border-brand/50`}>
+                  <div className="flex items-center gap-3">
+                    <span className={`grid h-11 w-11 place-items-center rounded-xl text-2xl ${d.tint}`} aria-hidden>{d.glyph}</span>
+                    <h3 className="text-lg font-semibold leading-tight tracking-tight">{d.name}</h3>
+                  </div>
+                  <p className="mt-3 text-sm leading-relaxed text-muted">{d.blurb}</p>
+                  <p className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
+                    <span><b className="text-ink">{s.liveLabs.length}</b> {s.liveLabs.length === 1 ? "lab" : "labs"} available</span>
+                    <span><b className="text-ink">{s.tools.length}</b> {s.tools.length === 1 ? "tool" : "tools"}</span>
+                    <span><b className="text-ink">{s.plannedLabs.length}</b> planned</span>
+                  </p>
+                  <span className={`mt-3 inline-block text-sm font-semibold ${d.text}`}>Browse {d.short} →</span>
+                </Link>
               </li>
             );
           })}
         </ul>
       </section>
 
-      <section className="mx-auto max-w-[1200px] px-4 pb-14 sm:px-6" aria-labelledby="tools-title">
-        <h2 id="tools-title" className="text-2xl font-bold tracking-tight">Interactive tools</h2>
-        <p className="mt-1 text-sm text-muted">Open-ended sandboxes you can use on their own or alongside a lab.</p>
-        <ul className="mt-6 grid gap-4 sm:grid-cols-2">
-          {TOOLS.map((t) => (
-            <li key={t.id}>
-              <Link to={t.path} className="card block h-full p-5 transition hover:-translate-y-0.5 hover:border-brand/50">
-                <span className="chip !border-ok/40 !bg-ok/10 !text-ok">Live</span>
-                <h3 className="mt-3 text-lg font-semibold tracking-tight">{t.title}</h3>
-                <p className="mt-1.5 text-sm text-muted">{t.tagline}</p>
-                <div className="mt-4 flex flex-wrap gap-1.5">{t.tags.map((x) => <span key={x} className="chip">{x}</span>)}</div>
-                <span className="mt-4 inline-block text-sm font-semibold text-brand">Launch →</span>
-              </Link>
+      <section className="border-y border-line bg-surface/50" aria-labelledby="now-title">
+        <div className="mx-auto max-w-[1200px] px-4 py-14 sm:px-6">
+          <h2 id="now-title" className="text-2xl font-bold tracking-tight">Available now</h2>
+          <p className="mt-1 text-sm text-muted">Start a guided lab or open a tool.</p>
+          <ul className="mt-6 grid gap-4 md:grid-cols-2">
+            {live.map((lab) => (
+              <li key={lab.id}>
+                <Link to={`/labs/${lab.id}`} className="card block h-full p-5 transition hover:-translate-y-0.5 hover:border-brand/50">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="chip !border-ok/40 !bg-ok/10 !text-ok">Guided lab {lab.number}</span>
+                    <DomainChip id={lab.domain} />
+                  </div>
+                  <h3 className="mt-3 text-lg font-semibold tracking-tight">{lab.title}</h3>
+                  {lab.course && <p className="text-xs text-muted">{lab.course}</p>}
+                  <p className="mt-2 text-sm text-muted">{lab.subtitle}</p>
+                  <p className="mt-3 text-xs text-muted">{lab.steps.length} steps · ~{labMinutes(lab)} min</p>
+                  <span className="mt-3 inline-block text-sm font-semibold text-brand">Start lab →</span>
+                </Link>
+              </li>
+            ))}
+            {TOOLS.map((t) => (
+              <li key={t.id}>
+                <Link to={t.path} className="card block h-full p-5 transition hover:-translate-y-0.5 hover:border-brand/50">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="chip !border-ok/40 !bg-ok/10 !text-ok">Interactive tool</span>
+                    <DomainChip id={t.domain} />
+                  </div>
+                  <h3 className="mt-3 text-lg font-semibold tracking-tight">{t.title}</h3>
+                  <p className="mt-2 text-sm text-muted">{t.tagline}</p>
+                  <div className="mt-3 flex flex-wrap gap-1.5">{t.tags.map((x) => <span key={x} className="chip">{x}</span>)}</div>
+                  <span className="mt-3 inline-block text-sm font-semibold text-brand">Launch →</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-[1200px] px-4 py-14 sm:px-6" aria-labelledby="next-title">
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <h2 id="next-title" className="text-2xl font-bold tracking-tight">Coming next</h2>
+            <p className="mt-1 text-sm text-muted">Planned projects across the domains. New labs appear here and in the Labs menu as they are added.</p>
+          </div>
+          <Link to="/labs?status=planned" className="shrink-0 text-sm font-semibold text-brand hover:underline">All planned →</Link>
+        </div>
+        <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {planned.map((lab) => (
+            <li key={lab.id} className="card border-dashed p-5 opacity-80" aria-disabled="true">
+              <div className="flex items-center gap-2"><span className="chip">Lab {lab.number} · planned</span><DomainChip id={lab.domain} /></div>
+              <h3 className="mt-3 font-semibold leading-snug tracking-tight">{lab.title}</h3>
+              <p className="mt-1.5 text-sm text-muted">{lab.subtitle}</p>
             </li>
           ))}
         </ul>
@@ -97,7 +145,7 @@ export function Home() {
         <div className="mx-auto max-w-[1200px] px-4 py-14 sm:px-6">
           <h2 className="text-2xl font-bold tracking-tight">Why it's different</h2>
           <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {PILLARS.map((p) => (
+            {PRINCIPLES.map((p) => (
               <li key={p.t} className="rounded-2xl border border-line bg-surface p-5">
                 <h3 className="font-semibold">{p.t}</h3>
                 <p className="mt-1.5 text-sm text-muted">{p.d}</p>
@@ -108,16 +156,16 @@ export function Home() {
       </section>
 
       <section className="mx-auto max-w-[1200px] px-4 py-14 sm:px-6">
-        <h2 className="text-2xl font-bold tracking-tight">How a lab works</h2>
-        <ol className="mt-6 grid gap-4 md:grid-cols-3">
-          {[["Pick a lab", "Choose a guided lab from the Labs menu and follow its steps in order."], ["Play with each concept", "Drag sliders, switch methods and watch the numbers and pictures respond."], ["Track your progress", "Mark steps complete; the platform remembers where you stopped."]].map(([t, d], i) => (
+        <h2 className="text-2xl font-bold tracking-tight">How it works</h2>
+        <ol className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {STEPS.map(([t, d], i) => (
             <li key={t} className="card p-5"><span className="font-mono text-sm text-brand">0{i + 1}</span><h3 className="mt-1 font-semibold">{t}</h3><p className="mt-1 text-sm text-muted">{d}</p></li>
           ))}
         </ol>
       </section>
 
       <footer className="border-t border-line py-8 text-center text-xs text-muted">
-        AI Lab · React · TypeScript · FastAPI · NumPy · MIT License
+        AI Lab · Machine Learning · Deep Learning · NLP · React · TypeScript · FastAPI · NumPy · MIT License
       </footer>
     </div>
   );

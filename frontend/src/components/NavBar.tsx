@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useThemeToggle } from "../hooks/useTheme";
+import { DOMAINS } from "../labs/domains";
 import { LABS } from "../labs/registry";
+import { TOOLS } from "../lib/features";
 
 export function Logo({ size = 28 }: { size?: number }) {
   return (
@@ -22,11 +24,12 @@ export function Logo({ size = 28 }: { size?: number }) {
 const linkCls = ({ isActive }: { isActive: boolean }) =>
   `rounded-lg px-3 py-1.5 text-sm font-medium transition ${isActive ? "bg-raised text-ink" : "text-muted hover:text-ink"}`;
 
-function LabsMenu() {
+/** Disclosure menu: closes on outside click, Escape and route change. */
+function NavMenu({ label, id, prefix, children }: { label: string; id: string; prefix: string; children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
-  const active = pathname.startsWith("/labs");
+  const active = pathname.startsWith(prefix);
 
   useEffect(() => setOpen(false), [pathname]);
   useEffect(() => {
@@ -39,46 +42,46 @@ function LabsMenu() {
   }, [open]);
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="sm:relative">
       <button
         aria-expanded={open}
-        aria-controls="labs-menu"
+        aria-controls={id}
         onClick={() => setOpen((o) => !o)}
         className={`flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium transition ${active || open ? "bg-raised text-ink" : "text-muted hover:text-ink"}`}
       >
-        Labs <span aria-hidden className="text-[10px]">▾</span>
+        {label} <span aria-hidden className="text-[10px]">▾</span>
       </button>
       {open && (
-        <div id="labs-menu" className="absolute right-0 z-40 mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-2xl border border-line bg-surface p-2 shadow-card sm:left-0 sm:right-auto">
-          <ul>
-            {LABS.map((l) => {
-              const live = l.status === "live";
-              const inner = (
-                <>
-                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-brand/10 font-mono text-sm font-bold text-brand">{l.number}</span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-semibold">{l.title}</span>
-                    <span className="block text-xs text-muted">{live ? `${l.steps.length} steps` : "Planned"}</span>
-                  </span>
-                </>
-              );
-              return (
-                <li key={l.id}>
-                  {live ? (
-                    <Link to={`/labs/${l.id}`} className="flex items-center gap-3 rounded-xl p-2 hover:bg-raised">{inner}</Link>
-                  ) : (
-                    <div className="flex items-center gap-3 rounded-xl p-2 opacity-60" aria-disabled="true">{inner}</div>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-          <Link to="/labs" className="mt-1 block rounded-xl border-t border-line px-3 pt-2.5 pb-1.5 text-sm font-semibold text-brand hover:underline">Browse all labs →</Link>
+        <div id={id} className="absolute left-4 right-4 top-full z-40 mt-2 max-h-[80vh] overflow-y-auto rounded-2xl border border-line bg-surface p-2 shadow-card sm:left-auto sm:right-0 sm:top-auto sm:w-[23rem]">
+          {children}
         </div>
       )}
     </div>
   );
 }
+
+function MenuRow({ badge, title, meta, to }: { badge: string; title: string; meta: string; to?: string }) {
+  const inner = (
+    <>
+      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-brand/10 font-mono text-sm font-bold text-brand">{badge}</span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-sm font-semibold">{title}</span>
+        <span className="block text-xs text-muted">{meta}</span>
+      </span>
+    </>
+  );
+  return to ? (
+    <Link to={to} className="flex items-center gap-3 rounded-xl p-2 hover:bg-raised">{inner}</Link>
+  ) : (
+    <div className="flex items-center gap-3 rounded-xl p-2 opacity-60" aria-disabled="true">{inner}</div>
+  );
+}
+
+const DomainHeading = ({ glyph, name, text }: { glyph: string; name: string; text: string }) => (
+  <p className={`mt-1 flex items-center gap-1.5 px-2 pt-2 text-[11px] font-semibold uppercase tracking-wider ${text}`}>
+    <span aria-hidden>{glyph}</span>{name}
+  </p>
+);
 
 export function NavBar() {
   const { dark, toggle } = useThemeToggle();
@@ -91,8 +94,45 @@ export function NavBar() {
         </Link>
         <nav aria-label="Primary" className="flex items-center gap-1">
           <NavLink to="/" end className={linkCls}>Home</NavLink>
-          <LabsMenu />
-          <NavLink to="/playground" className={linkCls}>Playground</NavLink>
+
+          <NavMenu label="Labs" id="labs-menu" prefix="/labs">
+            {DOMAINS.map((d) => {
+              const labs = LABS.filter((l) => l.domain === d.id);
+              if (!labs.length) return null;
+              return (
+                <div key={d.id}>
+                  <DomainHeading glyph={d.glyph} name={d.name} text={d.text} />
+                  <ul>
+                    {labs.map((l) => (
+                      <li key={l.id}>
+                        <MenuRow badge={String(l.number)} title={l.title} meta={l.status === "live" ? `${l.steps.length} steps` : "Planned"} to={l.status === "live" ? `/labs/${l.id}` : undefined} />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+            <Link to="/labs" className="mt-1 block rounded-xl border-t border-line px-3 pt-2.5 pb-1.5 text-sm font-semibold text-brand hover:underline">Browse all labs →</Link>
+          </NavMenu>
+
+          <NavMenu label="Tools" id="tools-menu" prefix="/playground">
+            {DOMAINS.map((d) => {
+              const tools = TOOLS.filter((t) => t.domain === d.id);
+              if (!tools.length) return null;
+              return (
+                <div key={d.id}>
+                  <DomainHeading glyph={d.glyph} name={d.name} text={d.text} />
+                  <ul>
+                    {tools.map((t) => (
+                      <li key={t.id}><MenuRow badge={d.short} title={t.title} meta={t.needsBackend ? "Needs the backend" : "Runs in the browser"} to={t.path} /></li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+            <Link to="/tools" className="mt-1 block rounded-xl border-t border-line px-3 pt-2.5 pb-1.5 text-sm font-semibold text-brand hover:underline">Browse all tools →</Link>
+          </NavMenu>
+
           <button
             onClick={toggle}
             className="btn-ghost ml-2 !px-2.5"

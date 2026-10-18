@@ -1,6 +1,9 @@
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { DOMAINS } from "../labs/domains";
+import { TOOLS } from "../lib/features";
+import { ToolsIndex } from "../pages/ToolsIndex";
 import { NavBar } from "../components/NavBar";
 import { getLab, LABS } from "../labs/registry";
 import { readProgress } from "../labs/progress";
@@ -23,6 +26,15 @@ describe("lab registry", () => {
       } else expect(lab.steps).toHaveLength(0);
     }
   });
+  it("every lab and tool belongs to a known domain", () => {
+    const ids = DOMAINS.map((d) => d.id);
+    LABS.forEach((l) => expect(ids).toContain(l.domain));
+    TOOLS.forEach((t) => expect(ids).toContain(t.domain));
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+  it("covers machine learning, deep learning and NLP", () => {
+    expect(DOMAINS.map((d) => d.id)).toEqual(["ml", "dl", "nlp"]);
+  });
   it("Lab 1 has the 13 guide sections", () => {
     expect(getLab("lab1")!.steps).toHaveLength(13);
   });
@@ -39,12 +51,34 @@ const app = (path: string) => (
 );
 
 describe("LabsIndex", () => {
-  it("lists Lab 1 as available and others as planned, and filters", async () => {
+  it("lists Lab 1 as available and others as planned, and filters by status", async () => {
     render(app("/labs"));
     expect(screen.getByRole("link", { name: /From messy data/ })).toHaveAttribute("href", "/labs/lab1");
     expect(screen.getAllByText("Planned").length).toBeGreaterThan(0);
     await userEvent.click(screen.getByRole("radio", { name: "Available" }));
     expect(screen.queryByText("Convolutional networks")).not.toBeInTheDocument();
+  });
+  it("filters by domain from the URL and from the chips", async () => {
+    render(app("/labs?domain=ml"));
+    expect(screen.getByText("Classical machine learning")).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /From messy data/ })).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole("radio", { name: /DL/ }));
+    expect(screen.getByRole("link", { name: /From messy data/ })).toBeInTheDocument();
+    expect(screen.queryByText("Classical machine learning")).not.toBeInTheDocument();
+  });
+  it("shows an empty state with a way out when nothing matches", async () => {
+    render(app("/labs?domain=nlp&status=live"));
+    expect(screen.getByText(/No labs match/)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Clear filters" }));
+    expect(screen.getByRole("link", { name: /From messy data/ })).toBeInTheDocument();
+  });
+});
+
+describe("ToolsIndex", () => {
+  it("groups tools by domain and shows empty domains honestly", () => {
+    render(<MemoryRouter><ToolsIndex /></MemoryRouter>);
+    expect(screen.getByRole("link", { name: /Neural Network Playground/ })).toHaveAttribute("href", "/playground");
+    expect(screen.getAllByText(/No tools in this domain yet/).length).toBe(2);
   });
 });
 
@@ -87,14 +121,25 @@ describe("LabPage", () => {
   });
 });
 
-describe("NavBar labs menu", () => {
-  it("opens, lists labs, and closes on Escape", async () => {
+describe("NavBar menus", () => {
+  it("Labs menu is grouped by domain, opens and closes on Escape", async () => {
     render(<MemoryRouter><NavBar /></MemoryRouter>);
     const btn = screen.getByRole("button", { name: /Labs/ });
     await userEvent.click(btn);
     expect(btn).toHaveAttribute("aria-expanded", "true");
-    expect(screen.getByRole("link", { name: /From messy data/ })).toHaveAttribute("href", "/labs/lab1");
+    const menu = document.getElementById("labs-menu")!;
+    expect(within(menu).getByText(/Machine Learning/)).toBeInTheDocument();
+    expect(within(menu).getByText(/Deep Learning/)).toBeInTheDocument();
+    expect(within(menu).getByText(/Natural Language Processing/)).toBeInTheDocument();
+    expect(within(menu).getByRole("link", { name: /From messy data/ })).toHaveAttribute("href", "/labs/lab1");
     await userEvent.keyboard("{Escape}");
     expect(btn).toHaveAttribute("aria-expanded", "false");
+  });
+  it("Tools menu lists the Playground", async () => {
+    render(<MemoryRouter><NavBar /></MemoryRouter>);
+    await userEvent.click(screen.getByRole("button", { name: /Tools/ }));
+    const menu = document.getElementById("tools-menu")!;
+    expect(within(menu).getByRole("link", { name: /Neural Network Playground/ })).toHaveAttribute("href", "/playground");
+    expect(within(menu).getByRole("link", { name: /Browse all tools/ })).toHaveAttribute("href", "/tools");
   });
 });

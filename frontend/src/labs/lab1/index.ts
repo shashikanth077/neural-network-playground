@@ -5,11 +5,11 @@ import type { Lab } from "../types";
 export const lab1: Lab = {
   id: "lab1",
   number: 1,
+  domain: "dl",
   title: "From messy data to a working neural network",
   subtitle: "Clean the data, find anomalies, scale the numbers, train a network and read handwritten digits, with a live demo at every step.",
   course: "VGTU · Neural Networks · Laboratory work No. 1",
   status: "live",
-  accent: "brand",
   tags: ["Data cleaning", "Anomaly detection", "Backpropagation", "MNIST", "Optimizers"],
   steps: [
     { id: "big-picture", group: "Orientation", minutes: 3, title: "The big picture", summary: "Six tasks, one story: why every step exists.", Component: lazy(() => import("./steps/BigPicture")) },

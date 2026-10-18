@@ -1,0 +1,52 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap");
+@import "katex/dist/katex.min.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 246 247 251;
+  --surface: 255 255 255;
+  --raised: 241 243 249;
+  --line: 224 228 238;
+  --ink: 17 24 39;
+  --muted: 92 102 122;
+  --brand: 79 70 229;
+  --pos: 37 99 235;
+  --neg: 234 88 12;
+  --ok: 5 150 105;
+  --bad: 220 38 38;
+}
+.dark {
+  --bg: 10 13 22;
+  --surface: 18 23 36;
+  --raised: 27 33 50;
+  --line: 44 52 74;
+  --ink: 232 236 245;
+  --muted: 150 160 182;
+  --brand: 129 140 248;
+  --pos: 96 165 250;
+  --neg: 251 146 60;
+  --ok: 52 211 153;
+  --bad: 248 113 113;
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { @apply bg-bg text-ink font-sans antialiased; }
+  :focus-visible { @apply outline-none ring-2 ring-brand ring-offset-2 ring-offset-bg; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { animation: none !important; transition: none !important; } }
+}
+
+@layer components {
+  .card { @apply rounded-2xl border border-line bg-surface shadow-card; }
+  .card-title { @apply text-sm font-semibold tracking-tight; }
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-45; }
+  .btn-primary { @apply btn bg-brand text-white hover:brightness-110 dark:text-bg; }
+  .btn-ghost { @apply btn border border-line bg-surface text-ink hover:bg-raised; }
+  .field { @apply w-full rounded-lg border border-line bg-surface px-2.5 py-1.5 text-sm text-ink; }
+  .label { @apply mb-1 flex items-center gap-1 text-xs font-medium text-muted; }
+  .chip { @apply inline-flex items-center rounded-full border border-line bg-raised px-2.5 py-0.5 text-xs font-medium text-muted; }
+}
+
+.katex-display { overflow-x: auto; overflow-y: hidden; padding: 4px 0; }

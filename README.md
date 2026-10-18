@@ -110,6 +110,10 @@ Backend tests cover forward propagation vs a manual computation, **finite-differ
 
 `backend/tests/test_against_pytorch.py` runs the same weights through the NumPy network and through PyTorch autograd. It checks the loss, every gradient for each activation and depth, and 25 SGD steps and 30 Adam steps against `torch.optim`. Install `torch` (CPU wheel is enough) to run it; without torch those tests are skipped.
 
+## End-to-end flow
+
+The full path from a click to the NumPy maths and back, with a sequence diagram and an automated check (`python scripts/e2e_flow.py` against a running backend, 20 steps): see [`docs/END_TO_END.md`](docs/END_TO_END.md).
+
 ## The mathematics
 
 Samples are rows; layer *l* computes `z = a·W + b`, `a = f(z)`; the output layer is one sigmoid neuron.

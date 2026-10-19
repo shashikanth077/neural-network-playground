@@ -27,7 +27,13 @@ Open the template in VS Code. With the AWS Toolkit connected, right-click the fi
 
 CloudFormation → select the stack → **Delete**. This terminates the instance and removes the security group.
 
-**Updating the app** is a `git pull` plus `docker compose up -d --build` on the server (see the VS Code guide). Updating the stack itself is not needed for code changes.
+**Updating the app.** The stack clones the repository **once**, at first boot, so pushing new code does not change a running server. If a new page or feature is missing on your deployed site (for example the Cheatsheets menu), the server is still on the older commit. SSH in and run:
+
+```bash
+bash /opt/nn-playground/infra/aws/update.sh   # fetches the branch, resets to it, rebuilds, waits for /api/health
+```
+
+Then hard-refresh the browser (Ctrl+Shift+R). If the file is missing because the server was deployed before it existed, run `cd /opt/nn-playground && git fetch --depth 1 origin <branch> && git reset --hard FETCH_HEAD && docker compose up -d --build` once. You can also replace the instance by deleting and re-creating the stack. The stack's `RepoBranch` parameter must name the branch that holds the latest code.
 
 This is a plan; it has **not** been executed from this repository's authoring environment.
 

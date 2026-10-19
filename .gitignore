@@ -13,3 +13,4 @@ venv/
 coverage/
 .idea/
 .vscode/
+.claude/worktrees/

@@ -10,7 +10,7 @@ phases:
           --instance-ids "$DEPLOY_INSTANCE_ID" \
           --document-name AWS-RunShellScript \
           --comment "Deploy ${CODEBUILD_RESOLVED_SOURCE_VERSION} to neural-network-playground" \
-          --parameters commands="cd /opt/neural-network-playground && DEPLOY_BRANCH=${DEPLOY_BRANCH} bash infra/aws/update.sh" \
+          --parameters commands="set -e; cd /opt/neural-network-playground; git fetch --depth 1 origin ${DEPLOY_BRANCH}; git checkout ${DEPLOY_BRANCH}; git reset --hard FETCH_HEAD; docker compose up -d --build --remove-orphans; for i in \$(seq 1 60); do curl -fs http://localhost:8080/api/health >/dev/null && exit 0; sleep 3; done; exit 1" \
           --query Command.CommandId \
           --output text)"
         echo "SSM command: ${command_id}"

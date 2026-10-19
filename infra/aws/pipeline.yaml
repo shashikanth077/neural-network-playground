@@ -58,12 +58,24 @@ Resources:
               - Effect: Allow
                 Action:
                   - codeconnections:UseConnection
+                Resource: !Ref ConnectionArn
+                Condition:
+                  StringEqualsIfExists:
+                    codeconnections:FullRepositoryId: !Ref Repository
+                    codeconnections:BranchName: !Ref Branch
+              - Effect: Allow
+                Action:
                   - codestar-connections:UseConnection
                 Resource: !Ref ConnectionArn
                 Condition:
-                  StringEquals:
-                    codeconnections:FullRepositoryId: !Ref Repository
-                    codeconnections:BranchName: !Ref Branch
+                  StringEqualsIfExists:
+                    codestar-connections:FullRepositoryId: !Ref Repository
+                    codestar-connections:BranchName: !Ref Branch
+              - Effect: Allow
+                Action:
+                  - codebuild:StartBuild
+                  - codebuild:BatchGetBuilds
+                Resource: !GetAtt BuildProject.Arn
 
   BuildRole:
     Type: AWS::IAM::Role
@@ -87,6 +99,14 @@ Resources:
                 Resource: "*"
               - Effect: Allow
                 Action:
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:GetBucketVersioning
+                Resource:
+                  - !GetAtt ArtifactBucket.Arn
+                  - !Sub "${ArtifactBucket.Arn}/*"
+              - Effect: Allow
+                Action:
                   - ssm:GetCommandInvocation
                 Resource: "*"
               - Effect: Allow
@@ -94,7 +114,7 @@ Resources:
                   - ssm:SendCommand
                 Resource:
                   - !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}::document/AWS-RunShellScript"
-                  - !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:instance/${DeployInstanceId}"
+                  - !Sub "arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:instance/${DeployInstanceId}"
 
   BuildProject:
     Type: AWS::CodeBuild::Project

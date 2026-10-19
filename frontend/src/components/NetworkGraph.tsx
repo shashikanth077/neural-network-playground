@@ -1,4 +1,5 @@
 import { memo, useMemo, useRef, useState } from "react";
+import { useT } from "../i18n";
 import { activationFill } from "../lib/colors";
 import { fmt } from "../lib/format";
 import type { ModelConfig, ModelParameters } from "../types";
@@ -70,6 +71,7 @@ interface Tip { x: number; y: number; lines: string[] }
 
 /** SVG diagram of the live network. Edge style / thickness come from the trained weights. */
 function NetworkGraphImpl({ config, params, activations, status }: Props) {
+  const t = useT();
   const configSizes = useMemo(() => [2, ...config.hidden_layers, 1], [config.hidden_layers]);
   const matches =
     params !== null && params.layer_sizes.length === configSizes.length && params.layer_sizes.every((n, i) => n === configSizes[i]);
@@ -86,29 +88,29 @@ function NetworkGraphImpl({ config, params, activations, status }: Props) {
     if (r) setTip({ x: e.clientX - r.left, y: e.clientY - r.top, lines });
   };
   const onMove = (e: React.MouseEvent<SVGSVGElement>) => {
-    const t = e.target as SVGElement;
-    if (t.dataset.node) {
-      const [l, i] = t.dataset.node.split("-").map(Number);
-      const kind = l === 0 ? "Input" : l === configSizes.length - 1 ? "Output" : `Hidden layer ${l}`;
-      const lines = [`${kind} · neuron ${i + 1}`];
-      if (l > 0 && p) lines.push(`bias: ${fmt(p.layers[l - 1].biases[i])}`);
-      if (acts) lines.push(`activation: ${fmt(acts[l][i])}`);
+    const el = e.target as SVGElement;
+    if (el.dataset.node) {
+      const [l, i] = el.dataset.node.split("-").map(Number);
+      const kind = l === 0 ? t("pg.ng.input") : l === configSizes.length - 1 ? t("pg.ng.output") : t("pg.ng.hiddenLayer", undefined, { l });
+      const lines = [t("pg.ng.neuron", undefined, { kind, n: i + 1 })];
+      if (l > 0 && p) lines.push(`${t("pg.ng.bias")} ${fmt(p.layers[l - 1].biases[i])}`);
+      if (acts) lines.push(`${t("pg.ng.activation")} ${fmt(acts[l][i])}`);
       show(e, lines);
-    } else if (t.dataset.l !== undefined && p) {
-      const l = +t.dataset.l!, i = +t.dataset.i!, j = +t.dataset.j!;
-      show(e, [`Weight L${l}[${i + 1}] → L${l + 1}[${j + 1}]`, `w = ${fmt(p.layers[l].weights[i][j])}`]);
+    } else if (el.dataset.l !== undefined && p) {
+      const l = +el.dataset.l!, i = +el.dataset.i!, j = +el.dataset.j!;
+      show(e, [t("pg.ng.weight", undefined, { l, i: i + 1, l2: l + 1, j: j + 1 }), `w = ${fmt(p.layers[l].weights[i][j])}`]);
     } else setTip(null);
   };
 
   const label = (l: number) =>
-    l === 0 ? "Input (x, y)" : l === configSizes.length - 1 ? "Output σ" : `Hidden ${l} · ${config.activation}`;
+    l === 0 ? t("pg.ng.label.input") : l === configSizes.length - 1 ? t("pg.ng.label.output") : t("pg.ng.label.hidden", undefined, { l, act: config.activation });
 
   return (
     <div ref={wrap} className="relative">
       <svg
         viewBox={`0 0 ${W} ${H + 24}`}
         role="img"
-        aria-label={`Network diagram with layer sizes ${configSizes.join(", ")}`}
+        aria-label={t("pg.ng.aria", undefined, { sizes: configSizes.join(", ") })}
         className="w-full"
         onMouseMove={onMove}
         onMouseLeave={() => setTip(null)}
@@ -132,7 +134,7 @@ function NetworkGraphImpl({ config, params, activations, status }: Props) {
         ))}
         {!p && (
           <text x={W / 2} y={16} textAnchor="middle" className="fill-muted" fontSize="12">
-            {status ? "Loading model parameters…" : "Structure preview. Create a valid model to see real weights."}
+            {status ? t("pg.ng.loading") : t("pg.ng.preview")}
           </text>
         )}
       </svg>
@@ -153,24 +155,25 @@ function NetworkGraphImpl({ config, params, activations, status }: Props) {
 export const NetworkGraphView = memo(NetworkGraphImpl);
 
 export function NetworkLegend() {
+  const t = useT();
   const item = "inline-flex items-center gap-1.5";
   return (
-    <ul className="mt-2 flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-muted" aria-label="Legend">
+    <ul className="mt-2 flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-muted" aria-label={t("pg.legend")}>
       <li className={item}>
         <svg width="28" height="8" aria-hidden><line x1="0" y1="4" x2="28" y2="4" style={{ stroke: "rgb(var(--pos))" }} strokeWidth="3" /></svg>
-        positive weight (solid)
+        {t("pg.ng.legend.pos")}
       </li>
       <li className={item}>
         <svg width="28" height="8" aria-hidden><line x1="0" y1="4" x2="28" y2="4" style={{ stroke: "rgb(var(--neg))" }} strokeWidth="3" strokeDasharray="5 3" /></svg>
-        negative weight (dashed)
+        {t("pg.ng.legend.neg")}
       </li>
       <li className={item}>
         <svg width="40" height="10" aria-hidden><line x1="0" y1="2" x2="40" y2="2" style={{ stroke: "rgb(var(--ink))" }} strokeWidth=".8" /><line x1="0" y1="7" x2="40" y2="7" style={{ stroke: "rgb(var(--ink))" }} strokeWidth="4" /></svg>
-        thicker = larger |weight|
+        {t("pg.ng.legend.thick")}
       </li>
       <li className={item}>
         <span className="h-3 w-24 rounded" style={{ background: "linear-gradient(90deg, rgb(234 88 12), rgb(226 232 240), rgb(37 99 235))" }} aria-hidden />
-        node: negative → 0 → positive activation
+        {t("pg.ng.legend.node")}
       </li>
     </ul>
   );

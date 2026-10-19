@@ -1,9 +1,11 @@
 import { useState } from "react";
 import type { Playground } from "../hooks/usePlayground";
+import { useT } from "../i18n";
 import { CLASS_COLORS } from "../lib/colors";
 import type { DatasetName } from "../types";
 import { DatasetCanvas } from "./DatasetCanvas";
 import { Field } from "./Field";
+import { SectionHelp } from "./SectionHelp";
 
 const OPTIONS: { name: DatasetName; label: string; blurb: string }[] = [
   { name: "xor", label: "XOR", blurb: "Opposite quadrants share a class: not linearly separable." },
@@ -14,6 +16,7 @@ const OPTIONS: { name: DatasetName; label: string; blurb: string }[] = [
 ];
 
 export function DatasetSelector({ pg }: { pg: Playground }) {
+  const t = useT();
   const { datasetSpec: spec, setDatasetSpec, data, locked } = pg;
   const [activeClass, setActiveClass] = useState<0 | 1>(0);
   const custom = spec.name === "custom";
@@ -21,9 +24,10 @@ export function DatasetSelector({ pg }: { pg: Playground }) {
   const current = OPTIONS.find((o) => o.name === spec.name)!;
 
   return (
-    <section className="card p-4" aria-labelledby="ds-title">
-      <h2 id="ds-title" className="card-title">Dataset explorer</h2>
-      <div role="radiogroup" aria-label="Dataset" className="mt-3 flex flex-wrap gap-1.5">
+    <section className="card p-4" aria-labelledby="ds-title" id="section-data">
+      <h2 id="ds-title" className="card-title">{t("pg.ds.title")}</h2>
+      <SectionHelp id="dataset" className="mt-2" />
+      <div role="radiogroup" aria-label={t("pg.ds.aria")} className="mt-3 flex flex-wrap gap-1.5">
         {OPTIONS.map((o) => (
           <button
             key={o.name}
@@ -35,28 +39,28 @@ export function DatasetSelector({ pg }: { pg: Playground }) {
               spec.name === o.name ? "border-brand bg-brand/10 text-brand" : "border-line text-muted hover:text-ink"
             }`}
           >
-            {o.label}
+            {t(`pg.ds.${o.name}.label`, o.label)}
           </button>
         ))}
       </div>
-      <p className="mt-2 text-xs text-muted">{current.blurb}</p>
+      <p className="mt-2 text-xs text-muted">{t(`pg.ds.${current.name}.blurb`, current.blurb)}</p>
 
       <div className="mt-3">
         <DatasetCanvas data={data} editable={custom && !locked} activeClass={activeClass} onAdd={pg.addPoint} />
       </div>
 
-      <div className="mt-2 flex flex-wrap items-center gap-3 text-xs" aria-label="Legend">
+      <div className="mt-2 flex flex-wrap items-center gap-3 text-xs" aria-label={t("pg.legend")}>
         {[0, 1].map((c) => (
           <span key={c} className="inline-flex items-center gap-1.5">
             <span className="h-2.5 w-2.5 rounded-full" style={{ background: CLASS_COLORS[c as 0 | 1] }} />
-            Class {c} <span className="text-muted">({counts[c]})</span>
+            {t("pg.ds.class", undefined, { c })} <span className="text-muted">({counts[c]})</span>
           </span>
         ))}
       </div>
 
       {custom ? (
         <div className="mt-3 space-y-2">
-          <div role="radiogroup" aria-label="Class to place" className="flex gap-1.5">
+          <div role="radiogroup" aria-label={t("pg.ds.classToPlace")} className="flex gap-1.5">
             {[0, 1].map((c) => (
               <button
                 key={c}
@@ -67,43 +71,43 @@ export function DatasetSelector({ pg }: { pg: Playground }) {
                   activeClass === c ? "border-brand bg-brand/10" : "border-line text-muted"
                 }`}
               >
-                Place class {c}
+                {t("pg.ds.placeClass", undefined, { c })}
               </button>
             ))}
           </div>
           <div className="flex flex-wrap gap-1.5">
             <button className="btn-ghost !py-1 !text-xs" disabled={locked || !data?.labels.length} onClick={pg.undoPoint}>
-              Undo
+              {t("pg.ds.undo")}
             </button>
             <button className="btn-ghost !py-1 !text-xs" disabled={locked || !data?.labels.length} onClick={pg.clearPoints}>
-              Clear
+              {t("pg.ds.clear")}
             </button>
             <button
               className="btn-ghost !py-1 !text-xs"
               disabled={locked}
               onClick={() => pg.addPoint(+(Math.random() * 2.4 - 1.2).toFixed(3), +(Math.random() * 2.4 - 1.2).toFixed(3), activeClass)}
-              title="Keyboard-friendly alternative to clicking"
+              title={t("pg.ds.addRandom.title")}
             >
-              Add random point
+              {t("pg.ds.addRandom")}
             </button>
           </div>
           {(data?.labels.length ?? 0) < 6 || counts[0] === 0 || counts[1] === 0 ? (
-            <p className="text-xs text-muted">Place at least 6 points with both classes to enable training.</p>
+            <p className="text-xs text-muted">{t("pg.ds.need6")}</p>
           ) : null}
         </div>
       ) : (
         <div className="mt-3 grid grid-cols-3 gap-2">
-          <Field id="ds-n" label="Samples" help="Points generated.">
+          <Field id="ds-n" label={t("pg.ds.samples")} help={t("pg.ds.samples.help")}>
             <input id="ds-n" type="number" min={10} max={2000} step={10} className="field" disabled={locked}
               value={spec.n_samples}
               onChange={(e) => setDatasetSpec({ n_samples: Math.min(2000, Math.max(10, Number(e.target.value) || 10)) })} />
           </Field>
-          <Field id="ds-noise" label="Noise" help="0 = clean, 1 = messy.">
+          <Field id="ds-noise" label={t("pg.ds.noise")} help={t("pg.ds.noise.help")}>
             <input id="ds-noise" type="number" min={0} max={1} step={0.05} className="field" disabled={locked}
               value={spec.noise}
               onChange={(e) => setDatasetSpec({ noise: Math.min(1, Math.max(0, Number(e.target.value) || 0)) })} />
           </Field>
-          <Field id="ds-seed" label="Seed" help="Same seed, same data.">
+          <Field id="ds-seed" label={t("pg.ds.seed")} help={t("pg.ds.seed.help")}>
             <input id="ds-seed" type="number" min={0} step={1} className="field" disabled={locked}
               value={spec.seed}
               onChange={(e) => setDatasetSpec({ seed: Math.max(0, Math.floor(Number(e.target.value) || 0)) })} />
@@ -113,7 +117,7 @@ export function DatasetSelector({ pg }: { pg: Playground }) {
             disabled={locked}
             onClick={() => setDatasetSpec({ seed: Math.floor(Math.random() * 10000) })}
           >
-            Regenerate with a new random seed
+            {t("pg.ds.regen")}
           </button>
         </div>
       )}

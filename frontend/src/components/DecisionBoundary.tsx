@@ -1,8 +1,10 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { DEFAULT_VIEW, type View } from "../hooks/usePlayground";
+import { useT } from "../i18n";
 import { useIsDark } from "../hooks/useTheme";
 import { CLASS_COLORS, probabilityRGB } from "../lib/colors";
 import type { DataPayload, GridPrediction } from "../types";
+import { Rich } from "./SectionHelp";
 
 interface Props {
   data: DataPayload | null;
@@ -29,6 +31,7 @@ function sample(grid: GridPrediction, x: number, y: number): number | null {
 }
 
 function DecisionBoundaryImpl({ data, grid, view, onView, onProbe, hasModel }: Props) {
+  const t = useT();
   const dark = useIsDark();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -229,7 +232,7 @@ function DecisionBoundaryImpl({ data, grid, view, onView, onProbe, hasModel }: P
           ref={canvasRef}
           tabIndex={0}
           role="img"
-          aria-label="Decision boundary plot. Arrow keys pan, plus and minus zoom, zero resets the view."
+          aria-label={t("pg.db.canvas")}
           style={{ width: size, height: size, touchAction: "none" }}
           className={`rounded-xl border border-line ${drag.current ? "cursor-grabbing" : "cursor-crosshair"}`}
           onPointerDown={(e) => {
@@ -244,7 +247,7 @@ function DecisionBoundaryImpl({ data, grid, view, onView, onProbe, hasModel }: P
         />
         {!hasModel && (
           <div className="absolute inset-0 grid place-items-center rounded-xl bg-surface/80 p-6 text-center text-sm text-muted">
-            Choose a dataset with both classes and valid settings to see the model's predictions.
+            {t("pg.db.noModel")}
           </div>
         )}
         {hover && hasModel && (
@@ -254,31 +257,30 @@ function DecisionBoundaryImpl({ data, grid, view, onView, onProbe, hasModel }: P
             style={{ left: Math.min(hover.px + 14, size - 170), top: Math.max(4, hover.py - 56) }}
           >
             <div className="font-mono">({hover.x.toFixed(2)}, {hover.y.toFixed(2)})</div>
-            {hover.cls !== null && <div>True class: <b>{hover.cls}</b></div>}
+            {hover.cls !== null && <div>{t("pg.db.trueClass")} <b>{hover.cls}</b></div>}
             {hover.p !== null && (
               <div>
-                P(class 1) = <b>{(hover.p * 100).toFixed(1)}%</b> → predicts class {hover.p >= 0.5 ? 1 : 0} (
-                {(Math.max(hover.p, 1 - hover.p) * 100).toFixed(0)}% confident)
+                <Rich text={t("pg.db.prob", undefined, { p: (hover.p * 100).toFixed(1), c: hover.p >= 0.5 ? 1 : 0, conf: (Math.max(hover.p, 1 - hover.p) * 100).toFixed(0) })} />
               </div>
             )}
           </div>
         )}
         <div className="absolute right-2 top-2 flex flex-col gap-1">
-          <button className="btn-ghost !px-2 !py-0.5" aria-label="Zoom in" onClick={() => zoomAt(0.8)}>+</button>
-          <button className="btn-ghost !px-2 !py-0.5" aria-label="Zoom out" onClick={() => zoomAt(1.25)}>−</button>
-          {moved && <button className="btn-ghost !px-2 !py-0.5 !text-xs" onClick={() => onView(DEFAULT_VIEW)}>Reset</button>}
+          <button className="btn-ghost !px-2 !py-0.5" aria-label={t("pg.db.zoomIn")} onClick={() => zoomAt(0.8)}>+</button>
+          <button className="btn-ghost !px-2 !py-0.5" aria-label={t("pg.db.zoomOut")} onClick={() => zoomAt(1.25)}>−</button>
+          {moved && <button className="btn-ghost !px-2 !py-0.5 !text-xs" onClick={() => onView(DEFAULT_VIEW)}>{t("pg.db.resetView")}</button>}
         </div>
       </div>
-      <ul className="mt-3 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 text-xs text-muted" aria-label="Legend">
-        <li className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full" style={{ background: CLASS_COLORS[0] }} />class 0 point</li>
-        <li className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full" style={{ background: CLASS_COLORS[1] }} />class 1 point</li>
+      <ul className="mt-3 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 text-xs text-muted" aria-label={t("pg.legend")}>
+        <li className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full" style={{ background: CLASS_COLORS[0] }} />{t("pg.db.legend.c0")}</li>
+        <li className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full" style={{ background: CLASS_COLORS[1] }} />{t("pg.db.legend.c1")}</li>
         <li className="inline-flex items-center gap-1.5">
           <span className="h-3 w-28 rounded" style={{ background: "linear-gradient(90deg, rgb(249 115 22 / .7), rgb(248 249 252), rgb(59 130 246 / .7))" }} aria-hidden />
-          predicted 0 → unsure → 1
+          {t("pg.db.legend.grad")}
         </li>
-        <li className="inline-flex items-center gap-1.5"><span className="h-0.5 w-6 bg-ink" />decision boundary (p = 0.5)</li>
+        <li className="inline-flex items-center gap-1.5"><span className="h-0.5 w-6 bg-ink" />{t("pg.db.legend.boundary")}</li>
       </ul>
-      <p className="mt-1 text-center text-xs text-muted">Drag to pan · scroll or +/− to zoom · hover for confidence</p>
+      <p className="mt-1 text-center text-xs text-muted">{t("pg.db.hint")}</p>
     </div>
   );
 }

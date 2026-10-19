@@ -190,28 +190,22 @@ print("best CNN run:", best_run + 1, best_row)
 # %% Step 7 - compare with the best fully connected network of Lab 1
 # The Lab 1 numbers are read from its own results file, nothing is typed in by hand.
 fc_path = os.path.join("..", "LabWork1", "results", "summary.json")
-if os.path.exists(fc_path):
-    with open(fc_path) as f:
-        fc = json.load(f)["task61"]
-else:
-    # Lab 1 results are not in this checkout: skip the comparison instead of inventing numbers
-    print("Lab 1 results not found at", fc_path, "- comparison skipped")
-    fc, fc_params = None, None
-if fc is not None:
-    sizes = [784] + fc["neurons"] + [10]
-    fc_params = sum(a_ * b_ + b_ for a_, b_ in zip(sizes[:-1], sizes[1:]))     # weights + biases per layer
-    cmp11 = pd.DataFrame([
-        {"Model": "Fully connected " + "-".join(map(str, fc["neurons"])) + " (Lab 1)",
-         "Test accuracy": fc["test_acc"], "Test loss": fc["test_loss"], "Parameters": fc_params},
-        {"Model": f"CNN {best_row['Filters']} (this lab, run {best_run + 1})",
-         "Test accuracy": best_row["test_acc"], "Test loss": best_row["test_loss"], "Parameters": best_row["params"]},
-    ])
-    cmp11.to_csv("results/task11_vs_fc.csv", index=False)
-    print(cmp11.to_string(index=False))
+with open(fc_path) as f:
+    fc = json.load(f)["task61"]
+sizes = [784] + fc["neurons"] + [10]
+fc_params = sum(a_ * b_ + b_ for a_, b_ in zip(sizes[:-1], sizes[1:]))     # weights + biases per layer
+cmp11 = pd.DataFrame([
+    {"Model": "Fully connected " + "-".join(map(str, fc["neurons"])) + " (Lab 1)",
+     "Test accuracy": fc["test_acc"], "Test loss": fc["test_loss"], "Parameters": fc_params},
+    {"Model": f"CNN {best_row['Filters']} (this lab, run {best_run + 1})",
+     "Test accuracy": best_row["test_acc"], "Test loss": best_row["test_loss"], "Parameters": best_row["params"]},
+])
+cmp11.to_csv("results/task11_vs_fc.csv", index=False)
+print(cmp11.to_string(index=False))
 summary["task11"] = {"best_run": best_run + 1, "filters": list(best_cfg["filters"]), "kernel": best_cfg["kernel"],
                      "dropout": best_cfg["dropout"], "lr": best_cfg["lr"], "epochs": best_epochs,
                      "test_acc": best_row["test_acc"], "test_loss": best_row["test_loss"],
-                     "fc_test_acc": fc["test_acc"] if fc else None, "fc_params": fc_params, "cnn_params": best_row["params"]}
+                     "fc_test_acc": fc["test_acc"], "fc_params": fc_params, "cnn_params": best_row["params"]}
 save_json()
 
 # %% Step 8 - average pooling

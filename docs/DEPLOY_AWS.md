@@ -1,5 +1,14 @@
 # Deploying to AWS (free-trial / credits friendly)
 
+## Automatic deployment from GitHub
+
+The production pipeline is defined in [`infra/aws/pipeline.yaml`](../infra/aws/pipeline.yaml).
+It uses CodeConnections for GitHub, CodeBuild for orchestration, and SSM Run Command
+to execute [`infra/aws/update.sh`](../infra/aws/update.sh) on the existing EC2 instance.
+Pushes to `master` trigger a queued deployment. The GitHub connection must be approved
+once in the AWS Console because connections created by CLI or CloudFormation remain
+`PENDING` until OAuth is completed.
+
 ## Option 0: CloudFormation template (recommended, no manual server setup)
 
 The template `infra/aws/nn-playground.yaml` creates a security group and one `t3.small` instance. On boot the instance installs Docker, clones this repository, and runs `docker compose up -d --build`. The stack reports `CREATE_COMPLETE` only after `/api/health` answers, so a failed build shows up as a failed stack.

@@ -44,7 +44,7 @@ function NavMenu({ label, id, prefix, children }: { label: string; id: string; p
   }, [open]);
 
   return (
-    <div ref={ref} className="sm:relative">
+    <div ref={ref} className="lg:relative">
       <button
         aria-expanded={open}
         aria-controls={id}
@@ -54,7 +54,7 @@ function NavMenu({ label, id, prefix, children }: { label: string; id: string; p
         {label} <span aria-hidden className="text-[10px]">▾</span>
       </button>
       {open && (
-        <div id={id} className="absolute left-4 right-4 top-full z-40 mt-2 max-h-[80vh] overflow-y-auto rounded-2xl border border-line bg-surface p-2 shadow-card sm:left-auto sm:right-0 sm:top-auto sm:w-[23rem]">
+        <div id={id} className="absolute left-4 right-4 top-full z-40 mt-2 max-h-[80vh] overflow-y-auto rounded-2xl border border-line bg-surface p-2 shadow-card lg:left-auto lg:right-0 lg:top-auto lg:w-[23rem]">
           {children}
         </div>
       )}
@@ -91,13 +91,13 @@ export function NavBar() {
   const m = useMeta();
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur">
-      <div className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-between gap-x-2 px-4 py-1.5 sm:h-14 sm:flex-nowrap sm:py-0 sm:px-6">
+      <div className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-between gap-x-2 py-1.5 px-4 sm:px-6 lg:h-14 lg:flex-nowrap lg:py-0">
         <Link to="/" className="order-1 flex items-center gap-2.5 font-semibold tracking-tight">
           <Logo />
           <span className="hidden sm:inline">AI Lab</span>
         </Link>
-        <nav aria-label="Primary" className="order-3 flex w-full flex-wrap items-center justify-center gap-0 sm:order-2 sm:flex-nowrap sm:ml-auto sm:w-auto sm:gap-1">
-          <NavLink to="/" end className={(a) => `${linkCls(a)} hidden sm:block`}>{t("nav.home")}</NavLink>
+        <nav aria-label="Primary" className="order-3 flex w-full flex-wrap items-center justify-center gap-0 lg:order-2 lg:flex-nowrap lg:ml-auto lg:w-auto sm:gap-1">
+          <NavLink to="/" end className={(a) => `${linkCls(a)} hidden lg:block`}>{t("nav.home")}</NavLink>
 
           <NavLink to="/concepts" className={(a) => `${linkCls(a)} !px-1.5 !text-xs max-[339px]:!px-1 max-[339px]:!text-[11px] min-[380px]:!px-2 min-[380px]:!text-[13px] sm:!px-3 sm:!text-sm`}>{t("nav.concepts")}</NavLink>
 
@@ -161,7 +161,7 @@ export function NavBar() {
 
           <NavLink to="/runs" className={(a) => `${linkCls(a)} !px-1.5 !text-xs max-[339px]:!px-1 max-[339px]:!text-[11px] min-[380px]:!px-2 min-[380px]:!text-[13px] sm:!px-3 sm:!text-sm`}>{t("runs.nav")}</NavLink>
         </nav>
-        <div className="order-2 flex items-center sm:order-3">
+        <div className="order-2 flex items-center lg:order-3">
           <button
             onClick={toggle}
             className="btn-ghost ml-1 !px-2 sm:ml-2 sm:!px-2.5"

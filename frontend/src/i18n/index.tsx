@@ -6,12 +6,9 @@ import { lab2 } from "./messages/lab2";
 import { cheatsheet } from "./messages/cheatsheet";
 import { explorers } from "./messages/explorers";
 import { concepts } from "./messages/concepts";
-<<<<<<< HEAD
 import { home } from "./messages/home";
 import { labsetup } from "./messages/labsetup";
-=======
 import { runs } from "./messages/runs";
->>>>>>> worktree-agent-a5158db33f135e62a
 
 export type Lang = "en" | "kn" | "lt";
 export const LANGS: { id: Lang; label: string; native: string }[] = [

@@ -48,6 +48,7 @@ describe("concept registry", () => {
           expect(lab?.status, where).toBe("live");
           expect(lab!.steps.some((s) => s.id === e.step), where).toBe(true);
         }
+        if (e.kind === "page") expect(["/runs", "/coverage", "/concepts", "/cheatsheets", "/tools", "/labs"], where).toContain(e.to);
         if (e.kind === "sheet") expect(getSheet(e.sheet)?.sections.some((s) => s.id === e.section), where).toBe(true);
         expect(evidenceHref(e)).toMatch(/^\//);
       }

@@ -23,6 +23,7 @@ function useEvidenceLabel() {
       case "playground": return { kind, title: e.note };
       case "learn": return { kind, title: t(`pg.lc.${e.topic}.title`, e.topic) };
       case "experiment": return { kind, title: t(`pg.exp.${e.id}.title`, e.id) };
+      case "page": return { kind, title: e.title };
       case "sheet": return { kind, title: `${t("nav.cheatsheets")} · ${e.section}` };
     }
   };

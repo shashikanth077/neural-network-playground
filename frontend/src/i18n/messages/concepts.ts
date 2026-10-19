@@ -43,6 +43,7 @@ const chrome = build([
   ["cc.kind.experiment", "Guided experiment", "ಮಾರ್ಗದರ್ಶಿತ ಪ್ರಯೋಗ", "Vedamas eksperimentas"],
   ["cc.kind.lab", "Lab step", "ಲ್ಯಾಬ್ ಹಂತ", "Laboratorijos žingsnis"],
   ["cc.kind.tool", "Tool", "ಸಾಧನ", "Įrankis"],
+  ["cc.kind.page", "Page", "ಪುಟ", "Puslapis"],
   ["cc.kind.sheet", "Cheatsheet", "ಚೀಟ್‌ಶೀಟ್", "Atmintinė"],
 
   ["cov.eyebrow", "AI Lab · Coverage", "AI Lab · ವ್ಯಾಪ್ತಿ", "AI Lab · Aprėptis"],

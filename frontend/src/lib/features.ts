@@ -23,4 +23,22 @@ export const TOOLS: Tool[] = [
     tags: ["NumPy backprop", "Live training", "Learning center"],
     needsBackend: true,
   },
+  {
+    id: "convolution",
+    domain: "dl",
+    title: "Convolution Explorer",
+    tagline: "Slide kernels over an image with stride, padding, ReLU and pooling, then size the lecture's MNIST CNN layer by layer.",
+    path: "/tools/convolution",
+    tags: ["Kernels", "Receptive field", "Pooling", "Parameter count"],
+    needsBackend: false,
+  },
+  {
+    id: "recurrent",
+    domain: "dl",
+    title: "Recurrent Cell Explorer",
+    tagline: "Run a SimpleRNN, LSTM or GRU over a short sequence and watch the state and every gate at each step.",
+    path: "/tools/recurrent",
+    tags: ["RNN", "LSTM", "GRU", "Gates"],
+    needsBackend: false,
+  },
 ];

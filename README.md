@@ -3,9 +3,11 @@
 A multi-domain platform of **guided labs** and **interactive tools** covering **Machine Learning, Deep Learning and Natural Language Processing**. Every project is its own self-contained lab or tool and belongs to one domain. Today it ships:
 
 * **Lab 1 · From messy data to a working neural network**: 13 step-by-step lessons with 9 live demos (missing values, three anomaly methods, scaling, a from-scratch network, MNIST, activations, optimizers, results, checklist and Q&A).
-* **Neural Network Playground**: design and train networks on a NumPy/FastAPI back end and watch the weights, loss and decision boundary change.
+* **Neural Network Playground**: design and train networks on a NumPy/FastAPI back end and watch the weights, loss and decision boundary change. It covers the course material on activations and losses, optimizers, regularisation, dropout, batch norm, early stopping, evaluation metrics and cross-validation.
+* **Convolution Explorer** and **Recurrent Cell Explorer**: browser-only tools for CNNs (kernels, stride, padding, pooling, receptive field, the MNIST CNN's shapes and parameters) and for SimpleRNN, LSTM and GRU cells (state and gates step by step).
+* **Cheatsheets**: searchable, printable quick references. The **Neural Network cheatsheet** has 14 sections (blocks, activations, output layers, losses, optimizers, generalisation, validation, metrics, CNN, RNN, text, Keras code, calculators, debugging). Machine Learning and NLP sheets are listed as planned.
 
-New labs plug in through a registry (see *Adding a lab*). Navigation: **Home · Labs ▾ · Tools ▾**, with both menus grouped by domain.
+New labs, tools and cheatsheets plug in through registries (see *Adding a lab*). Navigation: **Home · Labs ▾ · Tools ▾ · Cheatsheets ▾**, with all menus grouped by domain.
 
 ![Playground](screenshots/playground-trained.png)
 
@@ -20,14 +22,15 @@ Everything on screen comes from a real NumPy network training on the server: los
 | Domains (`labs/domains.ts`) | ML, DL and NLP; every lab and tool declares one. Menus, filters and the home page group by domain |
 | Home | Platform overview, *Explore by domain* tiles, *Available now*, *Coming next* |
 | Labs menu + `/labs` index | Lists every lab grouped by domain; filter by domain (`?domain=ml`) and status; per-lab progress |
-| Tools menu + `/tools` index | Stand-alone apps such as the Playground, grouped by domain |
+| Tools menu + `/tools` index | Stand-alone apps (Playground, Convolution Explorer, Recurrent Cell Explorer), grouped by domain |
+| Cheatsheets menu + `/cheatsheets` | Reference sheets grouped by domain; each sheet has a section list, search over titles and keywords, and Print / save as PDF |
 | Lab shell `/labs/:labId/:stepId` | Sidebar stepper grouped by topic, lab switcher, progress %, previous/next, “mark complete”, mobile drawer |
 | Progress | Saved per lab in the browser; resumes at the last step |
 | Lab 1 | Ported from the uploaded *Lab1_Visual_Guide.html*; every demo computes for real and the quoted numbers are asserted by unit tests |
 
 ![Lab 1](screenshots/lab1-anomalies.png)
 
-**Adding a lab:** create `frontend/src/labs/<name>/index.ts` exporting a `Lab` (id, number, **domain**, title, steps with lazy React components), then add it to `LABS` in `frontend/src/labs/registry.ts` (a planned placeholder is simply replaced). The menus, domain filters, index, home page, routes, stepper and progress tracking pick it up. **Adding a tool:** add an entry to `TOOLS` in `src/lib/features.ts` (with its domain) and a route in `App.tsx`. **Adding a domain:** add it to `DOMAINS` in `labs/domains.ts`. Shared demo primitives live in `labs/ui.tsx`.
+**Adding a lab:** create `frontend/src/labs/<name>/index.ts` exporting a `Lab` (id, number, **domain**, title, steps with lazy React components), then add it to `LABS` in `frontend/src/labs/registry.ts` (a planned placeholder is simply replaced). The menus, domain filters, index, home page, routes, stepper and progress tracking pick it up. **Adding a tool:** add an entry to `TOOLS` in `src/lib/features.ts` (with its domain) and a route in `App.tsx`. **Adding a cheatsheet:** create a file exporting a `Cheatsheet` (sections with `title`, search `keywords` and a `render()`), then list it in `SHEETS` in `frontend/src/cheatsheets/registry.ts`; the menu, index and routes pick it up (a `planned` entry is replaced). **Adding a domain:** add it to `DOMAINS` in `labs/domains.ts`. Shared demo primitives live in `labs/ui.tsx`.
 
 > **Correction made while porting Lab 1.** The original guide said the Z-score rule (threshold 3) stops catching the suspicious age at about 30–40. Measured on the 30 ages it only stops below ≈ 21 (z = 4.3 at 30, 4.8 at 40). The lab text, the Q&A answer and a regression test now reflect the real behaviour.
 
@@ -36,12 +39,16 @@ Everything on screen comes from a real NumPy network training on the server: los
 | Area | What you get |
 |---|---|
 | Datasets | XOR, two moons, circles, linearly separable, and a **custom** dataset drawn by clicking; configurable size, noise and seed |
-| Designer | 0–5 hidden layers, 1–32 neurons each, ReLU/sigmoid/tanh, 4 initializers, SGD/Adam, learning rate, batch size, epochs, validation split, live parameter count, per-field validation and help |
+| Designer | 0–5 hidden layers, 1–32 neurons each; 8 activations (ReLU, Leaky ReLU, ELU, SELU, sigmoid, tanh, softplus, SiLU); 4 initializers; 8 optimizers (SGD, momentum, Nesterov, Adagrad, RMSprop, Adadelta, Adam, Nadam); 3 losses (BCE, MSE, hinge); learning rate, batch size, epochs, validation split, live parameter count, per-field validation and help |
+| Regularisation | L1 and L2 penalties, dropout, batch normalisation, early stopping with patience and best-weights restore |
+| Evaluation | Confusion matrix, accuracy, precision, recall, F1, ROC curve and AUC with an adjustable threshold, on train or validation data |
+| Cross-validation | Hold-out, k-fold, stratified k-fold, shuffle split, time series split, leave-one-out; one fresh network per fold, mean ± std |
+| Diagnosis | Reads your curves and says whether the run looks under-fitted, over-fitted, unstable or fine, and what to change |
 | Network diagram | SVG built from the **actual weights**: sign → solid/dashed + colour, magnitude → thickness, node colour → activation, hover for bias/activation/weight |
 | Decision boundary | Real prediction grid (56×56), contour at p = 0.5, hover confidence, drag-pan, wheel/keyboard zoom, legend |
 | Training | Background-thread sessions, Pause / Resume / Reset, elapsed time, loss, accuracy, validation metrics, error reporting |
 | Analytics | Train/val loss and accuracy, gradient norm, parameter norm, plus a pinnable baseline run for overlay comparisons |
-| Learning Center | 14 topics with KaTeX formulas, variable glossary, live numbers from *your* experiment, activation explorer, gradient-descent toy, and a **real one-iteration trace** |
+| Learning Center | Topics with KaTeX formulas, variable glossary, live numbers from *your* experiment, activation explorer, gradient-descent toy, and a **real one-iteration trace** |
 | Presets | XOR, linear, underfitting, overfitting, learning-rate, activation and optimizer comparisons (with variants) |
 | Product shell | Responsive home page, dark/light theme, feature registry for future labs |
 
@@ -69,12 +76,12 @@ flowchart LR
 
 ```
 backend/app/    nn.py (network, losses, optimizers) · datasets.py · sessions.py · schemas.py · main.py
-backend/tests/  27 numerical tests + 14 API tests
-frontend/src/   api/ · hooks/ · lib/ · components/ · pages/ · test/
+backend/tests/  numerical, metrics/validation, API and PyTorch cross-check tests
+frontend/src/   api/ · hooks/ · lib/ · components/ · pages/ · explorers/ · cheatsheets/ · test/
 frontend/src/labs/  registry.ts · progress.ts · ui.tsx · lab1/ (math, data, 13 steps)
 infra/aws/      nn-playground.yaml (CloudFormation)
 docs/           API.md · DEPLOY_AWS.md · project-report.html
-scripts/        capture-screenshots.mjs (Playwright drives the real app)
+scripts/        capture-*.mjs (Playwright drives the real app) · e2e_flow.py · make_rnn_fixtures.py
 ```
 
 ## Run locally
@@ -103,15 +110,15 @@ Copy `.env.example` to `.env` to change limits. Never commit `.env`.
 ## Tests
 
 ```bash
-cd backend && pytest -q                        # 41 tests (+11 PyTorch cross-checks when torch is installed)
-cd frontend && npm test && npm run typecheck   # 53 tests (Lab 1 maths, registry/domains, filters, navigation, Playground UI)
+cd backend && pytest -q                        # 154 tests (196 with torch installed: PyTorch cross-checks)
+cd frontend && npm test && npm run typecheck   # 120 tests (Lab 1 maths, registries, navigation, optimizers/activations/losses, cheatsheets, explorers vs NumPy/PyTorch values)
 ```
 
 Backend tests cover forward propagation vs a manual computation, **finite-difference gradient checking** (3 activations × 3 depths), SGD/Adam update rules, loss decrease, XOR needing a hidden layer, stable sigmoid/BCE at extreme inputs, output shapes, and the API: parameters really change during training, pause truly freezes the epoch counter, reset restores seeded initial weights, independent sessions, validation/404/409 errors, dry-run trace leaves the model untouched, and session cleanup.
 
 ### Verification against PyTorch
 
-`backend/tests/test_against_pytorch.py` runs the same weights through the NumPy network and through PyTorch autograd. It checks the loss, every gradient for each activation and depth, and 25 SGD steps and 30 Adam steps against `torch.optim`. Install `torch` (CPU wheel is enough) to run it; without torch those tests are skipped.
+`backend/tests/test_against_pytorch.py` runs the same weights through the NumPy network and through PyTorch autograd. It checks the loss, every gradient (each activation and depth, dropout with identical masks, batch norm) and optimizer trajectories against `torch.optim`. `scripts/make_rnn_fixtures.py` writes PyTorch RNN and LSTM outputs that the frontend tests must reproduce; the GRU uses the lecture's formula and is checked by hand against it. Convolution and pooling exercises are compared with NumPy results. Install `torch` (CPU wheel is enough) to run the PyTorch tests; without torch they are skipped.
 
 ## End-to-end flow
 
@@ -169,8 +176,10 @@ The app is container-ready. The quickest route is the CloudFormation template in
 * Sessions live in process memory: run **one** backend worker/instance. Scaling out needs sticky sessions or an external store (Redis).
 * Training is intentionally small (≤ 2000 points, ≤ 2000 epochs, 2 input features). No auth or rate limiting yet.
 * Polling rather than WebSocket/SSE streaming.
-* PyTorch is used only to cross-check the NumPy maths in the tests; there is no PyTorch training mode in the app.
-* No end-to-end tests in CI (the Playwright scripts `scripts/capture-labs.mjs` and `scripts/capture-screenshots.mjs` are run manually).
+* PyTorch is used only to cross-check the maths in the tests; there is no PyTorch training mode in the app.
+* The Playground is a 2-D binary classifier. CNNs and RNNs need images and sequences, so they are shown in the two explorers (fixed weights, real computation) rather than trained.
+* The Machine Learning and NLP cheatsheets are placeholders marked *Planned*.
+* No end-to-end tests in CI (the Playwright scripts `scripts/capture-labs.mjs`, `scripts/capture-cheatsheets.mjs` and `scripts/capture-screenshots.mjs` are run manually).
 * Docker images were not built in the authoring environment; compose config is validated only.
 * Labs 2-4 on the home page and Labs index (CNN, attention, loss landscapes) are placeholders marked *Planned*.
 * Lab progress is stored per browser only (no accounts).

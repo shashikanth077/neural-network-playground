@@ -30,7 +30,7 @@ function NavMenu({ label, id, prefix, children }: { label: string; id: string; p
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
-  const active = pathname.startsWith(prefix);
+  const active = prefix.split("|").some((p) => pathname.startsWith(p));
 
   useEffect(() => setOpen(false), [pathname]);
   useEffect(() => {
@@ -48,7 +48,7 @@ function NavMenu({ label, id, prefix, children }: { label: string; id: string; p
         aria-expanded={open}
         aria-controls={id}
         onClick={() => setOpen((o) => !o)}
-        className={`flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium transition ${active || open ? "bg-raised text-ink" : "text-muted hover:text-ink"}`}
+        className={`flex items-center gap-0.5 rounded-lg px-2 py-1.5 text-[13px] font-medium sm:gap-1 sm:px-3 sm:text-sm transition ${active || open ? "bg-raised text-ink" : "text-muted hover:text-ink"}`}
       >
         {label} <span aria-hidden className="text-[10px]">▾</span>
       </button>
@@ -93,8 +93,8 @@ export function NavBar() {
           <Logo />
           <span className="hidden sm:inline">AI Lab</span>
         </Link>
-        <nav aria-label="Primary" className="flex items-center gap-1">
-          <NavLink to="/" end className={linkCls}>Home</NavLink>
+        <nav aria-label="Primary" className="flex items-center gap-0 sm:gap-1">
+          <NavLink to="/" end className={(a) => `${linkCls(a)} hidden sm:block`}>Home</NavLink>
 
           <NavMenu label="Labs" id="labs-menu" prefix="/labs">
             {DOMAINS.map((d) => {
@@ -116,7 +116,7 @@ export function NavBar() {
             <Link to="/labs" className="mt-1 block rounded-xl border-t border-line px-3 pt-2.5 pb-1.5 text-sm font-semibold text-brand hover:underline">Browse all labs →</Link>
           </NavMenu>
 
-          <NavMenu label="Tools" id="tools-menu" prefix="/playground">
+          <NavMenu label="Tools" id="tools-menu" prefix="/playground|/tools">
             {DOMAINS.map((d) => {
               const tools = TOOLS.filter((t) => t.domain === d.id);
               if (!tools.length) return null;
@@ -156,7 +156,7 @@ export function NavBar() {
 
           <button
             onClick={toggle}
-            className="btn-ghost ml-2 !px-2.5"
+            className="btn-ghost ml-1 !px-2 sm:ml-2 sm:!px-2.5"
             aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
             title={dark ? "Light theme" : "Dark theme"}
           >

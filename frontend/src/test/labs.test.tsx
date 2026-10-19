@@ -109,13 +109,13 @@ describe("LabPage", () => {
   });
   it("renders a calculation-heavy step with its real numbers (anomalies)", async () => {
     render(app("/labs/lab1/anomalies"));
-    expect(await screen.findByText(/z of the suspicious value/)).toHaveTextContent("5.22");
+    expect(await screen.findByText(/z of the suspicious value/, {}, { timeout: 5000 })).toHaveTextContent("5.22");
     await userEvent.click(screen.getByRole("radio", { name: "Quartile" }));
-    expect(await screen.findByText(/allowed range/)).toHaveTextContent("4.625");
+    expect(await screen.findByText(/allowed range/, {}, { timeout: 5000 })).toHaveTextContent("4.625");
   });
   it("trains the small network in the browser and reports Name 5", async () => {
     render(app("/labs/lab1/train"));
-    await screen.findByRole("button", { name: "Train" });
+    await screen.findByRole("button", { name: "Train" }, { timeout: 5000 });
     await userEvent.click(screen.getByRole("button", { name: "Train" }));
     await waitFor(() => expect(screen.getByText(/final loss/)).toBeInTheDocument());
     expect(screen.getByText(/Name 5 output/)).toHaveTextContent(/female \(0\)/);

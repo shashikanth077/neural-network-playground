@@ -5,6 +5,9 @@ import { Home } from "./pages/Home";
 import { LabsIndex } from "./pages/LabsIndex";
 import { ToolsIndex } from "./pages/ToolsIndex";
 import { CheatsheetsIndex } from "./pages/CheatsheetsIndex";
+import { ConceptsHub } from "./pages/ConceptsHub";
+import { ConceptPage } from "./pages/ConceptPage";
+import { CoveragePage } from "./pages/CoveragePage";
 import { useT } from "./i18n";
 
 const Playground = lazy(() => import("./pages/Playground").then((m) => ({ default: m.Playground })));
@@ -25,6 +28,9 @@ export default function App() {
         <Suspense fallback={<p className="p-8 text-center text-sm text-muted" role="status">…</p>}>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/concepts" element={<ConceptsHub />} />
+            <Route path="/concepts/:conceptId" element={<ConceptPage />} />
+            <Route path="/coverage" element={<CoveragePage />} />
             <Route path="/labs" element={<LabsIndex />} />
             <Route path="/labs/:labId" element={<LabPage />} />
             <Route path="/labs/:labId/:stepId" element={<LabPage />} />

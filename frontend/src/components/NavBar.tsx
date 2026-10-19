@@ -49,7 +49,7 @@ function NavMenu({ label, id, prefix, children }: { label: string; id: string; p
         aria-expanded={open}
         aria-controls={id}
         onClick={() => setOpen((o) => !o)}
-        className={`flex items-center gap-0.5 rounded-lg px-2 py-1.5 text-[13px] font-medium sm:gap-1 sm:px-3 sm:text-sm transition ${active || open ? "bg-raised text-ink" : "text-muted hover:text-ink"}`}
+        className={`flex items-center gap-0.5 rounded-lg px-1.5 py-1.5 text-xs font-medium min-[380px]:px-2 min-[380px]:text-[13px] sm:gap-1 sm:px-3 sm:text-sm transition ${active || open ? "bg-raised text-ink" : "text-muted hover:text-ink"}`}
       >
         {label} <span aria-hidden className="text-[10px]">▾</span>
       </button>
@@ -98,6 +98,8 @@ export function NavBar() {
         </Link>
         <nav aria-label="Primary" className="order-3 flex w-full items-center justify-center gap-0 sm:order-2 sm:ml-auto sm:w-auto sm:gap-1">
           <NavLink to="/" end className={(a) => `${linkCls(a)} hidden sm:block`}>{t("nav.home")}</NavLink>
+
+          <NavLink to="/concepts" className={(a) => `${linkCls(a)} !px-1.5 !text-xs min-[380px]:!px-2 min-[380px]:!text-[13px] sm:!px-3 sm:!text-sm`}>{t("nav.concepts")}</NavLink>
 
           <NavMenu label={t("nav.labs")} id="labs-menu" prefix="/labs">
             {DOMAINS.map((d) => {

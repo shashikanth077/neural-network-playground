@@ -114,6 +114,11 @@ export const common = build([
   ["home.how.4.t", "Track your progress", "ನಿಮ್ಮ ಪ್ರಗತಿಯನ್ನು ಗಮನಿಸಿ", "Sekite savo pažangą"],
   ["home.how.4.d", "Mark steps complete; the platform remembers where you stopped.", "ಹಂತಗಳನ್ನು ಪೂರ್ಣ ಎಂದು ಗುರುತಿಸಿ; ನೀವು ಎಲ್ಲಿ ನಿಲ್ಲಿಸಿದ್ದೀರಿ ಎಂದು ವೇದಿಕೆ ನೆನಪಿಟ್ಟುಕೊಳ್ಳುತ್ತದೆ.", "Pažymėkite žingsnius kaip baigtus; platforma prisimena, kur sustojote."],
 
+  ["hero.ml", "Machine learning", "ಯಂತ್ರ ಕಲಿಕೆ", "Mašininis mokymasis"],
+  ["hero.dl", "Deep learning", "ಆಳ ಕಲಿಕೆ", "Gilusis mokymasis"],
+  ["hero.nlp", "Natural language", "ನೈಸರ್ಗಿಕ ಭಾಷೆ", "Natūrali kalba"],
+  ["hero.alt", "Illustration of the three domains: machine learning, deep learning and natural language processing", "ಮೂರು ವಿಭಾಗಗಳ ಚಿತ್ರ: ಯಂತ್ರ ಕಲಿಕೆ, ಆಳ ಕಲಿಕೆ ಮತ್ತು ನೈಸರ್ಗಿಕ ಭಾಷಾ ಸಂಸ್ಕರಣೆ", "Trijų sričių iliustracija: mašininis mokymasis, gilusis mokymasis ir natūralios kalbos apdorojimas"],
+
   // ---- labs index
   ["labs.eyebrow", "AI Lab · Labs", "AI Lab · ಲ್ಯಾಬ್‌ಗಳು", "AI Lab · Laboratorijos"],
   ["labs.title", "Guided labs", "ಮಾರ್ಗದರ್ಶಿತ ಲ್ಯಾಬ್‌ಗಳು", "Vedamos laboratorijos"],

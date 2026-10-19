@@ -91,12 +91,12 @@ export function NavBar() {
   const m = useMeta();
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-[1500px] items-center justify-between px-4 sm:px-6">
-        <Link to="/" className="flex items-center gap-2.5 font-semibold tracking-tight">
+      <div className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-between gap-x-2 px-4 py-1.5 sm:h-14 sm:flex-nowrap sm:py-0 sm:px-6">
+        <Link to="/" className="order-1 flex items-center gap-2.5 font-semibold tracking-tight">
           <Logo />
           <span className="hidden sm:inline">AI Lab</span>
         </Link>
-        <nav aria-label="Primary" className="flex items-center gap-0 sm:gap-1">
+        <nav aria-label="Primary" className="order-3 flex w-full items-center justify-center gap-0 sm:order-2 sm:ml-auto sm:w-auto sm:gap-1">
           <NavLink to="/" end className={(a) => `${linkCls(a)} hidden sm:block`}>{t("nav.home")}</NavLink>
 
           <NavMenu label={t("nav.labs")} id="labs-menu" prefix="/labs">
@@ -157,6 +157,8 @@ export function NavBar() {
             <Link to="/cheatsheets" className="mt-1 block rounded-xl border-t border-line px-3 pt-2.5 pb-1.5 text-sm font-semibold text-brand hover:underline">{t("nav.browseSheets")}</Link>
           </NavMenu>
 
+        </nav>
+        <div className="order-2 flex items-center sm:order-3">
           <button
             onClick={toggle}
             className="btn-ghost ml-1 !px-2 sm:ml-2 sm:!px-2.5"
@@ -166,7 +168,7 @@ export function NavBar() {
             <span aria-hidden>{dark ? "☀" : "☾"}</span>
           </button>
           <LanguageSwitcher />
-        </nav>
+        </div>
       </div>
     </header>
   );

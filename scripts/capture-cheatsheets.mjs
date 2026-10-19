@@ -80,6 +80,31 @@ for (const w of [320, 375, 768, 1440]) {
   await c.close();
 }
 
+// language switcher: Lithuanian and Kannada keep the layout intact at phone widths
+for (const lang of ["lt", "kn"]) {
+  for (const w of [320, 375, 1440]) {
+    const c = await browser.newContext({ viewport: { width: w, height: 800 } });
+    await c.addInitScript((l) => localStorage.setItem("ailab.lang", l), lang);
+    const p = await c.newPage();
+    p.on("pageerror", (e) => errors.push("pageerror: " + e));
+    for (const path of ["/", "/labs", "/tools", "/cheatsheets", "/cheatsheets/neural-network", "/tools/convolution", "/tools/recurrent"]) {
+      await p.goto(BASE + path);
+      await p.waitForSelector("h1");
+      const over = await p.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+      check(over <= 0, `[${lang}] ${w}px ${path} no horizontal overflow (${over})`);
+    }
+    check((await p.evaluate(() => document.documentElement.lang)) === lang, `[${lang}] <html lang> is set`);
+    for (const idx of [0, 1, 2]) {
+      await p.goto(BASE);
+      await p.locator("nav button[aria-controls]").nth(idx).click();
+      const box = await p.locator("[id$='-menu']").boundingBox();
+      check(box && box.x >= 0 && box.x + box.width <= w, `[${lang}] ${w}px menu ${idx} fits`);
+    }
+    if (w === 1440) await p.screenshot({ path: OUT + `home-${lang}.png` });
+    await c.close();
+  }
+}
+
 await browser.close();
 if (errors.length) { console.log("\nFAILURES:\n" + errors.join("\n")); process.exit(1); }
 console.log("\nAll checks passed.");

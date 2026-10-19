@@ -1,0 +1,42 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - |
+        set -eu
+        command_id="$(aws ssm send-command \
+          --region "$AWS_DEFAULT_REGION" \
+          --instance-ids "$DEPLOY_INSTANCE_ID" \
+          --document-name AWS-RunShellScript \
+          --comment "Deploy ${CODEBUILD_RESOLVED_SOURCE_VERSION} to neural-network-playground" \
+          --parameters commands="cd /opt/neural-network-playground && DEPLOY_BRANCH=${DEPLOY_BRANCH} bash infra/aws/update.sh" \
+          --query Command.CommandId \
+          --output text)"
+        echo "SSM command: ${command_id}"
+        for attempt in $(seq 1 60); do
+          status="$(aws ssm get-command-invocation \
+            --region "$AWS_DEFAULT_REGION" \
+            --command-id "$command_id" \
+            --instance-id "$DEPLOY_INSTANCE_ID" \
+            --query Status \
+            --output text)"
+          case "$status" in
+            Success)
+              aws ssm get-command-invocation --region "$AWS_DEFAULT_REGION" \
+                --command-id "$command_id" --instance-id "$DEPLOY_INSTANCE_ID" \
+                --query StandardOutputContent --output text
+              exit 0
+              ;;
+            Failed|Cancelled|TimedOut)
+              aws ssm get-command-invocation --region "$AWS_DEFAULT_REGION" \
+                --command-id "$command_id" --instance-id "$DEPLOY_INSTANCE_ID" \
+                --query '{status:Status,stdout:StandardOutputContent,stderr:StandardErrorContent}' \
+                --output json
+              exit 1
+              ;;
+          esac
+          sleep 10
+        done
+        echo "Timed out waiting for SSM deployment." >&2
+        exit 1

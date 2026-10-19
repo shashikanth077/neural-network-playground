@@ -5,17 +5,23 @@ import asyncio
 from contextlib import asynccontextmanager
 
 import numpy as np
-from fastapi import APIRouter, FastAPI, Request
+from typing import Literal
+
+from fastapi import APIRouter, FastAPI, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from . import config as settings
+from .cv import cross_validate
 from .datasets import DATASET_INFO, generate_dataset
 from .schemas import (
     CreateModelRequest,
+    CrossValidationRequest,
+    CrossValidationResponse,
     DatasetInfo,
     DatasetRequest,
     DatasetResponse,
+    EvaluationResponse,
     HistoryResponse,
     IterationTrace,
     ParametersResponse,
@@ -162,6 +168,20 @@ def parameters(session_id: str):
 def iteration_trace(session_id: str, sample: int = 0):
     """Dry-run one training iteration on a single sample and return every intermediate value."""
     return manager.get(session_id).trace_iteration(max(0, sample))
+
+
+@api.get("/training/{session_id}/evaluation", response_model=EvaluationResponse, tags=["training"])
+def evaluation(session_id: str, split: Literal["train", "val"] = "val", threshold: float = Query(0.5, ge=0.0, le=1.0)):
+    """Confusion matrix, accuracy / precision / recall / F1, ROC curve and AUC for the current weights."""
+    return manager.get(session_id).evaluation(split, threshold)
+
+
+@api.post("/cross-validation", response_model=CrossValidationResponse, tags=["models"])
+def run_cross_validation(req: CrossValidationRequest):
+    """Train a fresh network per split (hold-out, k-fold, stratified, shuffle, time-series, leave-one-out)."""
+    X = np.asarray(req.dataset.points, dtype=float)
+    y = np.asarray(req.dataset.labels, dtype=int)
+    return cross_validate(X, y, req.config, req.method, req.k, req.val_fraction)
 
 
 @api.post("/training/{session_id}/predict", response_model=PredictResponse, tags=["training"])

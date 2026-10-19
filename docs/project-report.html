@@ -49,18 +49,18 @@ input[type=search]{font:inherit;width:100%;padding:8px 10px;border:1px solid var
 
 <section data-tab="Overview">
   <h1>What was built, end to end</h1>
-  <p class="mu"><b>AI Lab</b> is a multi-domain platform (<b>Machine Learning · Deep Learning · NLP</b>) of guided labs and interactive tools, each a separate project. It currently ships <b>Lab 1</b> (data cleaning → neural networks → MNIST, 13 interactive steps) and the <b>Neural Network Playground</b> (real NumPy training behind FastAPI), with a registry that makes the next lab a one-folder addition.</p>
+  <p class="mu"><b>AI Lab</b> is a multi-domain platform (<b>Machine Learning · Deep Learning · NLP</b>) of guided labs and interactive tools, each a separate project. It currently ships <b>Lab 1</b> (data cleaning → neural networks → MNIST, 13 interactive steps), the <b>Neural Network Playground</b> (real NumPy training behind FastAPI, covering the course lectures on activations, losses, optimizers, regularisation, evaluation and validation), a <b>Convolution Explorer</b>, a <b>Recurrent Cell Explorer</b> and a searchable <b>Cheatsheets</b> menu (Neural Network sheet live; ML and NLP planned). Registries make the next lab, tool or cheatsheet a one-file addition.</p>
   <div class="grid">
-    <div class="card"><div class="kpi">94</div><div class="mu">automated tests passing (41 pytest + 53 Vitest), plus 11 PyTorch cross-checks</div></div>
+    <div class="card"><div class="kpi">274</div><div class="mu">automated tests passing (154 pytest + 120 Vitest); 196 pytest with the PyTorch cross-checks enabled</div></div>
     <div class="card"><div class="kpi">13</div><div class="mu">steps in Lab 1, 9 interactive demos</div></div>
-    <div class="card"><div class="kpi">14</div><div class="mu">REST endpoints for the Playground</div></div>
+    <div class="card"><div class="kpi">16</div><div class="mu">REST endpoints for the Playground (incl. evaluation and cross-validation)</div></div>
     <div class="card"><div class="kpi">0</div><div class="mu">console errors across both browser suites</div></div>
   </div>
   <div class="card"><h2>Requirements checklist</h2><p class="mu">Click an item to see how it was verified.</p><div id="dod"></div></div>
   <div class="card"><h2>Honest status</h2>
-    <p><span class="ok">✔ Verified here:</span> backend tests, frontend tests, strict TypeScript build, and two Playwright suites that drive the real UI (Playground against the real API; Labs platform end to end including mobile layout and progress persistence).</p>
+    <p><span class="ok">✔ Verified here:</span> backend tests, frontend tests, strict TypeScript build, a 26-step API flow script, and three Playwright suites that drive the real UI (Playground against the real API; Labs platform; Cheatsheets and explorers including phone-width layout).</p>
     <p><span class="warn">▲ Not verified:</span> Docker image builds (compose and CloudFormation template only linted/validated), any actual AWS deployment (the session's AWS keys were rejected), screen-reader testing, load behaviour.</p>
-    <p><span class="bad">✘ Not built:</span> a PyTorch training mode (PyTorch is only used to verify the NumPy maths); WebSocket streaming; auth/rate limiting; labs 2-4 (shown as “Planned”).</p>
+    <p><span class="bad">✘ Not built:</span> a PyTorch training mode (PyTorch is only used to verify the NumPy maths); WebSocket streaming; auth/rate limiting; labs 2-4 and the ML / NLP cheatsheets (shown as “Planned”); training of CNNs or RNNs (the explorers use fixed weights and real computation, the Playground is a 2-D classifier).</p>
   </div>
 </section>
 
@@ -137,9 +137,24 @@ export const lab2: Lab = {
   <div class="card"><h3 style="margin-top:0">Components</h3><div class="row" id="comps"></div></div>
 </section>
 
+<section data-tab="Course coverage" hidden>
+  <h2>Course coverage: lectures 4–8</h2>
+  <p class="mu">Facts were extracted from the five lecture PDFs into <code>docs/notes/lecture-notes.md</code>. Each topic is implemented where it fits and checked against a reference. Filter by topic:</p>
+  <input type="search" id="cq" placeholder="Filter, e.g. dropout, LSTM, F1…" aria-label="Filter course coverage">
+  <div class="card"><table><thead><tr><th>Lecture topic</th><th>Where it lives</th><th>Checked against</th></tr></thead><tbody id="cv"></tbody></table></div>
+  <h3>Cheatsheets</h3>
+  <p>A new <b>Cheatsheets</b> menu (grouped by domain) opens <code>/cheatsheets</code>. The Neural Network sheet has 14 sections with formulas, defaults, Keras code and four calculators (parameter counts, conv output size, recurrent parameters, steps per epoch); it is searchable and prints cleanly. Adding a sheet is one file plus one registry line.</p>
+  <img loading="lazy" src="../screenshots/cheatsheet-nn.png" alt="Neural Network cheatsheet">
+  <h3>Explorers</h3>
+  <div class="grid">
+    <div class="card"><img loading="lazy" src="../screenshots/tool-convolution.png" alt="Convolution Explorer"><p class="mu">Kernels, stride, padding, ReLU, pooling, receptive field; lecture exercises A and C reproduced; MNIST CNN totals 333,526 parameters.</p></div>
+    <div class="card"><img loading="lazy" src="../screenshots/tool-recurrent.png" alt="Recurrent Cell Explorer"><p class="mu">SimpleRNN, LSTM, GRU unrolled with every gate shown; RNN and LSTM equal PyTorch outputs.</p></div>
+  </div>
+</section>
+
 <section data-tab="Screenshots" hidden>
   <h2>Screenshots of the working app</h2>
-  <p class="mu">Captured by <code>scripts/capture-labs.mjs</code> and <code>scripts/capture-screenshots.mjs</code> driving the real UI. Click to enlarge.</p>
+  <p class="mu">Captured by <code>scripts/capture-labs.mjs</code>, <code>scripts/capture-cheatsheets.mjs</code> and <code>scripts/capture-screenshots.mjs</code> driving the real UI. Click to enlarge.</p>
   <div class="gal" id="gal"></div>
   <dialog id="dlg"><img id="big" alt=""></dialog>
 </section>
@@ -157,13 +172,26 @@ export const lab2: Lab = {
   <tr><td class="ok">✔</td><td>MNIST pixel viewer reports pixel values on hover</td></tr>
   <tr><td class="ok">✔</td><td>No horizontal overflow at 390 px on home, index and three lab steps; no console errors</td></tr>
   </tbody></table></div>
+  <div class="card"><h3 style="margin-top:0">Browser run: Cheatsheets and explorers (Playwright)</h3>
+  <table><tbody>
+  <tr><td class="ok">✔</td><td>Cheatsheets menu lists the Neural Network sheet (live) and ML / NLP (planned); the sheet renders 14 sections; searching “lstm” narrows 14 → 3; calculators are present</td></tr>
+  <tr><td class="ok">✔</td><td>Print view hides the search box and keeps all sections</td></tr>
+  <tr><td class="ok">✔</td><td>Convolution Explorer: same padding gives 6×6, hovering a feature-map cell highlights a 9-cell receptive field, CNN total 333,526; Recurrent Explorer shows the GRU parameter count</td></tr>
+  <tr><td class="ok">✔</td><td>No horizontal page scroll and all three nav menus inside the viewport at 320, 375, 768 and 1440 px on six pages; no console errors</td></tr>
+  </tbody></table></div>
+  <div class="card"><h3 style="margin-top:0">Numerical verification of the extended Playground</h3>
+  <table><tbody>
+  <tr><td class="ok">✔</td><td>Finite-difference gradient checks for every activation, loss, dropout and batch norm; losses, gradients, dropout with identical masks, batch norm and optimizer trajectories compared with PyTorch (196 pytest with torch)</td></tr>
+  <tr><td class="ok">✔</td><td>API flow (26 steps) including evaluation, threshold behaviour, RMSprop + Leaky ReLU + dropout + batch norm + early stopping, and 4-fold cross-validation</td></tr>
+  <tr><td class="ok">✔</td><td>Convolution/pooling exercises equal NumPy results; RNN and LSTM equal PyTorch outputs over a 5-step sequence; GRU matches the lecture formula by hand calculation</td></tr>
+  </tbody></table></div>
   <div class="card"><h3 style="margin-top:0">Browser run: Playground (Playwright, real backend)</h3>
   <table><tbody>
-  <tr><td class="ok">✔</td><td>NumPy network matches PyTorch autograd: loss, gradients (3 activations × 3 depths), 25 SGD and 30 Adam steps (11 tests, run with torch installed);</td></tr>
+  <tr><td class="ok">✔</td><td>NumPy network matches PyTorch autograd (see the numerical verification card above);</td></tr>
   <tr><td class="ok">✔</td><td>Train XOR to epoch 200; pause froze the counter (78 → 78); resume completed; weights differ before vs after; reset returns to epoch 0</td></tr>
   <tr><td class="ok">✔</td><td>Preset, Learning Center iteration trace, custom dataset, dark/mobile, backend-down banner</td></tr>
   </tbody></table></div>
-  <div class="card"><h3 style="margin-top:0">Automated tests (94)</h3>
+  <div class="card"><h3 style="margin-top:0">Automated tests (274)</h3>
   <input type="search" id="tq" placeholder="Filter tests…" aria-label="Filter tests">
   <label class="cb"><input type="checkbox" id="tb" checked> pytest</label> <label class="cb"><input type="checkbox" id="tf" checked> vitest</label>
   <table><thead><tr><th>Suite</th><th>What it proves</th></tr></thead><tbody id="tt"></tbody></table></div>
@@ -205,9 +233,12 @@ const dod=[
 ["Lab 1 implemented with proper UI steps","13 steps in a sidebar stepper with progress, previous/next, mobile drawer."],
 ["Every Lab 1 demo is real","Imputation, three anomaly methods, scaling, a from-scratch 2-2-1 network trained in the browser, softmax calculator, optimizers: all computed live; numbers asserted by tests."],
 ["Content faithful to the uploaded guide","All 13 sections, tables, Q&A and checklist ported; the real MNIST digit and learning-curve image extracted from the file. One inaccurate claim was corrected (see Lab 1 guide)."],
-["Playground still works","41 backend tests + the full Playground browser run were re-executed after the platform change."],
+["Playground covers the lectures","Eight activations, eight optimizers, three losses, L1/L2, dropout, batch norm, early stopping, evaluation metrics with ROC/AUC, six validation methods and cross-validation, each verified numerically."],
+["Cheatsheets menu","Domain-grouped menu, index, searchable and printable Neural Network sheet; ML and NLP shown as planned."],
+["CNN and RNN explorers","Convolution Explorer and Recurrent Cell Explorer with real computation checked against NumPy and PyTorch."],
+["Playground still works","Full Playground browser run re-executed after the extension; the pause, reset, preset, custom dataset and backend-down checks pass."],
 ["Responsive and accessible","No overflow at 390 px; labelled controls, aria-current steps, live regions."],
-["Automated tests","94 passing (41 pytest, 53 Vitest), 11 PyTorch cross-checks when torch is installed, a 20-step API flow script and two Playwright suites."],
+["Automated tests","274 passing (154 pytest + 120 Vitest), 196 pytest with PyTorch installed, a 26-step API flow script and three Playwright suites."],
 ["Documentation","README, docs/API.md, docs/DEPLOY_AWS.md, this report."],
 ["No mock data or placeholder buttons","Planned labs are labelled and non-interactive; nothing is simulated."]];
 $('#dod').innerHTML=dod.map(([t,d])=>`<details><summary style="cursor:pointer;padding:6px 0"><span class="ok">✔</span> ${esc(t)}</summary><p class="mu" style="margin-left:22px">${esc(d)}</p></details>`).join('');
@@ -245,20 +276,34 @@ const pk=()=>{arch.querySelectorAll('.node').forEach(n=>n.setAttribute('aria-pre
 g.onclick=pk;g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pk()}};arch.append(g);if(i===0)pk()});
 const life=["Browser POSTs /api/models → server validates, splits data, initialises weights (status ready).","UI GETs /parameters and POSTs a grid /predict to draw the untrained network and boundary.","Train → POST /training/start; a worker thread starts looping mini-batches.","UI polls /status every 250 ms; when the epoch advances it fetches /history?since=, /parameters and a new grid.","Pause clears the run Event; Resume sets it; Reset stops the worker and re-seeds the weights.","Idle sessions are removed by the janitor after the TTL."];
 $('#life').innerHTML=life.map((t,i)=>`<div class="step card"><div class="num">${i+1}</div><div>${t}</div></div>`).join('');
-const eps=[["GET","/api/health","Service health"],["GET","/api/datasets","Dataset catalogue"],["POST","/api/datasets/generate","Generate data from a seed"],["POST","/api/models","Create a ready session with initial weights"],["POST","/api/training/start","Start a session"],["POST","/api/training/{id}/pause","Pause between mini-batches"],["POST","/api/training/{id}/resume","Resume"],["POST","/api/training/{id}/reset","Stop and re-initialise from seed"],["GET","/api/training/{id}/status","Status and latest metrics"],["GET","/api/training/{id}/history","Per-epoch history (?since=N)"],["POST","/api/training/{id}/predict","Probabilities for points or a grid, optional activations"],["GET","/api/training/{id}/parameters","Weights and biases"],["GET","/api/training/{id}/iteration-trace","Dry-run of one iteration"],["DELETE","/api/training/{id}","Remove a session"]];
+const eps=[["GET","/api/health","Service health"],["GET","/api/datasets","Dataset catalogue"],["POST","/api/datasets/generate","Generate data from a seed"],["POST","/api/models","Create a ready session with initial weights"],["POST","/api/training/start","Start a session"],["POST","/api/training/{id}/pause","Pause between mini-batches"],["POST","/api/training/{id}/resume","Resume"],["POST","/api/training/{id}/reset","Stop and re-initialise from seed"],["GET","/api/training/{id}/status","Status and latest metrics"],["GET","/api/training/{id}/history","Per-epoch history (?since=N)"],["GET","/api/training/{id}/evaluation","Confusion matrix, precision/recall/F1, ROC and AUC at a threshold"],["POST","/api/cross-validation","Train a fresh network per fold and report mean ± std"],["POST","/api/training/{id}/predict","Probabilities for points or a grid, optional activations"],["GET","/api/training/{id}/parameters","Weights and biases"],["GET","/api/training/{id}/iteration-trace","Dry-run of one iteration"],["DELETE","/api/training/{id}","Remove a session"]];
 const rend=()=>{const q=$('#epq').value.toLowerCase();$('#ep').innerHTML=eps.filter(e=>e.join(' ').toLowerCase().includes(q)).map(e=>`<tr><td><code>${e[0]}</code></td><td><code>${esc(e[1])}</code></td><td>${e[2]}</td></tr>`).join('')};$('#epq').oninput=rend;rend();
-$('#comps').innerHTML=["NavBar (Labs menu)","LabPage (stepper shell)","LabsIndex","Home","Header","DatasetSelector","NetworkArchitectureEditor","NetworkGraph","TrainingControls","TrainingMetrics","LossChart","AccuracyChart","GradientChart","DecisionBoundary","ExperimentPresets","LearningCenter","ErrorMessage","labs/ui primitives"].map(c=>`<span class="chip">${c}</span>`).join('');
+$('#comps').innerHTML=["NavBar (Labs menu)","LabPage (stepper shell)","LabsIndex","Home","Header","DatasetSelector","NetworkArchitectureEditor","NetworkGraph","TrainingControls","TrainingMetrics","LossChart","AccuracyChart","GradientChart","DecisionBoundary","ExperimentPresets","LearningCenter","EvaluationPanel","CrossValidationPanel","LearningDiagnosis","ConvolutionExplorer","RecurrentExplorer","CheatsheetPage","ErrorMessage","labs/ui primitives"].map(c=>`<span class="chip">${c}</span>`).join('');
 
 /* gallery */
-const shots=[["home.png","Home: the multi-domain platform"],["labs-menu.png","Labs menu grouped by domain"],["labs-menu-mobile.png","Labs menu on a phone"],["tools-menu.png","Tools menu"],["labs-index.png","Labs index"],["labs-domain-ml.png","Labs filtered to Machine Learning"],["tools-index.png","Tools index by domain"],["lab1-step1.png","Lab 1 · step 1"],["lab1-missing.png","Task 1 · imputation"],["lab1-anomalies.png","Anomaly lab (masking at 20)"],["lab1-train.png","Train the 2-2-1 network"],["lab1-mnist.png","MNIST: pixels, architecture, softmax"],["lab1-optimizers.png","Optimizer race"],["lab1-results.png","Notebook results"],["lab1-defense.png","Defense Q&A"],["lab1-dark.png","Dark theme"],["lab1-mobile.png","Mobile (390 px)"],["lab1-mobile-drawer.png","Mobile step drawer"],["playground-trained.png","Playground: XOR after training"],["playground-full.png","Playground: full page"],["playground-overfitting.png","Playground: overfitting preset"],["learning-center.png","Playground: iteration trace"],["error-backend-down.png","Backend unreachable state"]];
+const shots=[["cheatsheets-menu.png","Cheatsheets menu"],["cheatsheet-nn.png","Neural Network cheatsheet"],["tool-convolution.png","Convolution Explorer"],["tool-recurrent.png","Recurrent Cell Explorer"],["home.png","Home: the multi-domain platform"],["labs-menu.png","Labs menu grouped by domain"],["labs-menu-mobile.png","Labs menu on a phone"],["tools-menu.png","Tools menu"],["labs-index.png","Labs index"],["labs-domain-ml.png","Labs filtered to Machine Learning"],["tools-index.png","Tools index by domain"],["lab1-step1.png","Lab 1 · step 1"],["lab1-missing.png","Task 1 · imputation"],["lab1-anomalies.png","Anomaly lab (masking at 20)"],["lab1-train.png","Train the 2-2-1 network"],["lab1-mnist.png","MNIST: pixels, architecture, softmax"],["lab1-optimizers.png","Optimizer race"],["lab1-results.png","Notebook results"],["lab1-defense.png","Defense Q&A"],["lab1-dark.png","Dark theme"],["lab1-mobile.png","Mobile (390 px)"],["lab1-mobile-drawer.png","Mobile step drawer"],["playground-trained.png","Playground: XOR after training"],["playground-full.png","Playground: full page"],["playground-overfitting.png","Playground: overfitting preset"],["learning-center.png","Playground: iteration trace"],["error-backend-down.png","Backend unreachable state"]];
 $('#gal').innerHTML=shots.map(([f,c])=>`<figure><button data-f="${f}" aria-label="Enlarge: ${c}"><img loading="lazy" src="../screenshots/${f}" alt="${c}"></button><figcaption>${c}</figcaption></figure>`).join('');
 $('#gal').onclick=e=>{const b=e.target.closest('button');if(!b)return;$('#big').src='../screenshots/'+b.dataset.f;$('#big').alt=b.getAttribute('aria-label');$('#dlg').showModal()};$('#dlg').onclick=()=>$('#dlg').close();
 
 /* tests */
-const tests=[["b","Forward pass equals manual computation for relu/sigmoid/tanh"],["b","Finite-difference gradient check: 3 activations × 3 architectures"],["b","SGD update equals w − η·g; Adam first step ≈ η·sign(g)"],["b","Loss decreases on separable data; XOR needs a hidden layer"],["b","Sigmoid and BCE stable at ±1000 logits; shapes, counts, seeds"],["b","API: parameters change; pause freezes the epoch counter; reset restores seeded weights"],["b","API: independent sessions; 404/409/422; divergence reported; trace is a dry run; cleanup"],["f","Lab 1 maths: imputation, z-score, Chauvenet, IQR, masking threshold, scaling"],["f","Lab 1 SmallNet: seeded, trains, 100 % accuracy at lr 0.5×1000, barely learns at lr 0.01×100"],["f","Lab 1 softmax, embedded MNIST digit, optimizer divergence"],["f","Registry: unique ids/numbers, live labs have unique steps, Lab 1 has 13 steps; every lab and tool has a known domain; domains are ml, dl, nlp"],
+const tests=[["b","Optimizers, activations, losses, dropout and batch norm: gradient checks and PyTorch comparison"],["b","Metrics, validation splitters and cross-validation budgets"],["b","Extended API: evaluation, early stopping, cross-validation, validation errors"],["f","Cheatsheets: registry, every section renders, search filters, planned sheet message, nav menu"],["f","Explorers: exercise A/B/C matrices vs NumPy, MNIST CNN 333,526, RNN and LSTM vs PyTorch, GRU formula"],["f","Calculators: lecture parameter counts (LeNet, MNIST CNN, text CNN, RNN, LSTM, GRU)"],["b","Forward pass equals manual computation for relu/sigmoid/tanh"],["b","Finite-difference gradient check: 3 activations × 3 architectures"],["b","SGD update equals w − η·g; Adam first step ≈ η·sign(g)"],["b","Loss decreases on separable data; XOR needs a hidden layer"],["b","Sigmoid and BCE stable at ±1000 logits; shapes, counts, seeds"],["b","API: parameters change; pause freezes the epoch counter; reset restores seeded weights"],["b","API: independent sessions; 404/409/422; divergence reported; trace is a dry run; cleanup"],["f","Lab 1 maths: imputation, z-score, Chauvenet, IQR, masking threshold, scaling"],["f","Lab 1 SmallNet: seeded, trains, 100 % accuracy at lr 0.5×1000, barely learns at lr 0.01×100"],["f","Lab 1 softmax, embedded MNIST digit, optimizer divergence"],["f","Registry: unique ids/numbers, live labs have unique steps, Lab 1 has 13 steps; every lab and tool has a known domain; domains are ml, dl, nlp"],
 ["f","Labs filters: by domain from the URL and chips, by status, empty state with Clear filters"],
 ["f","Tools index groups by domain and shows empty domains; Labs and Tools menus are grouped and close on Escape"],
 ["f","Home presents all three domains, links to the available lab and tool, and planned labs are not links"],["f","LabsIndex lists available vs planned and filters"],["f","LabPage: redirect to first step, unknown lab redirect, Continue saves progress, stepper shows ticks"],["f","Real numbers rendered in anomaly step; browser-side training result in train step"],["f","NavBar Labs menu opens, lists labs, closes on Escape"],["f","Validation, formatting, presets, NetworkGraph, ErrorMessage, Home"]];
+const cov=[
+["Activation functions (sigmoid, tanh, ReLU, Leaky ReLU, ELU, SELU, softplus, SiLU)","Playground designer; Learning Center; cheatsheet","Finite differences + PyTorch"],
+["Loss functions (BCE, MSE, hinge)","Playground loss selector; loss chart","Finite differences + PyTorch"],
+["Optimizers: SGD, momentum, Nesterov, Adagrad, RMSprop, Adadelta, Adam, Nadam","Playground; cheatsheet","PyTorch trajectories"],
+["L1 / L2 regularisation, elastic net","Playground regularisation panel","Finite-difference gradient checks; penalty value and weight-decay tests"],
+["Dropout (inverted) and batch normalisation","Playground","Finite differences; PyTorch with identical masks and for batch norm"],
+["Early stopping with patience and best-weights restore","Playground; API","API tests: stops before the limit and restores the best weights"],
+["Accuracy, precision, recall, F1, confusion matrix, ROC, AUC, threshold","Evaluation panel; /evaluation","Worked examples, accuracy paradox, ROC/AUC identities, threshold trade-off"],
+["Hold-out, k-fold, stratified, shuffle, time series, leave-one-out, cross-validation","Cross-validation panel; /cross-validation","Partition, stratification and the lecture time-series table"],
+["Convolution, stride, padding, pooling, feature maps, receptive field","Convolution Explorer; cheatsheet","NumPy; lecture exercises A, B, C"],
+["LeNet, MNIST CNN and text CNN shapes and parameter counts","Explorer + calculators","Lecture numbers (333,526; 1,387,757)"],
+["SimpleRNN, LSTM, GRU","Recurrent Cell Explorer; cheatsheet","PyTorch (RNN, LSTM); lecture formula (GRU)"],
+["Embedding, text pipeline, Keras layer arguments","Cheatsheet sections","Calculator tests"]];
+const rc=()=>{const q=$('#cq').value.toLowerCase();$('#cv').innerHTML=cov.filter(r=>r.join(' ').toLowerCase().includes(q)).map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('')};$('#cq').oninput=rc;rc();
 const rt=()=>{const q=$('#tq').value.toLowerCase(),b=$('#tb').checked,f=$('#tf').checked;$('#tt').innerHTML=tests.filter(t=>(t[0]==='b'?b:f)&&t[1].toLowerCase().includes(q)).map(t=>`<tr><td><span class="chip">${t[0]==='b'?'pytest':'vitest'}</span></td><td>${esc(t[1])}</td></tr>`).join('')};['tq','tb','tf'].forEach(i=>$('#'+i).oninput=rt);rt();
 document.querySelectorAll('.copy').forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.parentElement.textContent.replace(/^Copy/,'').trim());b.textContent='Copied';setTimeout(()=>b.textContent='Copy',1200)}catch{b.textContent='Select & copy'}});
 const rm=[["Your next lab work to replace the placeholder Lab 2 (planned ML, DL and NLP cards are placeholders)","Waiting for content"],["Server-side lab progress and accounts (progress is per-browser today)","Planned"],["PyTorch training mode in the app (PyTorch is used only to verify the maths)","<span class='bad'>Not built</span>"],["Streaming instead of polling in the Playground","Planned"],["Redis-backed Playground sessions for scaling","Planned"],["Authentication and rate limiting before public exposure","Planned"],["Playwright suites in CI","Planned"],["Docker image build verification","<span class='warn'>Unverified here</span>"],["AWS deployment with the CloudFormation template","<span class='warn'>Template linted; not deployed</span>"]];

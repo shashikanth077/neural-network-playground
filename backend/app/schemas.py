@@ -8,9 +8,11 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 from .config import MAX_SAMPLES
 
 DatasetName = Literal["xor", "moons", "circles", "linear"]
-Activation = Literal["relu", "sigmoid", "tanh"]
+Activation = Literal["relu", "leaky_relu", "elu", "selu", "sigmoid", "tanh", "softplus", "silu"]
 Initializer = Literal["xavier", "he", "small_normal", "zeros"]
-Optimizer = Literal["sgd", "adam"]
+Optimizer = Literal["sgd", "momentum", "nesterov", "adagrad", "rmsprop", "adadelta", "adam", "nadam"]
+Loss = Literal["bce", "mse", "hinge"]
+ValidationMethod = Literal["holdout", "kfold", "stratified_kfold", "shuffle_split", "time_series", "leave_one_out"]
 Status = Literal["ready", "running", "paused", "completed", "failed"]
 
 
@@ -65,11 +67,27 @@ class ModelConfig(BaseModel):
     init: Initializer = "xavier"
     optimizer: Optimizer = "adam"
     learning_rate: float = Field(0.03, gt=0.0, le=10.0)
-    batch_size: int = Field(32, ge=1, le=512)
+    batch_size: int = Field(32, ge=1, le=MAX_SAMPLES, description="1 = SGD, n_train = batch gradient descent, in between = mini-batch.")
+    loss: Loss = "bce"
+    l1: float = Field(0.0, ge=0.0, le=1.0, description="L1 (lasso) strength on the weights.")
+    l2: float = Field(0.0, ge=0.0, le=1.0, description="L2 (ridge / weight decay) strength on the weights.")
+    dropout: float = Field(0.0, ge=0.0, le=0.9, description="Probability of dropping a hidden neuron during training.")
+    batch_norm: bool = False
+    early_stopping: bool = False
+    patience: int = Field(10, ge=1, le=500, description="Epochs without validation-loss improvement before stopping.")
+    restore_best: bool = True
     epochs: int = Field(200, ge=1, le=2000)
     val_split: float = Field(0.2, ge=0.0, le=0.5)
     seed: int = Field(0, ge=0, le=2**31 - 1)
     epoch_delay_ms: int = Field(15, ge=0, le=1000, description="Pause after each epoch so progress is watchable.")
+
+    @model_validator(mode="after")
+    def _combos(self):
+        if self.early_stopping and self.val_split <= 0:
+            raise ValueError("Early stopping watches the validation loss, so set a validation split above 0.")
+        if self.batch_norm and self.batch_size < 2:
+            raise ValueError("Batch normalisation needs a batch size of at least 2.")
+        return self
 
     @field_validator("hidden_layers")
     @classmethod
@@ -104,6 +122,7 @@ class EpochMetrics(BaseModel):
     train_acc: float
     val_loss: Optional[float] = None
     val_acc: Optional[float] = None
+    penalty: float = 0.0
     grad_norm: float
     param_norm: float
     elapsed: float
@@ -117,6 +136,10 @@ class SessionStatus(BaseModel):
     elapsed_seconds: float
     error: Optional[str]
     n_parameters: int
+    n_non_trainable: int = 0
+    best_epoch: Optional[int] = None
+    stopped_early: bool = False
+    restored_best: bool = False
     n_train: int
     n_val: int
     layer_sizes: list[int]
@@ -132,6 +155,8 @@ class HistoryResponse(BaseModel):
 class LayerParameters(BaseModel):
     weights: list[list[float]]  # (n_in, n_out)
     biases: list[float]
+    gamma: Optional[list[float]] = None  # batch-norm scale (hidden layers, when enabled)
+    beta: Optional[list[float]] = None
 
 
 class ParametersResponse(BaseModel):
@@ -197,4 +222,66 @@ class IterationTrace(BaseModel):
     example_weight: dict
     optimizer: str
     learning_rate: float
+    note: str
+
+
+class Confusion(BaseModel):
+    tp: int
+    fp: int
+    tn: int
+    fn: int
+
+
+class RocCurve(BaseModel):
+    fpr: list[float]
+    tpr: list[float]
+    thresholds: list[Optional[float]]
+
+
+class EvaluationResponse(BaseModel):
+    session_id: str
+    split: Literal["train", "val"]
+    epoch: int
+    n: int
+    threshold: float
+    confusion: Confusion
+    accuracy: float
+    precision: float
+    recall: float
+    specificity: float
+    fpr: float
+    f1: float
+    auc: Optional[float]
+    roc: Optional[RocCurve]
+
+
+class CrossValidationRequest(BaseModel):
+    dataset: DataPayload
+    config: ModelConfig = Field(default_factory=ModelConfig)
+    method: ValidationMethod = "kfold"
+    k: int = Field(5, ge=2, le=10, description="Folds (or number of splits).")
+    val_fraction: float = Field(0.2, gt=0.0, lt=0.9, description="Used by hold-out and shuffle split.")
+
+
+class FoldResult(BaseModel):
+    fold: int
+    n_train: int
+    n_val: int
+    val_indices: list[int]
+    val_loss: float
+    val_accuracy: float
+    val_f1: float
+    train_loss: float
+    train_accuracy: float
+
+
+class CrossValidationResponse(BaseModel):
+    method: str
+    folds: list[FoldResult]
+    mean_val_loss: float
+    std_val_loss: float
+    mean_val_accuracy: float
+    std_val_accuracy: float
+    mean_val_f1: float
+    n_samples: int
     note: str

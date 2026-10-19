@@ -1,11 +1,11 @@
 import { memo, useMemo } from "react";
-import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { CartesianGrid, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { EpochMetrics, PinnedRun } from "../types";
 import { buildRows, COLORS, EmptyChart, Explain } from "./chartParts";
 
-interface Props { history: EpochMetrics[]; pinned: PinnedRun | null; hasVal: boolean }
+interface Props { history: EpochMetrics[]; pinned: PinnedRun | null; hasVal: boolean; bestEpoch?: number | null }
 
-function LossChartImpl({ history, pinned, hasVal }: Props) {
+function LossChartImpl({ history, pinned, hasVal, bestEpoch }: Props) {
   const rows = useMemo(() => buildRows(history, pinned, (h) => ({ train: h.train_loss, val: h.val_loss })), [history, pinned]);
   return (
     <div>
@@ -21,6 +21,7 @@ function LossChartImpl({ history, pinned, hasVal }: Props) {
               <YAxis tick={{ fontSize: 11, fill: COLORS.axis }} domain={[0, "auto"]} width={44} tickFormatter={(v: number) => v.toFixed(2)} />
               <Tooltip formatter={(v: number) => (typeof v === "number" ? v.toFixed(4) : v)} labelFormatter={(l) => `Epoch ${l}`} contentStyle={{ borderRadius: 10, fontSize: 12 }} />
               <Legend wrapperStyle={{ fontSize: 12 }} />
+              {hasVal && bestEpoch ? <ReferenceLine x={bestEpoch} stroke="#059669" strokeDasharray="4 3" label={{ value: `best val · ${bestEpoch}`, fill: "#059669", fontSize: 11, position: "insideTopRight" }} /> : null}
               <Line type="monotone" dataKey="train" name="Train loss" stroke={COLORS.train} dot={false} strokeWidth={2} isAnimationActive={false} />
               {hasVal && <Line type="monotone" dataKey="val" name="Validation loss" stroke={COLORS.val} dot={false} strokeWidth={2} isAnimationActive={false} connectNulls />}
               {pinned && <Line type="monotone" dataKey="pin_train" name="Pinned train" stroke={COLORS.pinTrain} strokeDasharray="5 4" dot={false} isAnimationActive={false} />}

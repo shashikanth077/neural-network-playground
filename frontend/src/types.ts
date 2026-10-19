@@ -1,7 +1,9 @@
 export type DatasetName = "xor" | "moons" | "circles" | "linear" | "custom";
-export type Activation = "relu" | "sigmoid" | "tanh";
+export type Activation = "relu" | "leaky_relu" | "elu" | "selu" | "sigmoid" | "tanh" | "softplus" | "silu";
 export type Initializer = "xavier" | "he" | "small_normal" | "zeros";
-export type Optimizer = "sgd" | "adam";
+export type Optimizer = "sgd" | "momentum" | "nesterov" | "adagrad" | "rmsprop" | "adadelta" | "adam" | "nadam";
+export type Loss = "bce" | "mse" | "hinge";
+export type ValidationMethod = "holdout" | "kfold" | "stratified_kfold" | "shuffle_split" | "time_series" | "leave_one_out";
 export type TrainStatus = "ready" | "running" | "paused" | "completed" | "failed";
 
 export interface DatasetSpec {
@@ -23,6 +25,14 @@ export interface ModelConfig {
   optimizer: Optimizer;
   learning_rate: number;
   batch_size: number;
+  loss: Loss;
+  l1: number;
+  l2: number;
+  dropout: number;
+  batch_norm: boolean;
+  early_stopping: boolean;
+  patience: number;
+  restore_best: boolean;
   epochs: number;
   val_split: number;
   seed: number;
@@ -35,6 +45,7 @@ export interface EpochMetrics {
   train_acc: number;
   val_loss: number | null;
   val_acc: number | null;
+  penalty: number;
   grad_norm: number;
   param_norm: number;
   elapsed: number;
@@ -48,6 +59,10 @@ export interface SessionStatus {
   elapsed_seconds: number;
   error: string | null;
   n_parameters: number;
+  n_non_trainable: number;
+  best_epoch: number | null;
+  stopped_early: boolean;
+  restored_best: boolean;
   n_train: number;
   n_val: number;
   layer_sizes: number[];
@@ -58,6 +73,8 @@ export interface SessionStatus {
 export interface LayerParameters {
   weights: number[][]; // [n_in][n_out]
   biases: number[];
+  gamma?: number[] | null;
+  beta?: number[] | null;
 }
 
 export interface ModelParameters {
@@ -115,4 +132,45 @@ export interface IterationTrace {
 export interface PinnedRun {
   label: string;
   history: EpochMetrics[];
+}
+
+export interface Evaluation {
+  session_id: string;
+  split: "train" | "val";
+  epoch: number;
+  n: number;
+  threshold: number;
+  confusion: { tp: number; fp: number; tn: number; fn: number };
+  accuracy: number;
+  precision: number;
+  recall: number;
+  specificity: number;
+  fpr: number;
+  f1: number;
+  auc: number | null;
+  roc: { fpr: number[]; tpr: number[]; thresholds: (number | null)[] } | null;
+}
+
+export interface FoldResult {
+  fold: number;
+  n_train: number;
+  n_val: number;
+  val_indices: number[];
+  val_loss: number;
+  val_accuracy: number;
+  val_f1: number;
+  train_loss: number;
+  train_accuracy: number;
+}
+
+export interface CrossValidation {
+  method: ValidationMethod;
+  folds: FoldResult[];
+  mean_val_loss: number;
+  std_val_loss: number;
+  mean_val_accuracy: number;
+  std_val_accuracy: number;
+  mean_val_f1: number;
+  n_samples: number;
+  note: string;
 }

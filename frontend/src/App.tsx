@@ -5,6 +5,7 @@ import { Home } from "./pages/Home";
 import { LabsIndex } from "./pages/LabsIndex";
 import { ToolsIndex } from "./pages/ToolsIndex";
 import { CheatsheetsIndex } from "./pages/CheatsheetsIndex";
+import { useT } from "./i18n";
 
 const Playground = lazy(() => import("./pages/Playground").then((m) => ({ default: m.Playground })));
 const CheatsheetPage = lazy(() => import("./pages/CheatsheetPage").then((m) => ({ default: m.CheatsheetPage })));
@@ -13,14 +14,15 @@ const RecurrentExplorer = lazy(() => import("./pages/RecurrentExplorer").then((m
 const LabPage = lazy(() => import("./pages/LabPage").then((m) => ({ default: m.LabPage })));
 
 export default function App() {
+  const t = useT();
   return (
     <div className="min-h-screen">
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-surface focus:p-2">
-        Skip to content
+        {t("nav.skip")}
       </a>
       <NavBar />
       <div id="main">
-        <Suspense fallback={<p className="p-8 text-center text-sm text-muted" role="status">Loading…</p>}>
+        <Suspense fallback={<p className="p-8 text-center text-sm text-muted" role="status">…</p>}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/labs" element={<LabsIndex />} />

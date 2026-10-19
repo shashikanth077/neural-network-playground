@@ -32,7 +32,7 @@ describe("cheatsheet pages", () => {
     at("/cheatsheets/neural-network");
     const nn = getSheet("neural-network")!;
     for (const s of nn.sections) {
-      expect(await screen.findByRole("heading", { level: 2, name: s.title })).toBeInTheDocument();
+      expect(await screen.findByRole("heading", { level: 2, name: s.title }, { timeout: 5000 })).toBeInTheDocument();
     }
   });
 

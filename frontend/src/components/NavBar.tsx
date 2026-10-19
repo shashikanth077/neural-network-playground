@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useThemeToggle } from "../hooks/useTheme";
+import { LanguageSwitcher, useMeta, useT } from "../i18n";
 import { DOMAINS } from "../labs/domains";
 import { SHEETS } from "../cheatsheets/registry";
 import { LABS } from "../labs/registry";
@@ -86,6 +87,8 @@ const DomainHeading = ({ glyph, name, text }: { glyph: string; name: string; tex
 
 export function NavBar() {
   const { dark, toggle } = useThemeToggle();
+  const t = useT();
+  const m = useMeta();
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur">
       <div className="mx-auto flex h-14 max-w-[1500px] items-center justify-between px-4 sm:px-6">
@@ -94,74 +97,75 @@ export function NavBar() {
           <span className="hidden sm:inline">AI Lab</span>
         </Link>
         <nav aria-label="Primary" className="flex items-center gap-0 sm:gap-1">
-          <NavLink to="/" end className={(a) => `${linkCls(a)} hidden sm:block`}>Home</NavLink>
+          <NavLink to="/" end className={(a) => `${linkCls(a)} hidden sm:block`}>{t("nav.home")}</NavLink>
 
-          <NavMenu label="Labs" id="labs-menu" prefix="/labs">
+          <NavMenu label={t("nav.labs")} id="labs-menu" prefix="/labs">
             {DOMAINS.map((d) => {
               const labs = LABS.filter((l) => l.domain === d.id);
               if (!labs.length) return null;
               return (
                 <div key={d.id}>
-                  <DomainHeading glyph={d.glyph} name={d.name} text={d.text} />
+                  <DomainHeading glyph={d.glyph} name={m.domainName(d)} text={d.text} />
                   <ul>
                     {labs.map((l) => (
                       <li key={l.id}>
-                        <MenuRow badge={String(l.number)} title={l.title} meta={l.status === "live" ? `${l.steps.length} steps` : "Planned"} to={l.status === "live" ? `/labs/${l.id}` : undefined} />
+                        <MenuRow badge={String(l.number)} title={m.labTitle(l)} meta={l.status === "live" ? t("nav.steps", undefined, { n: l.steps.length }) : t("nav.planned")} to={l.status === "live" ? `/labs/${l.id}` : undefined} />
                       </li>
                     ))}
                   </ul>
                 </div>
               );
             })}
-            <Link to="/labs" className="mt-1 block rounded-xl border-t border-line px-3 pt-2.5 pb-1.5 text-sm font-semibold text-brand hover:underline">Browse all labs →</Link>
+            <Link to="/labs" className="mt-1 block rounded-xl border-t border-line px-3 pt-2.5 pb-1.5 text-sm font-semibold text-brand hover:underline">{t("nav.browseLabs")}</Link>
           </NavMenu>
 
-          <NavMenu label="Tools" id="tools-menu" prefix="/playground|/tools">
+          <NavMenu label={t("nav.tools")} id="tools-menu" prefix="/playground|/tools">
             {DOMAINS.map((d) => {
-              const tools = TOOLS.filter((t) => t.domain === d.id);
+              const tools = TOOLS.filter((x) => x.domain === d.id);
               if (!tools.length) return null;
               return (
                 <div key={d.id}>
-                  <DomainHeading glyph={d.glyph} name={d.name} text={d.text} />
+                  <DomainHeading glyph={d.glyph} name={m.domainName(d)} text={d.text} />
                   <ul>
-                    {tools.map((t) => (
-                      <li key={t.id}><MenuRow badge={d.short} title={t.title} meta={t.needsBackend ? "Needs the backend" : "Runs in the browser"} to={t.path} /></li>
+                    {tools.map((x) => (
+                      <li key={x.id}><MenuRow badge={d.short} title={m.toolTitle(x)} meta={x.needsBackend ? t("nav.needsBackend") : t("nav.inBrowser")} to={x.path} /></li>
                     ))}
                   </ul>
                 </div>
               );
             })}
-            <Link to="/tools" className="mt-1 block rounded-xl border-t border-line px-3 pt-2.5 pb-1.5 text-sm font-semibold text-brand hover:underline">Browse all tools →</Link>
+            <Link to="/tools" className="mt-1 block rounded-xl border-t border-line px-3 pt-2.5 pb-1.5 text-sm font-semibold text-brand hover:underline">{t("nav.browseTools")}</Link>
           </NavMenu>
 
-          <NavMenu label="Cheatsheets" id="sheets-menu" prefix="/cheatsheets">
+          <NavMenu label={t("nav.cheatsheets")} id="sheets-menu" prefix="/cheatsheets">
             {DOMAINS.map((d) => {
               const sheets = SHEETS.filter((s) => s.domain === d.id);
               if (!sheets.length) return null;
               return (
                 <div key={d.id}>
-                  <DomainHeading glyph={d.glyph} name={d.name} text={d.text} />
+                  <DomainHeading glyph={d.glyph} name={m.domainName(d)} text={d.text} />
                   <ul>
                     {sheets.map((s) => (
                       <li key={s.id}>
-                        <MenuRow badge={d.short} title={s.title} meta={s.status === "live" ? `${s.sections.length} sections` : "Planned"} to={s.status === "live" ? `/cheatsheets/${s.id}` : undefined} />
+                        <MenuRow badge={d.short} title={m.sheetTitle(s)} meta={s.status === "live" ? t("nav.sections", undefined, { n: s.sections.length }) : t("nav.planned")} to={s.status === "live" ? `/cheatsheets/${s.id}` : undefined} />
                       </li>
                     ))}
                   </ul>
                 </div>
               );
             })}
-            <Link to="/cheatsheets" className="mt-1 block rounded-xl border-t border-line px-3 pt-2.5 pb-1.5 text-sm font-semibold text-brand hover:underline">Browse all cheatsheets →</Link>
+            <Link to="/cheatsheets" className="mt-1 block rounded-xl border-t border-line px-3 pt-2.5 pb-1.5 text-sm font-semibold text-brand hover:underline">{t("nav.browseSheets")}</Link>
           </NavMenu>
 
           <button
             onClick={toggle}
             className="btn-ghost ml-1 !px-2 sm:ml-2 sm:!px-2.5"
-            aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
-            title={dark ? "Light theme" : "Dark theme"}
+            aria-label={dark ? t("nav.lightTheme") : t("nav.darkTheme")}
+            title={dark ? t("nav.lightTheme") : t("nav.darkTheme")}
           >
             <span aria-hidden>{dark ? "☀" : "☾"}</span>
           </button>
+          <LanguageSwitcher />
         </nav>
       </div>
     </header>

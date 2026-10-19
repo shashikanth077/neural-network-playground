@@ -1,6 +1,8 @@
+import type { Messages } from "../index";
 import { build } from "./common";
+import { conceptTexts } from "./concepts_text";
 
-export const concepts = build([
+const chrome = build([
   ["nav.concepts", "Concepts", "ಪರಿಕಲ್ಪನೆಗಳು", "Sąvokos"],
   ["cc.eyebrow", "AI Lab · Concepts", "AI Lab · ಪರಿಕಲ್ಪನೆಗಳು", "AI Lab · Sąvokos"],
   ["cc.title", "AI concepts, each with a live example", "AI ಪರಿಕಲ್ಪನೆಗಳು, ಪ್ರತಿಯೊಂದಕ್ಕೂ ಲೈವ್ ಉದಾಹರಣೆ", "DI sąvokos su gyvais pavyzdžiais"],
@@ -36,7 +38,6 @@ export const concepts = build([
   ["cc.refOnly", "Reference", "ಉಲ್ಲೇಖ", "Nuoroda"],
   ["cc.planned.title", "Planned live example", "ಯೋಜಿತ ಲೈವ್ ಉದಾಹರಣೆ", "Planuojamas gyvas pavyzdys"],
   ["cc.notFound", "Concept not found", "ಪರಿಕಲ್ಪನೆ ಸಿಗಲಿಲ್ಲ", "Sąvoka nerasta"],
-  ["cc.partial", "The concept titles and short texts are shown in English; the rest of the page is translated.", "ಪರಿಕಲ್ಪನೆಗಳ ಶೀರ್ಷಿಕೆ ಮತ್ತು ಸಣ್ಣ ಪಠ್ಯಗಳು ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿವೆ; ಪುಟದ ಉಳಿದ ಭಾಗ ಅನುವಾದಿತವಾಗಿದೆ.", "Sąvokų pavadinimai ir trumpi tekstai rodomi anglų kalba; likusi puslapio dalis išversta."],
   ["cc.kind.learn", "Learning Center topic", "ಕಲಿಕಾ ಕೇಂದ್ರದ ವಿಷಯ", "Mokymosi centro tema"],
   ["cc.kind.playground", "Playground", "ಪ್ಲೇಗ್ರೌಂಡ್", "Žaidimų aikštelė"],
   ["cc.kind.experiment", "Guided experiment", "ಮಾರ್ಗದರ್ಶಿತ ಪ್ರಯೋಗ", "Vedamas eksperimentas"],
@@ -53,3 +54,10 @@ export const concepts = build([
   ["cov.status", "Status", "ಸ್ಥಿತಿ", "Būsena"],
   ["cov.gaps", "Planned concepts and their live example", "ಯೋಜಿತ ಪರಿಕಲ್ಪನೆಗಳು ಮತ್ತು ಅವುಗಳ ಲೈವ್ ಉದಾಹರಣೆ", "Planuojamos sąvokos ir jų gyvi pavyzdžiai"],
 ]);
+
+/** One namespace: the page chrome (`cc.*`, `cov.*`) plus the catalogue texts (`concept.*`, `area.*`). */
+export const concepts: Messages = {
+  en: { ...chrome.en, ...conceptTexts.en },
+  kn: { ...chrome.kn, ...conceptTexts.kn },
+  lt: { ...chrome.lt, ...conceptTexts.lt },
+};

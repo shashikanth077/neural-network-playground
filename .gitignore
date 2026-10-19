@@ -11,5 +11,6 @@ venv/
 .DS_Store
 *.log
 coverage/
+*.pem
 .idea/
 .vscode/

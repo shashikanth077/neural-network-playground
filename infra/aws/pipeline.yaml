@@ -174,3 +174,11 @@ Resources:
               InputArtifacts:
                 - Name: SourceOutput
               RunOrder: 1
+      Triggers:
+        - ProviderType: CodeStarSourceConnection
+          GitConfiguration:
+            SourceActionName: GitHub
+            Push:
+              - Branches:
+                  Includes:
+                    - master

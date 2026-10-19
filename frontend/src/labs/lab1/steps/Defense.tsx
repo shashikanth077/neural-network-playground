@@ -1,36 +1,39 @@
+import { useT } from "../rich";
 import { Demo } from "../../ui";
 import { QA } from "../data";
 
-const MAP: string[][] = [
-  ["1", "imputation, groupby", "“Task 1” cells", "165.83 / 166 cm"],
-  ["2", "Z-score", "z = (A−mean)/std", "88, z = 5.22"],
-  ["3", "Chauvenet", "erfc, n·P < 0.5", "88, n·P = 5.4e-6"],
-  ["4", "IQR", "np.percentile", "limits 4.625 / 19.625"],
-  ["5", "backprop from scratch", "class SmallNet", "Name 5 → female"],
-  ["6.1", "depth, width, batch, validation", "run_model(...)", "98.16%, 512-256-128-64"],
-  ["6.2", "activations", "loop over act × 3 repeats", "relu 97.58%"],
-  ["6.3", "optimizers", "grid sgd / rmsprop / adam", "Adam 0.001, 98.16%"],
-];
+/** Task id, then keys for the three text columns live under `lab1.def.map.<index>.*`. */
+const MAP_IDS = ["1", "2", "3", "4", "5", "6.1", "6.2", "6.3"];
 
 export default function Defense() {
+  const t = useT();
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted">Short answers you can say out loud, with numbers from this lab. Remember: you must have the code open and be able to explain every cell.</p>
+      <p className="text-sm text-muted">{t("lab1.def.intro")}</p>
       <div className="space-y-2">
-        {QA.map(([q, a]) => (
+        {QA.map(([q, a], i) => (
           <details key={q} className="card group p-4">
             <summary className="cursor-pointer list-none text-sm font-semibold marker:hidden">
-              <span aria-hidden className="mr-2 inline-block text-brand transition group-open:rotate-90">▸</span>{q}
+              <span aria-hidden className="mr-2 inline-block text-brand transition group-open:rotate-90">▸</span>{t(`lab1.def.q${i}.q`, q)}
             </summary>
-            <p className="mt-2 pl-5 text-sm leading-relaxed text-muted">{a}</p>
+            <p className="mt-2 pl-5 text-sm leading-relaxed text-muted">{t(`lab1.def.q${i}.a`, a)}</p>
           </details>
         ))}
       </div>
-      <Demo title="Quick map: what to open for each task">
+      <Demo title={t("lab1.def.map.title")}>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[480px] text-sm">
-            <thead><tr>{["Task", "Concept", "Where in the notebook", "Key output"].map((h) => <th key={h} scope="col" className="border-b border-line px-2 py-1.5 text-left text-xs font-semibold uppercase tracking-wide text-muted">{h}</th>)}</tr></thead>
-            <tbody>{MAP.map((r) => <tr key={r[0]}>{r.map((c, i) => <td key={i} className="border-b border-line px-2 py-1.5">{c}</td>)}</tr>)}</tbody>
+            <thead><tr>{["task", "concept", "where", "out"].map((h) => <th key={h} scope="col" className="border-b border-line px-2 py-1.5 text-left text-xs font-semibold uppercase tracking-wide text-muted">{t(`lab1.def.map.h.${h}`)}</th>)}</tr></thead>
+            <tbody>
+              {MAP_IDS.map((id, i) => (
+                <tr key={id}>
+                  <td className="border-b border-line px-2 py-1.5">{id}</td>
+                  <td className="border-b border-line px-2 py-1.5">{t(`lab1.def.map.${i}.c`)}</td>
+                  <td className="border-b border-line px-2 py-1.5">{t(`lab1.def.map.${i}.w`)}</td>
+                  <td className="border-b border-line px-2 py-1.5">{t(`lab1.def.map.${i}.k`)}</td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         </div>
       </Demo>

@@ -157,9 +157,14 @@ export function LabPage() {
           <p className="mt-1 max-w-3xl text-muted">{m.stepSummary(lab.id, step)}</p>
         </header>
 
+        {lab.Map && <lab.Map key={`map-${step.id}`} stepId={step.id} done={progress.done} />}
+        {lab.Intro && <lab.Intro key={`intro-${step.id}`} stepId={step.id} done={progress.done} />}
+
         <Suspense fallback={<p className="py-10 text-center text-sm text-muted" role="status">{t("lab.loading")}</p>}>
           <Step />
         </Suspense>
+
+        {lab.Outro && <lab.Outro key={`outro-${step.id}`} stepId={step.id} done={progress.done} />}
 
         <footer className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
           {prev ? (

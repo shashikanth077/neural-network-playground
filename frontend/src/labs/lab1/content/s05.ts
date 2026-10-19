@@ -1,0 +1,41 @@
+import type { Row } from "./types";
+
+/** Step 5: Normalization. */
+export const s05: Row[] = [
+  ["step.lab1.scaling.title", "Normalization", "ಸಾಮಾನ್ಯೀಕರಣ (ಮಾಪನ)", "Normavimas"],
+  ["step.lab1.scaling.summary", "Put height and weight on one ruler: min-max vs standardize.", "ಎತ್ತರ ಮತ್ತು ತೂಕವನ್ನು ಒಂದೇ ಮಾಪಕದಲ್ಲಿ ಇಡಿ: min-max ಮತ್ತು ಪ್ರಮಾಣೀಕರಣ.", "Ūgį ir svorį padėkite ant vienos liniuotės: min-max ir standartizavimas."],
+
+  ["lab1.sc.intro", "Height is ~150-200 (cm), weight ~50-100 (kg). Networks start with small random weights and learn by small steps; features with big numbers dominate and gradients become unstable. So we rescale.", "ಎತ್ತರ ~150-200 (cm), ತೂಕ ~50-100 (kg). ನೆಟ್‌ವರ್ಕ್‌ಗಳು ಸಣ್ಣ ಯಾದೃಚ್ಛಿಕ ತೂಕಗಳೊಂದಿಗೆ ಆರಂಭಿಸಿ ಸಣ್ಣ ಹೆಜ್ಜೆಗಳಲ್ಲಿ ಕಲಿಯುತ್ತವೆ; ದೊಡ್ಡ ಸಂಖ್ಯೆಗಳ ವೈಶಿಷ್ಟ್ಯಗಳು ಪ್ರಾಬಲ್ಯ ಸಾಧಿಸುತ್ತವೆ ಮತ್ತು ಗ್ರೇಡಿಯಂಟ್‌ಗಳು ಅಸ್ಥಿರವಾಗುತ್ತವೆ. ಆದ್ದರಿಂದ ನಾವು ಮರುಮಾಪನ ಮಾಡುತ್ತೇವೆ.", "Ūgis yra ~150-200 (cm), svoris ~50-100 (kg). Tinklai pradeda nuo mažų atsitiktinių svorių ir mokosi mažais žingsniais; didelių skaičių požymiai dominuoja, o gradientai tampa nestabilūs. Todėl keičiame mastelį."],
+  ["lab1.sc.method", "Scaling method", "ಮಾಪನ ವಿಧಾನ", "Normavimo metodas"],
+  ["lab1.sc.mm", "Min-max → [0,1]", "Min-max → [0,1]", "Min-max → [0,1]"],
+  ["lab1.sc.zs", "Standardize (mean 0, std 1)", "ಪ್ರಮಾಣೀಕರಿಸಿ (ಸರಾಸರಿ 0, std 1)", "Standartizuoti (vidurkis 0, std 1)"],
+  ["lab1.sc.hname", "height (cm)", "ಎತ್ತರ (cm)", "ūgis (cm)"],
+  ["lab1.sc.wname", "weight (kg)", "ತೂಕ (kg)", "svoris (kg)"],
+  ["lab1.sc.demo.title", "Before and after scaling", "ಮಾಪನದ ಮೊದಲು ಮತ್ತು ನಂತರ", "Prieš ir po normavimo"],
+  ["lab1.sc.svgAria", "Dot plots of the original and scaled features", "ಮೂಲ ಮತ್ತು ಮಾಪನ ಮಾಡಿದ ವೈಶಿಷ್ಟ್ಯಗಳ ಚುಕ್ಕೆ ನಕ್ಷೆಗಳು", "Pradinių ir normuotų požymių taškų diagramos"],
+  ["lab1.sc.svgNote", "top: original values (shown 0-100% of own range) · bottom: after scaling", "ಮೇಲೆ: ಮೂಲ ಮೌಲ್ಯಗಳು (ತನ್ನ ವ್ಯಾಪ್ತಿಯ 0-100% ಆಗಿ ತೋರಿಸಲಾಗಿದೆ) · ಕೆಳಗೆ: ಮಾಪನದ ನಂತರ", "viršuje: pradinės reikšmės (rodoma 0-100 % savo intervalo) · apačioje: po normavimo"],
+  ["lab1.sc.out", "Name 5 (158 cm, 54 kg) becomes **({h}, {w})**. The shape of the data is unchanged, only the units are gone: both features now live on a comparable scale.", "Name 5 (158 cm, 54 kg) **({h}, {w})** ಆಗುತ್ತದೆ. ಡೇಟಾದ ಆಕಾರ ಬದಲಾಗಿಲ್ಲ, ಕೇವಲ ಏಕಮಾನಗಳು ಹೋಗಿವೆ: ಈಗ ಎರಡೂ ವೈಶಿಷ್ಟ್ಯಗಳು ಹೋಲಿಸಬಹುದಾದ ಮಾಪಕದಲ್ಲಿವೆ.", "Name 5 (158 cm, 54 kg) tampa **({h}, {w})**. Duomenų forma nepasikeitė, dingo tik vienetai: abu požymiai dabar yra palyginamo mastelio."],
+  ["lab1.sc.f1", "Used in Task 5. Smallest becomes 0, biggest 1. Sensitive to outliers (that is why Tasks 2-4 come first!).", "ಕಾರ್ಯ 5 ರಲ್ಲಿ ಬಳಸಲಾಗಿದೆ. ಚಿಕ್ಕದು 0 ಆಗುತ್ತದೆ, ದೊಡ್ಡದು 1. ಅಸಂಗತ ಮೌಲ್ಯಗಳಿಗೆ ಸೂಕ್ಷ್ಮ (ಅದಕ್ಕಾಗಿಯೇ ಕಾರ್ಯಗಳು 2-4 ಮೊದಲು ಬರುತ್ತವೆ!).", "Naudojama 5 užduotyje. Mažiausia tampa 0, didžiausia – 1. Jautru išskirtims (todėl 2-4 užduotys eina pirmiau!)."],
+  ["lab1.sc.f2", "Centers at 0. Values are not bounded. The other method named in the objective.", "0 ಕ್ಕೆ ಕೇಂದ್ರೀಕರಿಸುತ್ತದೆ. ಮೌಲ್ಯಗಳು ಮಿತಿಯಲ್ಲಿಲ್ಲ. ಉದ್ದೇಶದಲ್ಲಿ ಹೆಸರಿಸಿದ ಇನ್ನೊಂದು ವಿಧಾನ.", "Centruoja ties 0. Reikšmės neapribotos. Kitas užduotyje paminėtas metodas."],
+  ["lab1.sc.impTitle", "Important detail", "ಮುಖ್ಯ ವಿವರ", "Svarbi detalė"],
+  ["lab1.sc.imp", "Compute min/max (or mean/std) on __training data__ and reuse the same numbers for new data. Never recompute them on the test set.", "min/max (ಅಥವಾ ಸರಾಸರಿ/std) ಅನ್ನು __ತರಬೇತಿ ಡೇಟಾ__ ಮೇಲೆ ಲೆಕ್ಕ ಹಾಕಿ ಮತ್ತು ಹೊಸ ಡೇಟಾಗೆ ಅದೇ ಸಂಖ್ಯೆಗಳನ್ನು ಮರುಬಳಸಿ. ಟೆಸ್ಟ್ ಸೆಟ್ ಮೇಲೆ ಅವನ್ನು ಎಂದಿಗೂ ಮರುಲೆಕ್ಕ ಹಾಕಬೇಡಿ.", "Apskaičiuokite min/max (arba vidurkį/std) iš __mokymo duomenų__ ir tuos pačius skaičius naudokite naujiems duomenims. Niekada neperskaičiuokite jų testavimo rinkinyje."],
+
+  ["lab1.sc.lab.title", "Edit the table and watch both scalers recompute", "ಕೋಷ್ಟಕವನ್ನು ತಿದ್ದಿ ಮತ್ತು ಎರಡೂ ಮಾಪಕಗಳು ಮರುಲೆಕ್ಕ ಹಾಕುವುದನ್ನು ನೋಡಿ", "Redaguokite lentelę ir stebėkite, kaip perskaičiuojami abu normuokliai"],
+  ["lab1.sc.lab.intro", "Change any height or weight. The scaled columns update live, and the formula for the patient you pick is written out with your numbers. The min, max, μ and σ shown are what a trained model has to remember about its training data.", "ಯಾವುದೇ ಎತ್ತರ ಅಥವಾ ತೂಕವನ್ನು ಬದಲಿಸಿ. ಮಾಪನ ಮಾಡಿದ ಕಾಲಮ್‌ಗಳು ಲೈವ್ ಆಗಿ ಬದಲಾಗುತ್ತವೆ, ಮತ್ತು ನೀವು ಆರಿಸಿದ ರೋಗಿಯ ಸೂತ್ರ ನಿಮ್ಮ ಸಂಖ್ಯೆಗಳೊಂದಿಗೆ ಬರೆಯಲ್ಪಡುತ್ತದೆ. ತೋರಿಸಿರುವ min, max, μ ಮತ್ತು σ ತರಬೇತಿ ಪಡೆದ ಮಾಡೆಲ್ ತನ್ನ ತರಬೇತಿ ಡೇಟಾದ ಬಗ್ಗೆ ನೆನಪಿಟ್ಟುಕೊಳ್ಳಬೇಕಾದವು.", "Pakeiskite bet kurį ūgį ar svorį. Normuoti stulpeliai atsinaujina iš karto, o pasirinkto paciento formulė užrašoma su jūsų skaičiais. Rodomi min, max, μ ir σ yra tai, ką išmokytas modelis turi prisiminti apie savo mokymo duomenis."],
+  ["lab1.sc.lab.pick", "Explain patient", "ರೋಗಿಯನ್ನು ವಿವರಿಸಿ", "Paaiškinti pacientą"],
+  ["lab1.sc.lab.reset", "Reset table", "ಕೋಷ್ಟಕ ಮರುಹೊಂದಿಸಿ", "Atstatyti lentelę"],
+  ["lab1.sc.lab.invalid", "Every cell needs a number.", "ಪ್ರತಿ ಕೋಶಕ್ಕೂ ಸಂಖ್ಯೆ ಬೇಕು.", "Kiekvienam langeliui reikia skaičiaus."],
+  ["lab1.sc.lab.degenerate", "All values of a column are equal (max = min or σ = 0), so scaling would divide by zero.", "ಕಾಲಮ್‌ನ ಎಲ್ಲಾ ಮೌಲ್ಯಗಳು ಸಮಾನ (max = min ಅಥವಾ σ = 0), ಆದ್ದರಿಂದ ಮಾಪನ ಸೊನ್ನೆಯಿಂದ ಭಾಗಿಸುತ್ತಿತ್ತು.", "Visos stulpelio reikšmės vienodos (max = min arba σ = 0), todėl normuojant tektų dalyti iš nulio."],
+  ["lab1.sc.lab.tableLabel", "Editable table of heights and weights with scaled values", "ಮಾಪನ ಮಾಡಿದ ಮೌಲ್ಯಗಳೊಂದಿಗೆ ಎತ್ತರ ಮತ್ತು ತೂಕಗಳ ತಿದ್ದಬಹುದಾದ ಕೋಷ್ಟಕ", "Redaguojama ūgių ir svorių lentelė su normuotomis reikšmėmis"],
+  ["lab1.sc.lab.hOf", "Height of patient {n}", "ರೋಗಿ {n} ರ ಎತ್ತರ", "{n}-ojo paciento ūgis"],
+  ["lab1.sc.lab.wOf", "Weight of patient {n}", "ರೋಗಿ {n} ರ ತೂಕ", "{n}-ojo paciento svoris"],
+  ["lab1.sc.lab.formulaFor", "Formulas for patient {n}:", "ರೋಗಿ {n} ಗಾಗಿ ಸೂತ್ರಗಳು:", "Paciento {n} formulės:"],
+  ["lab1.sc.lab.sigmaNote", "σ here is the population standard deviation (divide by n), the convention used in the lab's scaling code.", "ಇಲ್ಲಿ σ ಜನಸಂಖ್ಯಾ ಪ್ರಮಾಣಿತ ವಿಚಲನ (n ರಿಂದ ಭಾಗಿಸಿ), ಲ್ಯಾಬ್‌ನ ಮಾಪನ ಕೋಡ್‌ನಲ್ಲಿ ಬಳಸಿದ ಪದ್ಧತಿ.", "Čia σ yra populiacijos standartinis nuokrypis (dalijama iš n) – laboratorijos normavimo kode naudojama konvencija."],
+  ["lab1.sc.new.title", "A NEW patient arrives", "ಒಬ್ಬ ಹೊಸ ರೋಗಿ ಬರುತ್ತಾನೆ", "Ateina NAUJAS pacientas"],
+  ["lab1.sc.new.intro", "Scale a new patient with the min and max of the **table above** (the training data), never with their own: a single patient has no range of its own.", "ಹೊಸ ರೋಗಿಯನ್ನು **ಮೇಲಿನ ಕೋಷ್ಟಕದ** (ತರಬೇತಿ ಡೇಟಾ) min ಮತ್ತು max ನೊಂದಿಗೆ ಮಾಪನ ಮಾಡಿ, ಎಂದಿಗೂ ಅವರ ಸ್ವಂತದೊಂದಿಗೆ ಅಲ್ಲ: ಒಬ್ಬ ರೋಗಿಗೆ ಸ್ವಂತ ವ್ಯಾಪ್ತಿ ಇಲ್ಲ.", "Naują pacientą normuokite naudodami **aukščiau esančios lentelės** (mokymo duomenų) min ir max, niekada ne jo paties: vienas pacientas neturi savo intervalo."],
+  ["lab1.sc.new.h", "New height (cm)", "ಹೊಸ ಎತ್ತರ (cm)", "Naujas ūgis (cm)"],
+  ["lab1.sc.new.w", "New weight (kg)", "ಹೊಸ ತೂಕ (kg)", "Naujas svoris (kg)"],
+  ["lab1.sc.new.outside", "Outside [0, 1]: nobody in the training data was this extreme, so the network would be extrapolating.", "[0, 1] ಹೊರಗೆ: ತರಬೇತಿ ಡೇಟಾದಲ್ಲಿ ಯಾರೂ ಇಷ್ಟು ತೀವ್ರರಾಗಿರಲಿಲ್ಲ, ಆದ್ದರಿಂದ ನೆಟ್‌ವರ್ಕ್ ಹೊರಗಣ ಅಂದಾಜು (extrapolation) ಮಾಡುತ್ತದೆ.", "Už [0, 1] ribų: mokymo duomenyse niekas nebuvo toks kraštutinis, todėl tinklas ekstrapoliuotų."],
+  ["lab1.sc.new.inside", "Inside [0, 1]: similar to the training data.", "[0, 1] ಒಳಗೆ: ತರಬೇತಿ ಡೇಟಾವನ್ನು ಹೋಲುತ್ತದೆ.", "Tarp [0, 1]: panašu į mokymo duomenis."],
+  ["lab1.sc.new.wrong", "(Re-computing min and max on this one patient would give max = min, a division by zero.)", "(ಈ ಒಬ್ಬ ರೋಗಿಯ ಮೇಲೆ min ಮತ್ತು max ಮರುಲೆಕ್ಕ ಹಾಕಿದರೆ max = min ಆಗುತ್ತದೆ, ಅಂದರೆ ಸೊನ್ನೆಯಿಂದ ಭಾಗಾಕಾರ.)", "(Perskaičiavus min ir max vien šiam pacientui, gautume max = min – dalybą iš nulio.)"],
+];

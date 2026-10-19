@@ -1,52 +1,55 @@
+import { useState } from "react";
 import { Callout, Demo } from "../../ui";
+import { useT, useRich } from "../rich";
 
 const SCENES = [
-  { icon: "🏥", title: "Scene 1: Hospital intake system", tag: "Tasks 1 & 5", tagColor: "c-teal",
-    body: <>A nurse forgets to type one patient's height. The system must not crash and must not put 0 cm (that would ruin averages and dose calculations). It <b>imputes</b> a sensible value from similar patients, same gender here, and flags it as “estimated”. Later, a model uses height and weight to predict something (here: gender; in real life: risk scores, dosage ranges).</>,
-    callout: { tone: "warn" as const, title: "Why gender matters in Task 1", text: <>Women average ~166 cm, men ~183 cm in this data. Using the overall mean (~175 cm) would make the missing woman 9 cm too tall. Good imputation uses the <i>group</i> the person belongs to.</> } },
-  { icon: "🏅", title: "Scene 2: Sports registration", tag: "Tasks 2-4", tagColor: "bad",
-    body: <>Schools send lists of children for a competition. One list says a participant is 88. A person checks 30 values easily; a ministry checking 3 million records cannot. So software flags values that are statistically “too far away”. Three different rules exist because each is blind in a different way (see the live lab).</>,
-    callout: { tone: "info" as const, title: "Same idea everywhere", text: <>Credit-card fraud (a 9 000 € purchase from a card that spends 40 € a day), broken sensors in a factory (temperature 900 °C), server attacks (10 000 logins in a minute).</> } },
-  { icon: "✉️", title: "Scene 3: Reading digits at the post office / bank", tag: "Task 6", tagColor: "c-purple",
-    body: <>Postal codes on envelopes and amounts on cheques were among the first big neural-network successes. A camera takes a picture, the picture is cut into digits, each digit becomes a 28×28 grid of numbers, and the network answers “this is a 7 with 98% confidence”. If confidence is low, a human checks the item.</>,
-    callout: { tone: "good" as const, title: "MNIST is the “hello world”", text: <>If you understand how 784 numbers become one of 10 answers, you understand the skeleton of image classifiers, speech recognizers and text classifiers.</> } },
-];
-
-const PIPE = [
-  ["Raw record", "height = ?, weight 54", "Task 1"], ["Clean", "impute · drop 88", "Tasks 1-4"], ["Scale", "0 … 1", "Task 5 (min-max)"],
-  ["Model", "weights learned", "Tasks 5-6"], ["Prediction", "0.002 → female", "Task 6 test digit"], ["Decision", "use / review", ""],
+  { icon: "🏥", tagColor: "c-teal", tone: "warn" as const },
+  { icon: "🏅", tagColor: "bad", tone: "info" as const },
+  { icon: "✉️", tagColor: "c-purple", tone: "good" as const },
 ];
 
 export default function RealWorld() {
+  const t = useT();
+  const r = useRich();
+  const [pick, setPick] = useState(0);
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted">The lab uses tiny examples, but each task is a miniature of something companies do every day.</p>
-      {SCENES.map((s) => (
-        <div key={s.title} className="card flex gap-4 p-4 sm:p-5">
+      <p className="text-sm text-muted">{t("lab1.rw.intro")}</p>
+      {SCENES.map((s, i) => (
+        <div key={i} className="card flex gap-4 p-4 sm:p-5">
           <div className="text-3xl" aria-hidden>{s.icon}</div>
           <div className="min-w-0">
             <h3 className="text-base font-semibold">
-              {s.title}
-              <span className="chip ml-2 align-middle" style={{ color: `rgb(var(--${s.tagColor}))` }}>{s.tag}</span>
+              {t(`lab1.rw.s${i}.title`)}
+              <span className="chip ml-2 align-middle" style={{ color: `rgb(var(--${s.tagColor}))` }}>{t(`lab1.rw.s${i}.tag`)}</span>
             </h3>
-            <p className="mt-1.5 text-sm leading-relaxed">{s.body}</p>
-            <Callout tone={s.callout.tone} title={s.callout.title}>{s.callout.text}</Callout>
+            <p className="mt-1.5 text-sm leading-relaxed">{r(`lab1.rw.s${i}.body`)}</p>
+            <Callout tone={s.tone} title={t(`lab1.rw.s${i}.ct`)}>{r(`lab1.rw.s${i}.cx`)}</Callout>
           </div>
         </div>
       ))}
-      <Demo title="Life of one data point, end to end">
-        <ol className="flex flex-col gap-2 md:flex-row md:items-stretch" aria-label="Pipeline">
-          {PIPE.map(([t, s, task], i) => (
-            <li key={t} className="flex flex-1 items-center gap-2 md:flex-col md:text-center">
-              <div className={`w-full rounded-xl border p-3 ${t === "Model" ? "border-brand bg-brand text-white dark:text-bg" : "border-line bg-raised/60"}`}>
-                <p className="text-sm font-semibold">{t}</p>
-                <p className={`text-xs ${t === "Model" ? "opacity-85" : "text-muted"}`}>{s}</p>
-                {task && <p className={`mt-1 text-[11px] ${t === "Model" ? "opacity-80" : "text-muted"}`}>{task}</p>}
-              </div>
-              {i < PIPE.length - 1 && <span aria-hidden className="text-muted md:hidden">↓</span>}
+      <Demo title={t("lab1.rw.pipeTitle")}>
+        <ol className="flex flex-col gap-2 md:flex-row md:items-stretch" aria-label={t("lab1.rw.pipeAria")}>
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <li key={i} className="flex flex-1 items-center gap-2 md:flex-col md:text-center">
+              <button
+                type="button"
+                aria-pressed={pick === i}
+                onClick={() => setPick(i)}
+                className={`w-full rounded-xl border p-3 text-left transition md:text-center ${pick === i ? "border-brand bg-brand text-white dark:text-bg" : "border-line bg-raised/60 hover:bg-raised"}`}
+              >
+                <span className="block text-sm font-semibold">{t(`lab1.rw.p${i}.t`)}</span>
+                <span className={`block text-xs ${pick === i ? "opacity-85" : "text-muted"}`}>{t(`lab1.rw.p${i}.s`)}</span>
+                {i < 5 && <span className={`mt-1 block text-[11px] ${pick === i ? "opacity-80" : "text-muted"}`}>{t(`lab1.rw.p${i}.task`)}</span>}
+              </button>
+              {i < 5 && <span aria-hidden className="text-muted md:hidden">↓</span>}
             </li>
           ))}
         </ol>
+        <p className="mt-3 text-xs text-muted">{t("lab1.rw.pipeHint")}</p>
+        <div className="mt-2 rounded-xl border border-line bg-raised/70 px-3 py-2 text-sm leading-relaxed" aria-live="polite">
+          <b>{t(`lab1.rw.p${pick}.t`)}.</b> {r(`lab1.rw.d${pick}`)}
+        </div>
       </Demo>
     </div>
   );

@@ -14,3 +14,4 @@ coverage/
 *.pem
 .idea/
 .vscode/
+.claude/worktrees/

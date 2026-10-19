@@ -1,11 +1,14 @@
 import { AccuracyChart } from "../components/AccuracyChart";
+import { CrossValidationPanel } from "../components/CrossValidationPanel";
 import { DatasetSelector } from "../components/DatasetSelector";
 import { DecisionBoundary } from "../components/DecisionBoundary";
 import { ErrorMessage } from "../components/ErrorMessage";
+import { EvaluationPanel } from "../components/EvaluationPanel";
 import { ExperimentPresets } from "../components/ExperimentPresets";
 import { GradientChart } from "../components/GradientChart";
 import { Header } from "../components/Header";
 import { LearningCenter } from "../components/LearningCenter";
+import { LearningDiagnosis } from "../components/LearningDiagnosis";
 import { LossChart } from "../components/LossChart";
 import { NetworkArchitectureEditor } from "../components/NetworkArchitectureEditor";
 import { NetworkGraphView, NetworkLegend } from "../components/NetworkGraph";
@@ -64,15 +67,20 @@ export function Playground() {
 
           <TrainingMetrics pg={pg} />
 
+          <EvaluationPanel pg={pg} />
+
           <section className="card p-4" aria-labelledby="charts-title">
             <h2 id="charts-title" className="card-title">Training analytics</h2>
             <p className="mt-1 text-xs text-muted">Every point is a real per-epoch value computed by the training loop.</p>
             <div className="mt-3 grid gap-6 lg:grid-cols-2">
-              <LossChart history={pg.history} pinned={pg.pinned} hasVal={hasVal} />
+              <LossChart history={pg.history} pinned={pg.pinned} hasVal={hasVal} bestEpoch={pg.session?.best_epoch} />
               <AccuracyChart history={pg.history} pinned={pg.pinned} hasVal={hasVal} />
             </div>
+            <LearningDiagnosis history={pg.history} loss={pg.config.loss} stoppedEarly={!!pg.session?.stopped_early} restored={!!pg.session?.restored_best} stopEpoch={pg.session?.epoch ?? 0} />
             <div className="mt-6"><GradientChart history={pg.history} /></div>
           </section>
+
+          <CrossValidationPanel pg={pg} />
         </div>
 
         <div className="order-3 xl:order-3">

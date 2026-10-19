@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useEvaluation } from "../hooks/useEvaluation";
 import type { Playground } from "../hooks/usePlayground";
 import { TOPICS, type LearnCtx } from "./learning";
 import { Tex } from "./Tex";
@@ -6,7 +7,10 @@ import { Tex } from "./Tex";
 export function LearningCenter({ pg }: { pg: Playground }) {
   const [id, setId] = useState(TOPICS[0].id);
   const topic = TOPICS.find((t) => t.id === id)!;
-  const ctx: LearnCtx = { config: pg.config, session: pg.session, history: pg.history, params: pg.params };
+  const hasVal = (pg.session?.n_val ?? 0) > 0;
+  const { data: evaluation } = useEvaluation(pg.session?.session_id ?? null, pg.session?.epoch ?? 0, pg.status, hasVal ? "val" : "train", 0.5);
+  const ctx: LearnCtx = { config: pg.config, session: pg.session, history: pg.history, params: pg.params, evaluation };
+  const groups = useMemo(() => [...new Set(TOPICS.map((t) => t.group))], []);
 
   return (
     <section id="learn" className="card p-4 sm:p-5" aria-labelledby="learn-title">
@@ -14,18 +18,16 @@ export function LearningCenter({ pg }: { pg: Playground }) {
       <p className="mt-1 text-sm text-muted">Concepts, formulas and live numbers from the experiment above.</p>
       <div className="mt-4 grid gap-4 lg:grid-cols-[250px_1fr]">
         <nav aria-label="Topics" className="flex gap-1.5 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible">
-          {TOPICS.map((t, i) => (
-            <button
-              key={t.id}
-              onClick={() => setId(t.id)}
-              aria-current={t.id === id ? "true" : undefined}
-              className={`shrink-0 rounded-lg px-3 py-2 text-left text-sm transition ${
-                t.id === id ? "bg-brand/10 font-semibold text-brand" : "text-muted hover:bg-raised hover:text-ink"
-              }`}
-            >
-              <span className="mr-2 font-mono text-xs opacity-60">{String(i + 1).padStart(2, "0")}</span>
-              {t.title}
-            </button>
+          {groups.map((g) => (
+            <div key={g} className="flex shrink-0 gap-1.5 lg:flex-col lg:gap-0">
+              <p className="hidden px-3 pb-1 pt-3 text-[11px] font-semibold uppercase tracking-wider text-muted lg:block">{g}</p>
+              {TOPICS.filter((t) => t.group === g).map((t) => (
+                <button key={t.id} onClick={() => setId(t.id)} aria-current={t.id === id ? "true" : undefined}
+                  className={`shrink-0 rounded-lg px-3 py-1.5 text-left text-sm transition ${t.id === id ? "bg-brand/10 font-semibold text-brand" : "text-muted hover:bg-raised hover:text-ink"}`}>
+                  {t.title}
+                </button>
+              ))}
+            </div>
           ))}
         </nav>
         <article className="min-w-0" aria-live="polite">

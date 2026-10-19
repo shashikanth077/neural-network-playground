@@ -1,7 +1,8 @@
 """End-to-end flow against a RUNNING backend (default http://127.0.0.1:8000).
 
 Walks the same path the UI uses and checks each step with real values:
-dataset -> model -> train -> pause/resume -> metrics -> parameters -> predict -> trace -> reset -> cleanup.
+dataset -> model -> train -> pause/resume -> metrics -> parameters -> predict -> trace -> reset ->
+evaluation (confusion/AUC) -> advanced options (RMSprop, dropout, batch norm, early stopping) -> cross-validation -> cleanup.
 
 Usage:  uvicorn app.main:app --port 8000   (in backend/)
         python scripts/e2e_flow.py [BASE_URL]
@@ -112,8 +113,43 @@ def main() -> int:
     step("18 unknown session -> 404", c.get("/training/nope/status").status_code == 404)
     step("19 invalid config -> 422", c.post("/models", json={**body, "config": {**cfg, "learning_rate": -1}}).status_code == 422)
 
+    # 10b. evaluation of the trained model (needs a trained session, so run a short one first)
+    c.post("/training/start", json={"session_id": sid})
+    wait(c, sid, {"completed"})
+    ev = c.get(f"/training/{sid}/evaluation", params={"split": "val", "threshold": 0.5}).json()
+    cm = ev["confusion"]
+    step("20 evaluation: confusion matrix adds up",
+         cm["tp"] + cm["fp"] + cm["tn"] + cm["fn"] == ev["n"] and 0.0 <= ev["auc"] <= 1.0,
+         f"n={ev['n']}, accuracy={ev['accuracy']:.3f}, F1={ev['f1']:.3f}, AUC={ev['auc']:.3f}")
+    hi = c.get(f"/training/{sid}/evaluation", params={"threshold": 0.99}).json()
+    step("21 raising the threshold cannot add positives", hi["confusion"]["tp"] + hi["confusion"]["fp"] <= cm["tp"] + cm["fp"])
+
+    # 10c. lecture 4-6 options: new optimizer/activation/loss + regularisation + early stopping
+    cfg2 = {**cfg, "optimizer": "rmsprop", "activation": "leaky_relu", "loss": "bce", "learning_rate": 0.01,
+            "l2": 0.001, "dropout": 0.1, "batch_norm": True, "early_stopping": True, "patience": 8,
+            "epochs": 300, "epoch_delay_ms": 0}
+    m2 = c.post("/models", json={**body, "config": cfg2})
+    sid2 = m2.json()["session_id"]
+    c.post("/training/start", json={"session_id": sid2})
+    fin2 = wait(c, sid2, {"completed", "failed"})
+    step("22 advanced config trains", fin2["status"] == "completed" and fin2["latest"]["train_loss"] < 0.6,
+         f"epochs run={fin2['epoch']}/{fin2['total_epochs']}, best_epoch={fin2.get('best_epoch')}, stopped_early={fin2['stopped_early']}")
+    pp = c.get(f"/training/{sid2}/parameters").json()
+    step("23 batch-norm parameters exposed", pp["layers"][0].get("gamma") is not None and len(pp["layers"][0]["gamma"]) == 8)
+    bad = c.post("/models", json={**body, "config": {**cfg2, "val_split": 0}})
+    step("24 early stopping without validation data -> 422", bad.status_code == 422)
+    c.delete(f"/training/{sid2}")
+
+    # 10d. cross-validation
+    cv = c.post("/cross-validation", json={**body, "config": {**cfg, "epochs": 40, "epoch_delay_ms": 0},
+                                           "method": "stratified_kfold", "k": 4})
+    cvj = cv.json()
+    step("25 cross-validation returns one result per fold",
+         cv.status_code == 200 and len(cvj["folds"]) == 4 and sum(f["n_val"] for f in cvj["folds"]) == 200,
+         f"mean val accuracy {cvj['mean_val_accuracy']:.3f} ± {cvj['std_val_accuracy']:.3f}")
+
     # 11. cleanup
-    step("20 delete session", c.delete(f"/training/{sid}").status_code == 204)
+    step("26 delete session", c.delete(f"/training/{sid}").status_code == 204)
 
     failed = [r for r in results if not r[1]]
     print(f"\n{len(results) - len(failed)}/{len(results)} steps passed")

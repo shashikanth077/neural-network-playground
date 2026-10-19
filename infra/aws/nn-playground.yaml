@@ -139,3 +139,7 @@ Outputs:
   SshCommand:
     Description: SSH command (requires the key pair you selected)
     Value: !Sub "ssh -i <your-key>.pem ec2-user@${AppInstance.PublicIp}"
+
+  UpdateCommand:
+    Description: Run on the server (after SSH) to pull the latest code and rebuild. The stack clones the repo only once, at first boot.
+    Value: "bash /opt/nn-playground/infra/aws/update.sh"

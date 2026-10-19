@@ -3,7 +3,7 @@ import { getArea } from "../concepts/areas";
 import { evidenceHref, isHandsOn } from "../concepts/links";
 import { CONCEPTS, coverageOf, getConcept } from "../concepts/registry";
 import type { Evidence } from "../concepts/types";
-import { useLang, useMeta, useT } from "../i18n";
+import { useMeta, useT } from "../i18n";
 import { COVERAGE_STYLE } from "./ConceptsHub";
 import { TOOLS } from "../lib/features";
 import { getLab } from "../labs/registry";
@@ -42,7 +42,6 @@ export function ConceptPage() {
   const { conceptId } = useParams();
   const c = getConcept(conceptId);
   const t = useT();
-  const { lang } = useLang();
   const label = useEvidenceLabel();
   if (!c) {
     return (
@@ -65,7 +64,6 @@ export function ConceptPage() {
         <span className={`chip ${COVERAGE_STYLE[k]}`}>{t(`cc.cov.${k}`)}</span>
       </div>
       <h1 className="mt-2 text-3xl font-extrabold tracking-tight">{t(`concept.${c.id}.title`, c.title)}</h1>
-      {lang !== "en" && <p className="mt-3 rounded-xl border border-line bg-raised/60 p-3 text-xs text-muted">{t("cc.partial")}</p>}
 
       <div className="mt-6 grid gap-4 md:grid-cols-2">
         <section className="card p-5" aria-labelledby="c-what"><h2 id="c-what" className="text-sm font-semibold uppercase tracking-wide text-brand">{t("cc.what")}</h2>

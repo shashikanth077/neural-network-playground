@@ -79,7 +79,7 @@ export const ROADMAP: [string, [string, string][]][] = [
 ];
 
 export const QA: [string, string][] = [
-  ["Why do you use the gender when imputing the height?", "Heights differ strongly by gender (women ≈ 165.8 cm, men ≈ 182.7 cm). The overall mean (~175 cm) would be about 9 cm wrong for a woman, so I use only the values of the same group."],
+  ["Why do you use the gender when imputing the height?", "Heights differ strongly by gender (women ≈ 165.8 cm, men ≈ 182.7 cm). The overall mean (~176 cm) would be about 10 cm wrong for a woman, so I use only the values of the same group."],
   ["Mean or median for imputation?", "Both gave nearly the same result (165.83 vs 166 cm). The median is safer when outliers exist because one extreme value does not move it."],
   ["What is the difference between the three anomaly methods?", "Z-score and Chauvenet use mean and standard deviation (assume a normal distribution); the outlier itself inflates σ. Chauvenet also accounts for sample size n. The IQR rule uses quartiles, which the outlier cannot distort. All three found 88 here."],
   ["Why can the Z-score miss an outlier?", "Masking: a big outlier increases σ, which shrinks its own z-score. With 88, σ = 14.04 but without it only 2.4. With a smaller outlier (about 21 or below, for these 30 ages) the z-score rule with threshold 3 stops flagging it while Chauvenet and IQR still do."],

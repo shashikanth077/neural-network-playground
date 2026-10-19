@@ -1,12 +1,91 @@
 import { useEffect, useRef, useState } from "react";
 import { useIsDark } from "../../../hooks/useTheme";
-import { Callout, canvasColor, col, Controls, Demo, f2, Grid, Legend, Out, Slider } from "../../ui";
-import { optimizerPaths, type OptName } from "../math";
+import { Callout, canvasColor, col, Controls, Demo, f2, Grid, Legend, Out, Seg, Slider } from "../../ui";
+import { optimizerPaths, stepsToLoss, type OptName } from "../math";
+import { useT, useRich } from "../rich";
+import { ScrollTable, sci, td, th } from "../widgets";
 
 const NAMES: Record<OptName, string> = { sgd: "SGD", rms: "RMSprop", adam: "Adam" };
 const COLOR: Record<OptName, string> = { sgd: "bad", rms: "ok", adam: "pos" };
+const OPTS: OptName[] = ["sgd", "rms", "adam"];
+const LRS = [0.01, 0.05, 0.1, 0.3];
+const TARGET = 0.01;
+const BUDGET = 40;
+
+interface Attempt { opt: OptName; lr: number; at: number; loss: number; ok: boolean; len: number }
+
+function Challenge() {
+  const t = useT();
+  const r = useRich();
+  const [opt, setOpt] = useState<OptName>("sgd");
+  const [lr, setLr] = useState("0.1");
+  const [tries, setTries] = useState<Attempt[]>([]);
+  const [reveal, setReveal] = useState(false);
+  const last = tries[0];
+  const run = () => {
+    const res = optimizerPaths(Number(lr), BUDGET)[opt];
+    setTries((cur) => [{ opt, lr: Number(lr), at: stepsToLoss(res, TARGET), loss: res.loss, ok: res.ok, len: res.path.length - 1 }, ...cur].slice(0, 8));
+  };
+  return (
+    <Demo title={t("lab1.op.ch.title")}>
+      <p className="text-sm text-muted">{t("lab1.op.ch.intro")}</p>
+      <div className="mt-3 flex flex-wrap items-end gap-3">
+        <Seg label={t("lab1.op.ch.opt")} value={opt} onChange={setOpt} options={OPTS.map((o) => ({ value: o, label: NAMES[o] }))} />
+        <Seg label={t("lab1.op.ch.lr")} value={lr} onChange={setLr} options={LRS.map((v) => ({ value: String(v), label: String(v) }))} />
+        <button className="btn-primary" onClick={run}>{t("lab1.op.ch.run")}</button>
+      </div>
+      {last && (
+        <p className="mt-3 text-sm" role="status">
+          <b>{NAMES[last.opt]}, lr {last.lr}:</b>{" "}
+          {last.at >= 0
+            ? <span className="text-ok">{r("lab1.op.ch.ok", { n: last.at, l: sci(last.loss, 2) })}</span>
+            : !last.ok
+              ? <span className="text-bad">{r("lab1.op.ch.boom", { n: last.len, o: NAMES[last.opt] })}</span>
+              : <span className="text-c-amber">{r("lab1.op.ch.fail", { l: sci(last.loss, 2) })}</span>}
+        </p>
+      )}
+      {tries.length > 1 && (
+        <div className="mt-2">
+          <p className="text-xs font-semibold text-muted">{t("lab1.op.ch.history")}</p>
+          <ul className="mt-1 flex flex-wrap gap-1.5 text-xs">
+            {tries.slice(1).map((a, i) => (
+              <li key={i} className={`rounded-full border px-2.5 py-0.5 ${a.at >= 0 ? "border-ok text-ok" : "border-line text-muted"}`}>{NAMES[a.opt]} · {a.lr} · {a.at >= 0 ? `✓ ${a.at}` : a.ok ? "✗" : "💥"}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <div className="mt-3">
+        <button className="btn-ghost !text-xs" aria-expanded={reveal} onClick={() => setReveal((x) => !x)}>{reveal ? t("lab1.op.ch.hide") : t("lab1.op.ch.reveal")}</button>
+      </div>
+      {reveal && (
+        <div className="mt-2 space-y-2">
+          <ScrollTable label={t("lab1.op.ch.tableLabel")}>
+            <table className="w-full text-sm">
+              <thead><tr><th scope="col" className={th}> </th>{LRS.map((v) => <th key={v} scope="col" className={th}>lr {v}</th>)}</tr></thead>
+              <tbody>
+                {OPTS.map((o) => (
+                  <tr key={o}>
+                    <th scope="row" className={`${td} text-left font-semibold`}>{NAMES[o]}</th>
+                    {LRS.map((v) => {
+                      const res = optimizerPaths(v, BUDGET)[o];
+                      const at = stepsToLoss(res, TARGET);
+                      return <td key={v} className={`${td} font-mono ${at >= 0 ? "bg-ok/10 font-semibold text-ok" : !res.ok ? "text-bad" : "text-muted"}`}>{at >= 0 ? `✓ ${at}` : !res.ok ? "💥" : "✗"}</td>;
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </ScrollTable>
+          <p className="text-xs text-muted">{t("lab1.op.ch.legend")}</p>
+          <p className="text-sm text-muted">{t("lab1.op.ch.note")}</p>
+        </div>
+      )}
+    </Demo>
+  );
+}
 
 export default function Optimizers() {
+  const t = useT();
   const dark = useIsDark();
   const [lrExp, setLrExp] = useState(-1.3);
   const [steps, setSteps] = useState(40);
@@ -65,37 +144,34 @@ export default function Optimizers() {
 
   return (
     <div className="space-y-4">
-      <p className="text-sm leading-relaxed text-muted">
-        The optimizer decides how to use the gradient to move the weights. The toy valley below is steep in one direction and flat in the other (like real loss surfaces). All three start at the same point.
-      </p>
-      <Demo title="SGD vs RMSprop vs Adam on the same valley">
+      <p className="text-sm leading-relaxed text-muted">{t("lab1.op.intro")}</p>
+      <Demo title={t("lab1.op.demo.title")}>
         <Controls>
-          <Slider id="op-lr" label="Learning rate" min={-2.3} max={-0.2} step={0.05} value={lrExp} onChange={setLrExp} format={() => f2(lr, 3)} />
-          <Slider id="op-n" label="Steps" min={1} max={80} step={1} value={steps} onChange={(v) => { setPlaying(false); setSteps(v); }} />
-          <button className="btn-primary" onClick={() => { setSteps(1); setPlaying(true); }}>▶ Animate</button>
+          <Slider id="op-lr" label={t("lab1.op.lr")} min={-2.3} max={-0.2} step={0.05} value={lrExp} onChange={setLrExp} format={() => f2(lr, 3)} />
+          <Slider id="op-n" label={t("lab1.op.steps")} min={1} max={80} step={1} value={steps} onChange={(v) => { setPlaying(false); setSteps(v); }} />
+          <button className="btn-primary" onClick={() => { setSteps(1); setPlaying(true); }}>{t("lab1.op.animate")}</button>
         </Controls>
-        <canvas ref={canvas} width={900} height={360} className="w-full rounded-xl border border-line" role="img" aria-label="Optimizer paths on a loss valley" />
-        <Legend items={[{ color: col("bad"), label: "SGD" }, { color: col("ok"), label: "RMSprop" }, { color: col("pos"), label: "Adam" }, { color: col("ink"), label: "● start · rings = loss levels · goal = centre" }]} />
+        <canvas ref={canvas} width={900} height={360} className="w-full rounded-xl border border-line" role="img" aria-label={t("lab1.op.aria")} />
+        <Legend items={[{ color: col("bad"), label: "SGD" }, { color: col("ok"), label: "RMSprop" }, { color: col("pos"), label: "Adam" }, { color: col("ink"), label: t("lab1.op.leg") }]} />
         <Out>
           {(Object.keys(runs) as OptName[]).map((k, i) => (
             <span key={k}>
               {i > 0 && " · "}
               <b style={{ color: col(COLOR[k]) }}>{NAMES[k]}</b>:{" "}
-              {runs[k].ok ? `loss = ${runs[k].loss < 1e-4 ? runs[k].loss.toExponential(1) : f2(runs[k].loss, 4)}` : <b>diverged (exploded)</b>}
+              {runs[k].ok ? t("lab1.op.loss", undefined, { v: runs[k].loss < 1e-4 ? runs[k].loss.toExponential(1) : f2(runs[k].loss, 4) }) : <b>{t("lab1.op.diverged")}</b>}
             </span>
           ))}
         </Out>
         <div className="mt-4">
           <Grid cols={3}>
-            <div><b>SGD</b><p className="text-sm text-muted">step = lr × gradient. Simple, but the step size must be tuned carefully. Too large → it zig-zags and explodes, too small → crawls.</p></div>
-            <div><b>RMSprop</b><p className="text-sm text-muted">Divides the step by a running average of recent gradient size, so steep directions get smaller steps.</p></div>
-            <div><b>Adam</b><p className="text-sm text-muted">Momentum (average direction) + RMSprop scaling. Usually the safest default, lr 0.001 in Keras.</p></div>
+            <div><b>SGD</b><p className="text-sm text-muted">{t("lab1.op.sgd")}</p></div>
+            <div><b>RMSprop</b><p className="text-sm text-muted">{t("lab1.op.rms")}</p></div>
+            <div><b>Adam</b><p className="text-sm text-muted">{t("lab1.op.adam")}</p></div>
           </Grid>
         </div>
-        <Callout title="Compare with the notebook MNIST results">
-          SGD needed a large rate (0.1-0.5) while RMSprop/Adam liked small ones (0.0001-0.001) and collapsed to chance level at 0.1, the same behaviour you can reproduce above by pushing the slider right.
-        </Callout>
+        <Callout title={t("lab1.op.cmpTitle")}>{t("lab1.op.cmp")}</Callout>
       </Demo>
+      <Challenge />
     </div>
   );
 }

@@ -1,41 +1,42 @@
+import { Link } from "react-router-dom";
 import { Callout, Demo } from "../../ui";
+import { useT, useRich } from "../rich";
 
 const FLOW = [
-  { tag: "Task 1", icon: "🧩", title: "Fill gaps", text: "Missing height → estimate from similar people" },
-  { tag: "Tasks 2-4", icon: "🚨", title: "Find outliers", text: "Age 88 in a kids' list is a mistake, not data" },
-  { tag: "Task 5", icon: "📏", title: "Scale", text: "Put height (cm) and weight (kg) on the same 0-1 ruler" },
-  { tag: "Task 5", icon: "🧠", title: "Tiny network", text: "Guess gender from height + weight, by hand-written code" },
-  { tag: "Task 6", icon: "🔢", title: "Big network", text: "70 000 handwritten digits → 10 classes" },
-  { tag: "6.1-6.3", icon: "🎛️", title: "Tune", text: "Layers, activations, optimizers: change ONE thing at a time" },
+  { icon: "🧩", to: "missing-values" },
+  { icon: "🚨", to: "anomalies" },
+  { icon: "📏", to: "scaling" },
+  { icon: "🧠", to: "network" },
+  { icon: "🔢", to: "mnist" },
+  { icon: "🎛️", to: "optimizers" },
 ];
 
 export default function BigPicture() {
+  const t = useT();
+  const r = useRich();
   return (
     <div className="space-y-4">
-      <p className="text-sm leading-relaxed text-muted">
-        The lab is one story told in six tasks. Real machine-learning projects follow the same order: the model is only the last third of the work.
-      </p>
+      <p className="text-sm leading-relaxed text-muted">{t("lab1.big.intro")}</p>
       <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {FLOW.map((s, i) => (
-          <li key={s.title} className="card relative p-4">
-            <span className="chip">{s.tag}</span>
+          <li key={s.to} className="card relative p-4">
+            <span className="chip">{t(`lab1.big.f${i}.tag`)}</span>
             <div className="mt-2 text-2xl" aria-hidden>{s.icon}</div>
             <p className="mt-1 font-semibold">
               <span className="mr-1.5 font-mono text-xs text-muted">{i + 1}.</span>
-              {s.title}
+              {t(`lab1.big.f${i}.title`)}
             </p>
-            <p className="mt-0.5 text-sm text-muted">{s.text}</p>
+            <p className="mt-0.5 text-sm text-muted">{t(`lab1.big.f${i}.text`)}</p>
+            <Link to={`/labs/lab1/${s.to}`} className="mt-2 inline-block text-sm font-semibold text-brand underline-offset-2 hover:underline">
+              {t("lab1.big.open")}
+            </Link>
           </li>
         ))}
       </ol>
-      <Demo title="The rule that holds the whole lab together">
-        <p className="text-sm leading-relaxed">
-          “<b>Garbage in, garbage out.</b>” A neural network learns whatever you show it, including typos and wrong scales. Tasks 1-4 protect the model from bad data; Tasks 5-6 teach the model; the experiments in 6.1-6.3 prove which choices actually matter. Always measure on data the model has <b>never seen</b> (the test set).
-        </p>
+      <Demo title={t("lab1.big.ruleTitle")}>
+        <p className="text-sm leading-relaxed">{r("lab1.big.rule")}</p>
       </Demo>
-      <Callout title="How to use this lab">
-        Work through the steps in order. Every demo runs in your browser with real calculations, and the numbers quoted in the text are checked by automated tests. Tick <b>Mark step complete</b> as you go; progress is saved in this browser.
-      </Callout>
+      <Callout title={t("lab1.big.howTitle")}>{r("lab1.big.how")}</Callout>
     </div>
   );
 }

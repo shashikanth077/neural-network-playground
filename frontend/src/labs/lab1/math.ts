@@ -232,3 +232,164 @@ export function optimizerPaths(lr: number, steps: number): Record<OptName, OptRu
   });
   return result;
 }
+
+// =====================================================================================
+// Interactive-lab helpers (added for the hands-on widgets). Each has a unit test whose
+// expected numbers were computed independently with NumPy / Python's math module.
+// =====================================================================================
+
+// ---------------------------------------------------------- Task 1: groups
+export interface GroupStats { n: number; mean: number; median: number; min: number; max: number; sum: number }
+
+/** Summary of the known heights of one gender (or of everyone when `gender` is "all"). */
+export function groupStats(patients: Patient[], gender: 0 | 1 | "all"): GroupStats {
+  const pool = patients.filter(([g, h]) => h !== null && (gender === "all" || g === gender)).map(([, h]) => h as number);
+  if (!pool.length) return { n: 0, mean: NaN, median: NaN, min: NaN, max: NaN, sum: 0 };
+  return { n: pool.length, mean: mean(pool), median: median(pool), min: Math.min(...pool), max: Math.max(...pool), sum: pool.reduce((a, b) => a + b, 0) };
+}
+
+// ------------------------------------------------------ Tasks 2-4: per point
+export interface PointReport {
+  x: number; mu: number; sigma: number; z: number; nP: number;
+  q1: number; q3: number; low: number; high: number;
+  zFlag: boolean; chauvenetFlag: boolean; iqrFlag: boolean;
+}
+
+/** Every number the three rules use for the value at index `i`, with the same conventions as detectAnomalies. */
+export function pointReport(values: number[], i: number, zThreshold = 3): PointReport {
+  const n = values.length;
+  const mu = mean(values);
+  const sigma = std(values);
+  const x = values[i];
+  const z = (x - mu) / sigma;
+  const nP = chauvenetP(x, mu, sigma, n);
+  const q1 = percentile(values, 25);
+  const q3 = percentile(values, 75);
+  const low = q1 - 1.5 * (q3 - q1);
+  const high = q3 + 1.5 * (q3 - q1);
+  return { x, mu, sigma, z, nP, q1, q3, low, high, zFlag: Math.abs(z) > zThreshold, chauvenetFlag: nP < 0.5, iqrFlag: x < low || x > high };
+}
+
+// ------------------------------------------------------------- scaling
+export const scaleMinMax = (x: number, lo: number, hi: number) => (x - lo) / (hi - lo);
+export const scaleZ = (x: number, mu: number, sigma: number) => (x - mu) / sigma;
+/** Min, max, mean and population std of a feature: the numbers a scaler must remember from the training data. */
+export const featureStats = (a: number[]) => ({ min: Math.min(...a), max: Math.max(...a), mean: mean(a), std: std(a, 0) });
+
+// ------------------------------------------- Task 5: the 2-2-1 net as plain numbers
+export interface NetParams { w1: number[][]; b1: number[]; w2: number[]; b2: number }
+
+export const netParamsOf = (n: NetParams): NetParams => ({
+  w1: n.w1.map((r) => [...r]), b1: [...n.b1], w2: [...n.w2], b2: n.b2,
+});
+
+export function forwardParams(p: NetParams, x: number[]) {
+  const z1 = [x[0] * p.w1[0][0] + x[1] * p.w1[1][0] + p.b1[0], x[0] * p.w1[0][1] + x[1] * p.w1[1][1] + p.b1[1]];
+  const h = z1.map(sigmoid);
+  const zo = h[0] * p.w2[0] + h[1] * p.w2[1] + p.b2;
+  return { z1, h, zo, out: sigmoid(zo) };
+}
+
+/** Gradients of the per-sample loss ½(out − y)², the quantity the lab's backward pass differentiates. */
+export function gradients(p: NetParams, x: number[], y: number) {
+  const f = forwardParams(p, x);
+  const error = f.out - y;
+  const dOut = error * f.out * (1 - f.out);
+  const dHid = [dOut * p.w2[0] * f.h[0] * (1 - f.h[0]), dOut * p.w2[1] * f.h[1] * (1 - f.h[1])];
+  return {
+    ...f, y, error, loss: 0.5 * error * error, dOut, dHid,
+    gw2: [dOut * f.h[0], dOut * f.h[1]], gb2: dOut,
+    gw1: [[x[0] * dHid[0], x[0] * dHid[1]], [x[1] * dHid[0], x[1] * dHid[1]]],
+    gb1: [dHid[0], dHid[1]],
+  };
+}
+
+/** One plain gradient-descent update on one sample; returns the new parameters (the input is not modified). */
+export function sgdStep(p: NetParams, x: number[], y: number, lr: number) {
+  const g = gradients(p, x, y);
+  const next: NetParams = {
+    w1: p.w1.map((r, a) => r.map((v, b) => v - lr * g.gw1[a][b])),
+    b1: p.b1.map((v, b) => v - lr * g.gb1[b]),
+    w2: p.w2.map((v, b) => v - lr * g.gw2[b]),
+    b2: p.b2 - lr * g.gb2,
+  };
+  return { params: next, grads: g };
+}
+
+export interface TraceStep { id: string; phase: "forward" | "backward" | "update"; expr: string; value: number }
+
+const r4 = (v: number) => (Math.abs(v) < 5e-5 && v !== 0 ? v.toExponential(2) : v.toFixed(4)).replace(/^-/, "−");
+const sg = (v: number) => (v < 0 ? `(${r4(v)})` : r4(v));
+
+/** The whole forward + backward pass + update as an ordered list of single calculations, numbers filled in. */
+export function netTrace(p: NetParams, x: number[], y: number, lr: number): TraceStep[] {
+  const g = gradients(p, x, y);
+  const u = sgdStep(p, x, y, lr).params;
+  const T: TraceStep[] = [];
+  const add = (id: string, phase: TraceStep["phase"], expr: string, value: number) => T.push({ id, phase, expr, value });
+  [0, 1].forEach((j) => add(`z${j + 1}`, "forward", `z${j + 1} = ${sg(x[0])}·${sg(p.w1[0][j])} + ${sg(x[1])}·${sg(p.w1[1][j])} + ${sg(p.b1[j])} = ${r4(g.z1[j])}`, g.z1[j]));
+  [0, 1].forEach((j) => add(`h${j + 1}`, "forward", `h${j + 1} = sigmoid(${r4(g.z1[j])}) = ${r4(g.h[j])}`, g.h[j]));
+  add("zo", "forward", `z_out = ${r4(g.h[0])}·${sg(p.w2[0])} + ${r4(g.h[1])}·${sg(p.w2[1])} + ${sg(p.b2)} = ${r4(g.zo)}`, g.zo);
+  add("out", "forward", `out = sigmoid(${r4(g.zo)}) = ${r4(g.out)}`, g.out);
+  add("loss", "forward", `loss = ½·(${r4(g.out)} − ${y})² = ${r4(g.loss)}`, g.loss);
+  add("dOut", "backward", `d_out = (out − y)·out·(1 − out) = (${r4(g.out)} − ${y})·${r4(g.out)}·${r4(1 - g.out)} = ${r4(g.dOut)}`, g.dOut);
+  [0, 1].forEach((j) => add(`dH${j + 1}`, "backward", `d_h${j + 1} = d_out·w_out${j + 1}·h${j + 1}·(1 − h${j + 1}) = ${sg(g.dOut)}·${sg(p.w2[j])}·${r4(g.h[j])}·${r4(1 - g.h[j])} = ${r4(g.dHid[j])}`, g.dHid[j]));
+  [0, 1].forEach((j) => add(`gw2_${j + 1}`, "backward", `∂loss/∂w_out${j + 1} = d_out·h${j + 1} = ${sg(g.dOut)}·${r4(g.h[j])} = ${r4(g.gw2[j])}`, g.gw2[j]));
+  add("gb2", "backward", `∂loss/∂b_out = d_out = ${r4(g.gb2)}`, g.gb2);
+  [0, 1].forEach((a) => [0, 1].forEach((b) => add(`gw1_${a}${b}`, "backward", `∂loss/∂w(${a ? "weight" : "height"}→h${b + 1}) = ${r4(x[a])}·${sg(g.dHid[b])} = ${r4(g.gw1[a][b])}`, g.gw1[a][b])));
+  [0, 1].forEach((j) => add(`gb1_${j + 1}`, "backward", `∂loss/∂b_h${j + 1} = d_h${j + 1} = ${r4(g.gb1[j])}`, g.gb1[j]));
+  [0, 1].forEach((a) => [0, 1].forEach((b) => add(`u_w1_${a}${b}`, "update", `w(${a ? "weight" : "height"}→h${b + 1}): ${sg(p.w1[a][b])} − ${lr}·${sg(g.gw1[a][b])} = ${r4(u.w1[a][b])}`, u.w1[a][b])));
+  [0, 1].forEach((j) => add(`u_b1_${j + 1}`, "update", `b_h${j + 1}: ${sg(p.b1[j])} − ${lr}·${sg(g.gb1[j])} = ${r4(u.b1[j])}`, u.b1[j]));
+  [0, 1].forEach((j) => add(`u_w2_${j + 1}`, "update", `w_out${j + 1}: ${sg(p.w2[j])} − ${lr}·${sg(g.gw2[j])} = ${r4(u.w2[j])}`, u.w2[j]));
+  add("u_b2", "update", `b_out: ${sg(p.b2)} − ${lr}·${sg(g.gb2)} = ${r4(u.b2)}`, u.b2);
+  return T;
+}
+
+/** Scale a raw height/weight with the TRAINING min and max (new data never gets its own min/max) and classify it. */
+export function predictRaw(p: NetParams, height: number, weight: number, hs: { min: number; max: number }, ws: { min: number; max: number }) {
+  const x = [scaleMinMax(height, hs.min, hs.max), scaleMinMax(weight, ws.min, ws.max)];
+  const out = forwardParams(p, x).out;
+  return { x, pMale: out, pFemale: 1 - out, label: out > 0.5 ? ("male" as const) : ("female" as const) };
+}
+
+// -------------------------------------------------- MNIST: dense layers
+export interface Dense { w: number[][]; b: number[] }
+
+/** Fully connected stack with Glorot-uniform weights and zero biases, reproducible from `seed`. */
+export function randomMlp(sizes: number[], seed: number): Dense[] {
+  const r = mulberry32(seed);
+  return sizes.slice(1).map((out, l) => {
+    const inn = sizes[l];
+    const lim = Math.sqrt(6 / (inn + out));
+    return { w: Array.from({ length: inn }, () => Array.from({ length: out }, () => (r() * 2 - 1) * lim)), b: new Array(out).fill(0) };
+  });
+}
+
+/** relu on every hidden layer, softmax on the last; returns the activation of every layer and the probabilities. */
+export function mlpForward(layers: Dense[], x: number[]) {
+  let a = x;
+  const acts: number[][] = [x];
+  let logits: number[] = [];
+  layers.forEach((L, li) => {
+    const z = L.b.map((bias, j) => { let s = bias; for (let i = 0; i < a.length; i++) s += a[i] * L.w[i][j]; return s; });
+    const last = li === layers.length - 1;
+    if (last) logits = z;
+    a = last ? z : z.map((v) => Math.max(0, v));
+    acts.push(a);
+  });
+  return { acts, logits, probs: softmax(logits) };
+}
+
+/** inputs × neurons + neurons for every layer. */
+export const paramCount = (sizes: number[]) => sizes.slice(1).reduce((s, n, i) => s + sizes[i] * n + n, 0);
+
+// ----------------------------------------------- activation chain (6.2)
+/** Best-case gradient that survives `layers` identical layers: f′(x)^layers (all weights taken as 1). */
+export const chainGradient = (name: ActivationName, x: number, layers: number) => ACTIVATIONS[name].d(x) ** layers;
+
+// ---------------------------------------------------- optimizer challenge
+/** The valley loss f = ½(x² + 10y²) used by optimizerPaths. */
+export const valleyLoss = (p: [number, number]) => 0.5 * (p[0] * p[0] + 10 * p[1] * p[1]);
+
+/** Index of the first step whose loss is below `target`, or −1 if the run never gets there. */
+export const stepsToLoss = (run: OptRun, target: number) => run.path.findIndex((p) => valleyLoss(p) < target);

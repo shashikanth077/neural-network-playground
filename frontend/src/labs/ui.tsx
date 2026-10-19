@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useT } from "../i18n";
 
 /** Shared building blocks for lab demos. Colours come from the theme tokens, so light/dark just work. */
 export const col = (name: string, alpha?: number) =>
@@ -91,8 +92,9 @@ export function Controls({ children }: { children: ReactNode }) {
 }
 
 export function Legend({ items }: { items: { color: string; label: string }[] }) {
+  const t = useT();
   return (
-    <ul className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted" aria-label="Legend">
+    <ul className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted" aria-label={t("lab1.ui.legend")}>
       {items.map((i) => (
         <li key={i.label} className="inline-flex items-center gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full" style={{ background: i.color }} />
@@ -104,13 +106,14 @@ export function Legend({ items }: { items: { color: string; label: string }[] })
 }
 
 export function Grid({ cols = 2, children }: { cols?: 2 | 3; children: ReactNode }) {
-  return <div className={`grid gap-4 ${cols === 3 ? "md:grid-cols-3" : "md:grid-cols-2"}`}>{children}</div>;
+  return <div className={`grid gap-4 [&>*]:min-w-0 ${cols === 3 ? "md:grid-cols-3" : "md:grid-cols-2"}`}>{children}</div>;
 }
 
 export function Concept({ term, children }: { term: string; children: ReactNode }) {
+  const t = useT();
   return (
     <p className="text-sm leading-relaxed text-muted">
-      <b className="text-ink">Concept: {term}</b> {children}
+      <b className="text-ink">{t("lab1.ui.concept")} {term}</b> {children}
     </p>
   );
 }

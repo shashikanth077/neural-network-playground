@@ -14,6 +14,7 @@ const Playground = lazy(() => import("./pages/Playground").then((m) => ({ defaul
 const CheatsheetPage = lazy(() => import("./pages/CheatsheetPage").then((m) => ({ default: m.CheatsheetPage })));
 const ConvolutionExplorer = lazy(() => import("./pages/ConvolutionExplorer").then((m) => ({ default: m.ConvolutionExplorer })));
 const RecurrentExplorer = lazy(() => import("./pages/RecurrentExplorer").then((m) => ({ default: m.RecurrentExplorer })));
+const RunsPage = lazy(() => import("./pages/RunsPage").then((m) => ({ default: m.RunsPage })));
 const LabPage = lazy(() => import("./pages/LabPage").then((m) => ({ default: m.LabPage })));
 
 export default function App() {
@@ -40,6 +41,7 @@ export default function App() {
             <Route path="/tools/convolution" element={<ConvolutionExplorer />} />
             <Route path="/tools/recurrent" element={<RecurrentExplorer />} />
             <Route path="/playground" element={<Playground />} />
+            <Route path="/runs" element={<RunsPage />} />
             <Route path="*" element={<Home />} />
           </Routes>
         </Suspense>

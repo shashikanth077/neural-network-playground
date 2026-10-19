@@ -7,6 +7,8 @@ from contextlib import asynccontextmanager
 import numpy as np
 from typing import Literal
 
+import time
+
 from fastapi import APIRouter, FastAPI, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -16,6 +18,11 @@ from .cv import cross_validate
 from .datasets import DATASET_INFO, generate_dataset
 from .schemas import (
     CreateModelRequest,
+    DbStatus,
+    RunComparison,
+    RunDetail,
+    RunList,
+    RunUpdate,
     CrossValidationRequest,
     CrossValidationResponse,
     DatasetInfo,
@@ -31,8 +38,9 @@ from .schemas import (
     StartRequest,
 )
 from .sessions import InvalidState, SessionManager, SessionNotFound
+from .store import RunNotFound, StoreError, align_histories, config_diff, store
 
-manager = SessionManager()
+manager = SessionManager(on_finish=store.record_session)
 
 
 async def _janitor():
@@ -73,6 +81,16 @@ async def _conflict(_: Request, exc: InvalidState):
     return JSONResponse(status_code=409, content={"detail": str(exc)})
 
 
+@app.exception_handler(RunNotFound)
+async def _run_not_found(_: Request, exc: RunNotFound):
+    return JSONResponse(status_code=404, content={"detail": str(exc)})
+
+
+@app.exception_handler(StoreError)
+async def _store_down(_: Request, exc: StoreError):
+    return JSONResponse(status_code=503, content={"detail": exc.message, "code": exc.code})
+
+
 @app.exception_handler(ValueError)
 async def _bad_value(_: Request, exc: ValueError):
     return JSONResponse(status_code=422, content={"detail": str(exc)})
@@ -100,10 +118,14 @@ def generate(req: DatasetRequest):
     return DatasetResponse(name=req.name, points=x.tolist(), labels=y.tolist())
 
 
+def _source(dataset) -> dict | None:
+    return dataset.source.model_dump() if dataset.source else None
+
+
 @api.post("/models", response_model=SessionStatus, status_code=201, tags=["models"])
 def create_model(req: CreateModelRequest):
     """Create a session (dataset split + freshly initialised network). Training has not started."""
-    session = manager.create(req.dataset.points, req.dataset.labels, req.config)
+    session = manager.create(req.dataset.points, req.dataset.labels, req.config, _source(req.dataset))
     return session.status_dict()
 
 
@@ -116,7 +138,9 @@ def start_training(req: StartRequest):
         assert req.dataset is not None
         from .schemas import ModelConfig
 
-        session = manager.create(req.dataset.points, req.dataset.labels, req.config or ModelConfig())
+        session = manager.create(
+            req.dataset.points, req.dataset.labels, req.config or ModelConfig(), _source(req.dataset)
+        )
     session.start()
     return session.status_dict()
 
@@ -181,7 +205,57 @@ def run_cross_validation(req: CrossValidationRequest):
     """Train a fresh network per split (hold-out, k-fold, stratified, shuffle, time-series, leave-one-out)."""
     X = np.asarray(req.dataset.points, dtype=float)
     y = np.asarray(req.dataset.labels, dtype=int)
-    return cross_validate(X, y, req.config, req.method, req.k, req.val_fraction)
+    t0 = time.time()
+    result = cross_validate(X, y, req.config, req.method, req.k, req.val_fraction)
+    result["run_id"] = store.record_cv(
+        req.dataset.points, req.dataset.labels, _source(req.dataset), req.config.model_dump(), result, time.time() - t0
+    )
+    return result
+
+
+# ---------------------------------------------------------------- saved runs
+@api.get("/runs/status", response_model=DbStatus, tags=["runs"])
+def runs_status():
+    """Whether the experiment database is enabled and reachable."""
+    return store.status()
+
+
+@api.get("/runs", response_model=RunList, tags=["runs"])
+def list_runs(
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
+    kind: Literal["playground", "cross-validation"] | None = None,
+    q: str | None = Query(None, max_length=100),
+):
+    """Saved runs, newest first. ``q`` matches title, notes, settings and dataset text."""
+    return store.list(limit, offset, kind, q)
+
+
+@api.get("/runs/compare", response_model=RunComparison, tags=["runs"])
+def compare_runs(ids: str = Query(..., description="Comma-separated run ids, 2 to 4.")):
+    """Per-epoch histories of 2-4 runs on one epoch axis, plus the settings that differ."""
+    wanted = [i.strip() for i in ids.split(",") if i.strip()]
+    if len(set(wanted)) != len(wanted):
+        raise ValueError("Each run id may appear only once.")
+    if not 2 <= len(wanted) <= 4:
+        raise ValueError("Compare between 2 and 4 runs.")
+    runs = [store.get(i) for i in wanted]
+    return {**align_histories(runs), "runs": runs, "differing": config_diff(runs)}
+
+
+@api.get("/runs/{run_id}", response_model=RunDetail, tags=["runs"])
+def get_run(run_id: str):
+    return store.get(run_id)
+
+
+@api.patch("/runs/{run_id}", response_model=RunDetail, tags=["runs"])
+def update_run(run_id: str, req: RunUpdate):
+    return store.update(run_id, req.title.strip() if req.title is not None else None, req.notes)
+
+
+@api.delete("/runs/{run_id}", status_code=204, tags=["runs"])
+def delete_run(run_id: str):
+    store.delete(run_id)
 
 
 @api.post("/training/{session_id}/predict", response_model=PredictResponse, tags=["training"])

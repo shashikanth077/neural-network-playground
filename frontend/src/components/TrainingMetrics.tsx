@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import type { Playground } from "../hooks/usePlayground";
 import { useT } from "../i18n";
 import { duration, fmt, pct } from "../lib/format";
@@ -35,6 +36,13 @@ export function TrainingMetrics({ pg }: { pg: Playground }) {
             <Stat label={t("pg.tm.samples")} value={t("pg.tm.samples.value", undefined, { a: s.n_train, b: s.n_val })} />
             <Stat label={t("pg.tm.params")} value={s.n_parameters.toLocaleString()} />
           </dl>
+          {s.run_id && (s.status === "completed" || s.status === "failed") && (
+            <p className="mt-3 flex flex-wrap items-center gap-x-2 rounded-lg bg-emerald-500/10 px-3 py-2 text-xs text-emerald-700 dark:text-emerald-300" role="status" data-testid="run-saved">
+              <span aria-hidden>✓</span>
+              <span className="font-medium">{t("runs.saved")}</span>
+              <Link to={`/runs?run=${encodeURIComponent(s.run_id)}`} className="font-semibold underline">{t("runs.saved.view")}</Link>
+            </p>
+          )}
           {s.epoch === 0 && s.status === "ready" && (
             <p className="mt-3 text-xs text-muted"><Rich text={t("pg.tm.first")} /></p>
           )}

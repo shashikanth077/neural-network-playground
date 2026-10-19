@@ -36,9 +36,19 @@ class DatasetInfo(BaseModel):
     generated: bool
 
 
+class DatasetSource(BaseModel):
+    """Optional description of where a dataset came from; stored with saved runs."""
+
+    name: str = Field("custom", max_length=40)
+    n_samples: Optional[int] = Field(None, ge=0, le=100000)
+    noise: Optional[float] = Field(None, ge=0.0, le=10.0)
+    seed: Optional[int] = Field(None, ge=0, le=2**31 - 1)
+
+
 class DataPayload(BaseModel):
     points: list[list[float]]
     labels: list[int]
+    source: Optional[DatasetSource] = None
 
     @model_validator(mode="after")
     def _check(self):
@@ -145,6 +155,7 @@ class SessionStatus(BaseModel):
     layer_sizes: list[int]
     config: ModelConfig
     latest: Optional[EpochMetrics]
+    run_id: Optional[str] = Field(None, description="Id of the saved run once training has finished and been stored.")
 
 
 class HistoryResponse(BaseModel):
@@ -285,3 +296,55 @@ class CrossValidationResponse(BaseModel):
     mean_val_f1: float
     n_samples: int
     note: str
+    run_id: Optional[str] = Field(None, description="Id of the saved run (null when the database is off).")
+
+
+class RunUpdate(BaseModel):
+    title: Optional[str] = Field(None, max_length=200)
+    notes: Optional[str] = Field(None, max_length=5000)
+
+    @model_validator(mode="after")
+    def _any(self):
+        if self.title is None and self.notes is None:
+            raise ValueError("Provide a title and/or notes to change.")
+        if self.title is not None and not self.title.strip():
+            raise ValueError("The title cannot be empty.")
+        return self
+
+
+class RunSummary(BaseModel):
+    id: str
+    created_at: float
+    finished_at: Optional[float] = None
+    kind: Literal["playground", "cross-validation"]
+    status: str
+    title: str
+    notes: str
+    config: dict
+    dataset: dict
+    metrics: dict
+    spark: list[float] = Field(default_factory=list, description="Up to 40 thinned training-loss values.")
+
+
+class RunDetail(RunSummary):
+    history: list[dict] = Field(default_factory=list)
+
+
+class RunList(BaseModel):
+    total: int
+    items: list[RunSummary]
+
+
+class DbStatus(BaseModel):
+    enabled: bool
+    available: bool
+    count: int
+    schema_version: Optional[int] = None
+    error: Optional[str] = None
+
+
+class RunComparison(BaseModel):
+    runs: list[RunDetail]
+    epochs: int
+    rows: list[dict] = Field(description="One row per epoch: '<run id>.<metric>' keys, null where a run is shorter.")
+    differing: list[str] = Field(description="Config keys whose values differ between the runs.")

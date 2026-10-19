@@ -49,7 +49,7 @@ function NavMenu({ label, id, prefix, children }: { label: string; id: string; p
         aria-expanded={open}
         aria-controls={id}
         onClick={() => setOpen((o) => !o)}
-        className={`flex items-center gap-0.5 rounded-lg px-1.5 py-1.5 text-xs font-medium min-[380px]:px-2 min-[380px]:text-[13px] sm:gap-1 sm:px-3 sm:text-sm transition ${active || open ? "bg-raised text-ink" : "text-muted hover:text-ink"}`}
+        className={`flex items-center gap-0.5 rounded-lg px-1.5 py-1.5 text-xs font-medium max-[339px]:px-1 max-[339px]:text-[11px] min-[380px]:px-2 min-[380px]:text-[13px] sm:gap-1 sm:px-3 sm:text-sm transition ${active || open ? "bg-raised text-ink" : "text-muted hover:text-ink"}`}
       >
         {label} <span aria-hidden className="text-[10px]">▾</span>
       </button>
@@ -96,10 +96,10 @@ export function NavBar() {
           <Logo />
           <span className="hidden sm:inline">AI Lab</span>
         </Link>
-        <nav aria-label="Primary" className="order-3 flex w-full items-center justify-center gap-0 sm:order-2 sm:ml-auto sm:w-auto sm:gap-1">
+        <nav aria-label="Primary" className="order-3 flex w-full flex-wrap items-center justify-center gap-0 sm:order-2 sm:flex-nowrap sm:ml-auto sm:w-auto sm:gap-1">
           <NavLink to="/" end className={(a) => `${linkCls(a)} hidden sm:block`}>{t("nav.home")}</NavLink>
 
-          <NavLink to="/concepts" className={(a) => `${linkCls(a)} !px-1.5 !text-xs min-[380px]:!px-2 min-[380px]:!text-[13px] sm:!px-3 sm:!text-sm`}>{t("nav.concepts")}</NavLink>
+          <NavLink to="/concepts" className={(a) => `${linkCls(a)} !px-1.5 !text-xs max-[339px]:!px-1 max-[339px]:!text-[11px] min-[380px]:!px-2 min-[380px]:!text-[13px] sm:!px-3 sm:!text-sm`}>{t("nav.concepts")}</NavLink>
 
           <NavMenu label={t("nav.labs")} id="labs-menu" prefix="/labs">
             {DOMAINS.map((d) => {
@@ -159,6 +159,7 @@ export function NavBar() {
             <Link to="/cheatsheets" className="mt-1 block rounded-xl border-t border-line px-3 pt-2.5 pb-1.5 text-sm font-semibold text-brand hover:underline">{t("nav.browseSheets")}</Link>
           </NavMenu>
 
+          <NavLink to="/runs" className={(a) => `${linkCls(a)} !px-1.5 !text-xs max-[339px]:!px-1 max-[339px]:!text-[11px] min-[380px]:!px-2 min-[380px]:!text-[13px] sm:!px-3 sm:!text-sm`}>{t("runs.nav")}</NavLink>
         </nav>
         <div className="order-2 flex items-center sm:order-3">
           <button

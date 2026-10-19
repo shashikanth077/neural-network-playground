@@ -2,6 +2,7 @@ import { lazy } from "react";
 import type { Lab } from "../types";
 import { PipelineMap } from "./PipelineMap";
 import { GuideIntro, GuideOutro } from "./StepGuide";
+import { lab1Setup } from "./setup";
 
 /** Lab 1 · From messy data to a working neural network (VGTU, Neural Networks). */
 export const lab1: Lab = {
@@ -14,6 +15,7 @@ export const lab1: Lab = {
   status: "live",
   tags: ["Data cleaning", "Anomaly detection", "Backpropagation", "MNIST", "Optimizers"],
   Map: PipelineMap,
+  setup: lab1Setup,
   Intro: GuideIntro,
   Outro: GuideOutro,
   steps: [

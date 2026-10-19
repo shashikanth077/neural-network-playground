@@ -1,6 +1,7 @@
 import { lazy } from "react";
 import type { Lab } from "../types";
 import { GuideIntro, GuideOutro } from "./StepGuide";
+import { lab2Setup } from "./setup";
 
 /** Lab 2 · Convolutional and recurrent networks in Keras (VGTU, Neural Networks). */
 export const lab2: Lab = {
@@ -12,6 +13,7 @@ export const lab2: Lab = {
   course: "VGTU · Neural Networks · Laboratory work No. 2",
   status: "live",
   tags: ["Conv2D", "Pooling", "MNIST", "Embedding", "Conv1D", "LSTM / GRU"],
+  setup: lab2Setup,
   Intro: GuideIntro,
   Outro: GuideOutro,
   steps: [

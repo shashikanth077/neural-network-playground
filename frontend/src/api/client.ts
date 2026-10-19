@@ -1,7 +1,9 @@
 import type {
   DataPayload,
   CrossValidation,
+  DatasetSource,
   DatasetSpec,
+  DbStatus,
   Evaluation,
   EpochMetrics,
   GridBounds,
@@ -9,6 +11,10 @@ import type {
   ModelConfig,
   ModelParameters,
   PredictResponse,
+  RunComparison,
+  RunDetail,
+  RunKind,
+  RunList,
   SessionStatus,
   ValidationMethod,
 } from "../types";
@@ -17,9 +23,12 @@ const BASE = (import.meta.env.VITE_API_BASE as string | undefined) ?? "/api";
 
 export class ApiError extends Error {
   status: number;
-  constructor(message: string, status: number) {
+  /** Machine-readable reason from the server, for example "disabled" when the run database is off. */
+  code?: string;
+  constructor(message: string, status: number, code?: string) {
     super(message);
     this.status = status;
+    this.code = code;
   }
 }
 
@@ -50,12 +59,15 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   }
   if (!res.ok) {
     let msg = `Request failed (${res.status})`;
+    let code: string | undefined;
     try {
-      msg = describeDetail((await res.json()).detail);
+      const body = await res.json();
+      msg = describeDetail(body.detail);
+      if (typeof body.code === "string") code = body.code;
     } catch {
       /* non-JSON error body */
     }
-    throw new ApiError(msg, res.status);
+    throw new ApiError(msg, res.status, code);
   }
   if (res.status === 204) return undefined as T;
   return (await res.json()) as T;
@@ -68,8 +80,8 @@ export const api = {
   health: () => request<{ status: string; active_sessions: number }>("/health"),
   generateDataset: (spec: DatasetSpec) =>
     post<DataPayload & { name: string }>("/datasets/generate", spec),
-  createModel: (dataset: DataPayload, config: ModelConfig) =>
-    post<SessionStatus>("/models", { dataset, config }),
+  createModel: (dataset: DataPayload, config: ModelConfig, source?: DatasetSource) =>
+    post<SessionStatus>("/models", { dataset: source ? { ...dataset, source } : dataset, config }),
   start: (sessionId: string) => post<SessionStatus>("/training/start", { session_id: sessionId }),
   pause: (id: string) => post<SessionStatus>(`/training/${id}/pause`),
   resume: (id: string) => post<SessionStatus>(`/training/${id}/resume`),
@@ -85,8 +97,23 @@ export const api = {
     post<PredictResponse>(`/training/${id}/predict`, { points: [point], include_activations: true }),
   evaluation: (id: string, split: "train" | "val", threshold: number) =>
     request<Evaluation>(`/training/${id}/evaluation?split=${split}&threshold=${threshold}`),
-  crossValidate: (dataset: DataPayload, config: ModelConfig, method: ValidationMethod, k: number, valFraction: number) =>
-    post<CrossValidation>("/cross-validation", { dataset, config, method, k, val_fraction: valFraction }),
+  crossValidate: (dataset: DataPayload, config: ModelConfig, method: ValidationMethod, k: number, valFraction: number, source?: DatasetSource) =>
+    post<CrossValidation>("/cross-validation", { dataset: source ? { ...dataset, source } : dataset, config, method, k, val_fraction: valFraction }),
   trace: (id: string, sample: number) =>
     request<IterationTrace>(`/training/${id}/iteration-trace?sample=${sample}`),
+  // ---- saved runs (experiment database)
+  runsStatus: () => request<DbStatus>("/runs/status"),
+  listRuns: (opts: { limit?: number; offset?: number; kind?: RunKind | ""; q?: string } = {}) => {
+    const p = new URLSearchParams();
+    p.set("limit", String(opts.limit ?? 50));
+    if (opts.offset) p.set("offset", String(opts.offset));
+    if (opts.kind) p.set("kind", opts.kind);
+    if (opts.q?.trim()) p.set("q", opts.q.trim());
+    return request<RunList>(`/runs?${p.toString()}`);
+  },
+  getRun: (id: string) => request<RunDetail>(`/runs/${encodeURIComponent(id)}`),
+  updateRun: (id: string, patch: { title?: string; notes?: string }) =>
+    request<RunDetail>(`/runs/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(patch) }),
+  deleteRun: (id: string) => request<void>(`/runs/${encodeURIComponent(id)}`, { method: "DELETE" }),
+  compareRuns: (ids: string[]) => request<RunComparison>(`/runs/compare?ids=${ids.map(encodeURIComponent).join(",")}`),
 };

@@ -2,7 +2,8 @@
 
 Walks the same path the UI uses and checks each step with real values:
 dataset -> model -> train -> pause/resume -> metrics -> parameters -> predict -> trace -> reset ->
-evaluation (confusion/AUC) -> advanced options (RMSprop, dropout, batch norm, early stopping) -> cross-validation -> cleanup.
+evaluation (confusion/AUC) -> advanced options (RMSprop, dropout, batch norm, early stopping) -> cross-validation ->
+experiment database (auto-saved runs: list / fetch / patch / compare / delete) -> cleanup.
 
 Usage:  uvicorn app.main:app --port 8000   (in backend/)
         python scripts/e2e_flow.py [BASE_URL]
@@ -51,7 +52,8 @@ def main() -> int:
     cfg = {"hidden_layers": [8], "activation": "tanh", "init": "xavier", "optimizer": "adam",
            "learning_rate": 0.05, "batch_size": 32, "epochs": 150, "val_split": 0.2,
            "seed": 7, "epoch_delay_ms": 10}  # small pacing so pause can be observed
-    body = {"dataset": {"points": d1["points"], "labels": d1["labels"]}, "config": cfg}
+    source = {"name": "xor", "n_samples": 200, "noise": 0.15, "seed": 42}  # lets saved runs say which data they used
+    body = {"dataset": {"points": d1["points"], "labels": d1["labels"], "source": source}, "config": cfg}
     m = c.post("/models", json=body)
     step("4 model created", m.status_code == 201, f"status={m.json().get('status')}, layers={m.json().get('layer_sizes')}")
     sid = m.json()["session_id"]
@@ -148,8 +150,64 @@ def main() -> int:
          cv.status_code == 200 and len(cvj["folds"]) == 4 and sum(f["n_val"] for f in cvj["folds"]) == 200,
          f"mean val accuracy {cvj['mean_val_accuracy']:.3f} ± {cvj['std_val_accuracy']:.3f}")
 
+    # 10e. experiment database: finished runs are saved automatically
+    st = c.get("/runs/status").json()
+    if not st["enabled"]:
+        step("26 experiment database", True, "switched off (DB_ENABLED=false): run steps skipped")
+    else:
+        step("26 experiment database reachable", st["available"], f"{st['count']} saved runs, schema v{st['schema_version']}")
+        rid = fin2.get("run_id")
+        step("27 finished training was saved automatically", bool(rid), f"run_id={rid}")
+        run = c.get(f"/runs/{rid}").json()
+        step("28 saved run holds config, dataset, metrics and the full history",
+             run["kind"] == "playground" and run["config"]["optimizer"] == "rmsprop"
+             and run["metrics"]["epochs_run"] == len(run["history"]) == fin2["epoch"]
+             and run["metrics"]["final_train_loss"] == run["history"][-1]["train_loss"]
+             and "points" not in run["dataset"] and run["dataset"]["name"] == "xor" and run["dataset"]["seed"] == 42,
+             f"{len(run['history'])} epochs, final train loss {run['metrics']['final_train_loss']:.4f}")
+        cv_id = cvj.get("run_id")
+        cv_run = c.get(f"/runs/{cv_id}").json()
+        step("29 cross-validation was saved", cv_run["kind"] == "cross-validation" and cv_run["metrics"]["n_folds"] == 4,
+             f"run_id={cv_id}, mean val acc {cv_run['metrics']['mean_val_accuracy']:.3f}")
+        lst = c.get("/runs", params={"limit": 5}).json()
+        ids = [r["id"] for r in lst["items"]]
+        step("30 list is newest first and has no full histories",
+             ids[0] == cv_id and rid in ids and "history" not in lst["items"][0] and lst["total"] >= 2, f"top ids {ids[:3]}")
+        step("31 filter by kind and text",
+             all(r["kind"] == "cross-validation" for r in c.get("/runs", params={"kind": "cross-validation"}).json()["items"])
+             and rid in [r["id"] for r in c.get("/runs", params={"q": "rmsprop"}).json()["items"]])
+        pr = c.patch(f"/runs/{rid}", json={"title": "E2E rmsprop run", "notes": "checked by e2e_flow"})
+        step("32 rename and notes", pr.status_code == 200 and pr.json()["title"] == "E2E rmsprop run"
+             and c.get(f"/runs/{rid}").json()["notes"] == "checked by e2e_flow")
+        # second run with another optimizer so there is something to compare
+        m3 = c.post("/models", json={**body, "config": {**cfg, "optimizer": "sgd", "learning_rate": 0.3, "epochs": 30, "epoch_delay_ms": 0}})
+        sid3 = m3.json()["session_id"]
+        c.post("/training/start", json={"session_id": sid3})
+        deadline = time.time() + 30
+        fin3 = wait(c, sid3, {"completed", "failed"})
+        while not fin3.get("run_id") and time.time() < deadline:
+            time.sleep(0.05)
+            fin3 = c.get(f"/training/{sid3}/status").json()
+        cmpr = c.get("/runs/compare", params={"ids": f"{rid},{fin3['run_id']}"})
+        cj = cmpr.json()
+        n_a, n_b = fin2["epoch"], 30
+        short_id = rid if n_a < n_b else fin3["run_id"]
+        padded_ok = n_a == n_b or cj["rows"][-1].get(f"{short_id}.train_loss") is None
+        step("33 compare aligns two histories on one epoch axis",
+             cmpr.status_code == 200 and cj["epochs"] == max(n_a, n_b) and padded_ok,
+             f"{cj['epochs']} epochs, differing settings: {', '.join(cj['differing'])}")
+        step("34 compare reports the settings that differ", {"optimizer", "learning_rate", "epochs"} <= set(cj["differing"]))
+        step("35 compare needs 2-4 runs and existing ids",
+             c.get("/runs/compare", params={"ids": rid}).status_code == 422
+             and c.get("/runs/compare", params={"ids": f"{rid},nope"}).status_code == 404)
+        step("36 unknown run -> 404", c.get("/runs/nope").status_code == 404 and c.patch("/runs/nope", json={"title": "x"}).status_code == 404)
+        gone = [c.delete(f"/runs/{x}").status_code for x in (rid, fin3["run_id"], cv_id)]
+        step("37 delete saved runs", gone == [204, 204, 204] and c.get(f"/runs/{rid}").status_code == 404,
+             "deleted the runs this script created")
+        c.delete(f"/training/{sid3}")
+
     # 11. cleanup
-    step("26 delete session", c.delete(f"/training/{sid}").status_code == 204)
+    step("38 delete session", c.delete(f"/training/{sid}").status_code == 204)
 
     failed = [r for r in results if not r[1]]
     print(f"\n{len(results) - len(failed)}/{len(results)} steps passed")

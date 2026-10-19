@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { AccuracyChart } from "../components/AccuracyChart";
 import { CrossValidationPanel } from "../components/CrossValidationPanel";
 import { DatasetSelector } from "../components/DatasetSelector";
@@ -18,12 +19,20 @@ import { HelpProvider, SectionHelp } from "../components/SectionHelp";
 import { TrainingMetrics } from "../components/TrainingMetrics";
 import { usePlayground } from "../hooks/usePlayground";
 import { useT } from "../i18n";
+import { takePendingRestore } from "../lib/pendingRestore";
 
 export function Playground() {
   const pg = usePlayground();
   const t = useT();
   const [helpOn, setHelpOn] = useHelpToggle();
   const hasVal = (pg.session?.n_val ?? 0) > 0;
+
+  // "Open in Playground" on the My runs page leaves its settings here.
+  const { restoreRun } = pg;
+  useEffect(() => {
+    const r = takePendingRestore();
+    if (r) void restoreRun(r);
+  }, [restoreRun]);
 
   return (
     <HelpProvider value={helpOn}>

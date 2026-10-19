@@ -47,7 +47,7 @@ export function CrossValidationPanel({ pg }: { pg: Playground }) {
     setBusy(true);
     setError(null);
     try {
-      setResult(await api.crossValidate(pg.data, { ...pg.config, early_stopping: false, val_split: 0 }, method, k, frac));
+      setResult(await api.crossValidate(pg.data, { ...pg.config, early_stopping: false, val_split: 0 }, method, k, frac, { name: pg.datasetSpec.name, n_samples: pg.datasetSpec.n_samples, noise: pg.datasetSpec.noise, seed: pg.datasetSpec.seed }));
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {

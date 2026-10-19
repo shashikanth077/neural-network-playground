@@ -13,9 +13,18 @@ export interface DatasetSpec {
   seed: number;
 }
 
+/** Where a dataset came from; sent along so saved runs can say which data they used. */
+export interface DatasetSource {
+  name: string;
+  n_samples?: number;
+  noise?: number;
+  seed?: number;
+}
+
 export interface DataPayload {
   points: number[][];
   labels: number[];
+  source?: DatasetSource;
 }
 
 export interface ModelConfig {
@@ -68,6 +77,8 @@ export interface SessionStatus {
   layer_sizes: number[];
   config: ModelConfig;
   latest: EpochMetrics | null;
+  /** Id of the saved run once training has finished and been stored (null when not saved). */
+  run_id?: string | null;
 }
 
 export interface LayerParameters {
@@ -173,4 +184,79 @@ export interface CrossValidation {
   mean_val_f1: number;
   n_samples: number;
   note: string;
+}
+
+// ---------------------------------------------------------------- saved runs
+export type RunKind = "playground" | "cross-validation";
+
+export interface RunDataset {
+  name: string;
+  n_samples?: number;
+  noise?: number | null;
+  seed?: number | null;
+  class_counts?: [number, number];
+  summary?: string;
+  points?: number[][];
+  labels?: number[];
+}
+
+export interface RunMetrics {
+  final_train_loss?: number | null;
+  final_train_acc?: number | null;
+  final_val_loss?: number | null;
+  final_val_acc?: number | null;
+  best_epoch?: number | null;
+  stopped_early?: boolean;
+  n_parameters?: number;
+  epochs_run?: number;
+  elapsed?: number;
+  error?: string | null;
+  // cross-validation
+  method?: string;
+  mean_val_loss?: number | null;
+  std_val_loss?: number | null;
+  mean_val_accuracy?: number | null;
+  std_val_accuracy?: number | null;
+  mean_val_f1?: number | null;
+  n_folds?: number;
+}
+
+export interface RunSummary {
+  id: string;
+  created_at: number;
+  finished_at: number | null;
+  kind: RunKind;
+  status: string;
+  title: string;
+  notes: string;
+  /** The model settings, plus `cv_method` / `cv_k` for cross-validation runs. */
+  config: Partial<ModelConfig> & Record<string, unknown>;
+  dataset: RunDataset;
+  metrics: RunMetrics;
+  spark: number[];
+}
+
+export interface RunDetail extends Omit<RunSummary, "spark"> {
+  spark?: number[];
+  history: EpochMetrics[];
+}
+
+export interface RunList {
+  total: number;
+  items: RunSummary[];
+}
+
+export interface RunComparison {
+  runs: RunDetail[];
+  epochs: number;
+  rows: Record<string, number | null>[];
+  differing: string[];
+}
+
+export interface DbStatus {
+  enabled: boolean;
+  available: boolean;
+  count: number;
+  schema_version: number | null;
+  error: string | null;
 }

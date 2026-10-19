@@ -1,10 +1,11 @@
 """Independent training sessions that run on background threads."""
 from __future__ import annotations
 
+import logging
 import threading
 import time
 import uuid
-from typing import Optional
+from typing import Callable, Optional
 
 import numpy as np
 
@@ -12,6 +13,9 @@ from . import config as settings
 from .metrics import evaluate as evaluate_split
 from .nn import NeuralNetwork, batch_indices, flatten, loss_and_dlogits, make_optimizer, sigmoid
 from .schemas import ModelConfig
+
+
+log = logging.getLogger("ailab.sessions")
 
 
 class SessionNotFound(Exception):
@@ -30,9 +34,21 @@ class TrainingSession:
     Pause / resume use an Event that the worker checks before every mini-batch.
     """
 
-    def __init__(self, points: list[list[float]], labels: list[int], config: ModelConfig):
+    def __init__(
+        self,
+        points: list[list[float]],
+        labels: list[int],
+        config: ModelConfig,
+        source: Optional[dict] = None,
+        on_finish: Optional[Callable[["TrainingSession"], Optional[str]]] = None,
+    ):
         self.id = uuid.uuid4().hex[:12]
         self.config = config
+        self.source = source
+        self.dataset_points = points if len(points) <= 2000 else []
+        self.dataset_labels = labels
+        self.on_finish = on_finish
+        self.run_id: Optional[str] = None
         self.lock = threading.RLock()
         self.created = self.last_access = time.time()
         X = np.asarray(points, dtype=float)
@@ -76,6 +92,7 @@ class TrainingSession:
         self.error: Optional[str] = None
         self._elapsed = 0.0
         self._resumed_at: Optional[float] = None
+        self.run_id = None
 
     # ------------------------------------------------------------ control
     def start(self) -> None:
@@ -165,11 +182,25 @@ class TrainingSession:
                 if not self._stop_flag.is_set():
                     self._bank_time()
                     self.status = "completed"
+            self._finished()
         except Exception as exc:  # surfaced to the UI through /status
             with self.lock:
                 self._bank_time()
                 self.status = "failed"
                 self.error = f"Training failed: {exc}"
+            self._finished()
+
+    def _finished(self) -> None:
+        """Hand a completed / failed session to the storage hook; a storage problem never affects training."""
+        if self.on_finish is None or self._stop_flag.is_set():
+            return
+        try:
+            run_id = self.on_finish(self)
+            with self.lock:
+                if not self._stop_flag.is_set():
+                    self.run_id = run_id
+        except Exception as exc:  # noqa: BLE001
+            log.warning("saving the finished run failed: %s", exc)
 
     def _interruptible_sleep(self, seconds: float) -> None:
         end = time.time() + seconds
@@ -235,6 +266,7 @@ class TrainingSession:
                 "layer_sizes": list(self.net.layer_sizes),
                 "config": self.config.model_dump(),
                 "latest": dict(self.history[-1]) if self.history else None,
+                "run_id": self.run_id,
             }
 
     def _best_epoch(self) -> Optional[int]:
@@ -337,14 +369,20 @@ class TrainingSession:
 class SessionManager:
     """Thread-safe registry with a TTL / capacity cleanup policy."""
 
-    def __init__(self, ttl: int = settings.SESSION_TTL_SECONDS, max_sessions: int = settings.MAX_SESSIONS):
+    def __init__(
+        self,
+        ttl: int = settings.SESSION_TTL_SECONDS,
+        max_sessions: int = settings.MAX_SESSIONS,
+        on_finish: Optional[Callable[[TrainingSession], Optional[str]]] = None,
+    ):
+        self.on_finish = on_finish
         self.ttl = ttl
         self.max_sessions = max_sessions
         self._sessions: dict[str, TrainingSession] = {}
         self._lock = threading.Lock()
 
-    def create(self, points, labels, config: ModelConfig) -> TrainingSession:
-        session = TrainingSession(points, labels, config)
+    def create(self, points, labels, config: ModelConfig, source: Optional[dict] = None) -> TrainingSession:
+        session = TrainingSession(points, labels, config, source=source, on_finish=self.on_finish)
         with self._lock:
             self._evict_locked()
             self._sessions[session.id] = session

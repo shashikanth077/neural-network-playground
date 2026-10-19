@@ -52,10 +52,22 @@ describe("concept pages", () => {
     expect(screen.getByRole("heading", { name: /Planned concepts/ })).toBeInTheDocument();
   });
 
-  it("works in Lithuanian and Kannada and falls back to English for concept text", async () => {
+  it("works in Lithuanian with translated concept texts and no English notice", async () => {
     at("/concepts", "lt");
     expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent("DI sąvokos");
     expect(screen.getByRole("link", { name: /Dropout/ })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Gradientinis nusileidimas/ })).toBeInTheDocument();
+    expect(screen.queryByText(/shown in English/)).toBeNull();
+  });
+
+  it("a concept page is translated in Lithuanian and Kannada", async () => {
+    const { unmount } = at("/concepts/backprop", "lt");
+    expect(await screen.findByRole("heading", { level: 1, name: "Atgalinis sklidimas" })).toBeInTheDocument();
+    expect(screen.getByText(/Grandinės taisyklė perduoda paklaidą/)).toBeInTheDocument();
+    unmount();
+    at("/concepts/backprop", "kn");
+    expect(await screen.findByRole("heading", { level: 1, name: "ಬ್ಯಾಕ್‌ಪ್ರೊಪಗೇಶನ್" })).toBeInTheDocument();
+    expect(screen.queryByText("Backpropagation")).toBeNull();
   });
 
   it("the Concepts link is in the navigation", async () => {

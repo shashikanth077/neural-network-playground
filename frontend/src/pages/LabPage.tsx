@@ -3,7 +3,8 @@ import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { useLabProgress } from "../labs/progress";
 import { getDomain } from "../labs/domains";
 import { getLab, LABS } from "../labs/registry";
-import type { Lab } from "../labs/types";
+import type { Lab, LabStep } from "../labs/types";
+import { firstLessonId, labSteps, SETUP_STEP_ID } from "../labs/LabSetupPanel";
 import { useMeta, useT } from "../i18n";
 
 function ProgressBar({ percent, label }: { percent: number; label: string }) {
@@ -14,18 +15,18 @@ function ProgressBar({ percent, label }: { percent: number; label: string }) {
   );
 }
 
-function Stepper({ lab, current, progress, onPick }: { lab: Lab; current: string; progress: ReturnType<typeof useLabProgress>; onPick?: () => void }) {
+function Stepper({ lab, steps, current, progress, onPick }: { lab: Lab; steps: LabStep[]; current: string; progress: ReturnType<typeof useLabProgress>; onPick?: () => void }) {
   const t = useT();
   const m = useMeta();
   const groups = useMemo(() => {
-    const out: { name: string; steps: { step: Lab["steps"][number]; index: number }[] }[] = [];
-    lab.steps.forEach((step, index) => {
+    const out: { name: string; steps: { step: LabStep; index: number }[] }[] = [];
+    steps.forEach((step, index) => {
       const g = out.find((x) => x.name === step.group);
       if (g) g.steps.push({ step, index });
       else out.push({ name: step.group, steps: [{ step, index }] });
     });
     return out;
-  }, [lab]);
+  }, [steps]);
   return (
     <nav aria-label={`${m.labTitle(lab)} · ${t("lab.stepsLabel")}`} className="space-y-4">
       {groups.map((g) => (
@@ -70,12 +71,13 @@ export function LabPage() {
   const navigate = useNavigate();
   const t = useT();
   const m = useMeta();
-  const progress = useLabProgress(lab?.id ?? "none", lab?.steps.map((s) => s.id) ?? []);
+  const steps = useMemo(() => (lab ? labSteps(lab) : []), [lab]);
+  const progress = useLabProgress(lab?.id ?? "none", steps.map((s) => s.id));
   const [drawer, setDrawer] = useState(false);
   const main = useRef<HTMLDivElement>(null);
 
-  const index = lab ? lab.steps.findIndex((s) => s.id === stepId) : -1;
-  const step = lab && index >= 0 ? lab.steps[index] : null;
+  const index = lab ? steps.findIndex((s) => s.id === stepId) : -1;
+  const step = lab && index >= 0 ? steps[index] : null;
 
   useEffect(() => {
     if (step) {
@@ -91,12 +93,12 @@ export function LabPage() {
   if (!lab) return <Navigate to="/labs" replace />;
   if (lab.status !== "live" || lab.steps.length === 0) return <Navigate to="/labs" replace />;
   if (!step) {
-    const resume = lab.steps.find((s) => s.id === progress.last) ?? lab.steps[0];
+    const resume = steps.find((s) => s.id === progress.last) ?? steps.find((s) => s.id === firstLessonId(lab)) ?? steps[0];
     return <Navigate to={`/labs/${lab.id}/${resume.id}`} replace />;
   }
 
-  const prev = lab.steps[index - 1];
-  const next = lab.steps[index + 1];
+  const prev = steps[index - 1];
+  const next = steps[index + 1];
   const Step = step.Component;
   const done = progress.isDone(step.id);
 
@@ -114,12 +116,12 @@ export function LabPage() {
           <LabSwitcher lab={lab} />
           <div>
             <div className="mb-1.5 flex items-center justify-between text-xs text-muted">
-              <span>{t("lab.stepsDone", undefined, { a: progress.done.length, b: lab.steps.length })}</span>
+              <span>{t("lab.stepsDone", undefined, { a: progress.done.length, b: steps.length })}</span>
               <span className="font-mono">{progress.percent}%</span>
             </div>
             <ProgressBar percent={progress.percent} label={t("lab.progress")} />
           </div>
-          <Stepper lab={lab} current={step.id} progress={progress} />
+          <Stepper lab={lab} steps={steps} current={step.id} progress={progress} />
           <button className="btn-ghost w-full !py-1.5 !text-xs" onClick={() => { if (window.confirm(t("lab.resetConfirm"))) progress.reset(); }}>
             {t("lab.reset")}
           </button>
@@ -130,7 +132,7 @@ export function LabPage() {
       <div className="lg:hidden">
         <button className="card flex w-full items-center justify-between gap-3 p-3 text-left" aria-expanded={drawer} aria-controls="lab-drawer" onClick={() => setDrawer((d) => !d)}>
           <span className="min-w-0">
-            <span className="block text-xs text-muted">{t("lab.stepOfShort", undefined, { n: lab.number, a: index + 1, b: lab.steps.length })}</span>
+            <span className="block text-xs text-muted">{t("lab.stepOfShort", undefined, { n: lab.number, a: index + 1, b: steps.length })}</span>
             <span className="block truncate text-sm font-semibold">{m.stepTitle(lab.id, step)}</span>
           </span>
           <span aria-hidden className="text-muted">{drawer ? "▴" : "▾"}</span>
@@ -139,7 +141,7 @@ export function LabPage() {
         {drawer && (
           <div id="lab-drawer" className="card mt-3 max-h-[60vh] space-y-3 overflow-y-auto p-3">
             <LabSwitcher lab={lab} />
-            <Stepper lab={lab} current={step.id} progress={progress} onPick={() => setDrawer(false)} />
+            <Stepper lab={lab} steps={steps} current={step.id} progress={progress} onPick={() => setDrawer(false)} />
           </div>
         )}
       </div>
@@ -152,19 +154,19 @@ export function LabPage() {
           <Link className="hover:text-ink" to={`/labs/${lab.id}`}>{t("lab.labN", undefined, { n: lab.number })}</Link> <span aria-hidden>/</span> <span>{t(`lab.group.${step.group}`, step.group)}</span>
         </nav>
         <header className="mt-2 mb-5">
-          <p className="font-mono text-sm text-brand">{t("lab.stepOf", undefined, { a: index + 1, b: lab.steps.length, m: step.minutes })}</p>
+          <p className="font-mono text-sm text-brand">{t("lab.stepOf", undefined, { a: index + 1, b: steps.length, m: step.minutes })}</p>
           <h1 className="mt-1 text-2xl font-extrabold tracking-tight sm:text-3xl">{m.stepTitle(lab.id, step)}</h1>
           <p className="mt-1 max-w-3xl text-muted">{m.stepSummary(lab.id, step)}</p>
         </header>
 
-        {lab.Map && <lab.Map key={`map-${step.id}`} stepId={step.id} done={progress.done} />}
-        {lab.Intro && <lab.Intro key={`intro-${step.id}`} stepId={step.id} done={progress.done} />}
+        {lab.Map && step.id !== SETUP_STEP_ID && <lab.Map key={`map-${step.id}`} stepId={step.id} done={progress.done} />}
+        {lab.Intro && step.id !== SETUP_STEP_ID && <lab.Intro key={`intro-${step.id}`} stepId={step.id} done={progress.done} />}
 
         <Suspense fallback={<p className="py-10 text-center text-sm text-muted" role="status">{t("lab.loading")}</p>}>
           <Step />
         </Suspense>
 
-        {lab.Outro && <lab.Outro key={`outro-${step.id}`} stepId={step.id} done={progress.done} />}
+        {lab.Outro && step.id !== SETUP_STEP_ID && <lab.Outro key={`outro-${step.id}`} stepId={step.id} done={progress.done} />}
 
         <footer className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
           {prev ? (

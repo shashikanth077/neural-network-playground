@@ -6,6 +6,9 @@ services:
         required: false
     environment:
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8080}
+      DB_PATH: /srv/data/ailab.db
+    volumes:
+      - ailab-data:/srv/data
     restart: unless-stopped
   frontend:
     build: ./frontend
@@ -14,3 +17,6 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
+
+volumes:
+  ailab-data:

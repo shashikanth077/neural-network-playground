@@ -56,3 +56,35 @@
 }
 
 .katex-display { overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
+
+/* ---- Home v2: hero, concept map ---- */
+.home-hero-glow {
+  background:
+    radial-gradient(55% 60% at 85% 0%, rgb(var(--brand) / .16), transparent 70%),
+    radial-gradient(45% 50% at 0% 30%, rgb(var(--c-teal) / .12), transparent 70%),
+    radial-gradient(40% 40% at 60% 100%, rgb(var(--c-purple) / .10), transparent 70%);
+}
+.home-gradient-text {
+  background-image: linear-gradient(100deg, rgb(var(--brand)), rgb(var(--c-purple)) 55%, rgb(var(--c-teal)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.cm-panel {
+  position: relative;
+  border: 1px solid rgb(var(--line));
+  border-radius: 1.25rem;
+  padding: 1.25rem;
+  background-color: rgb(var(--surface) / .85);
+  background-image: radial-gradient(rgb(var(--line) / .9) 1px, transparent 1px);
+  background-size: 22px 22px;
+  box-shadow: 0 1px 2px rgb(0 0 0 / .04), 0 18px 40px -24px rgb(0 0 0 / .25);
+}
+@media (min-width: 640px) { .cm-panel { padding: 1.75rem; } }
+.cm-node { cursor: pointer; outline: none; transition: opacity .15s; }
+.cm-node .cm-ring { opacity: 0; }
+.cm-node:hover .cm-ring { opacity: .35; }
+.cm-node:focus-visible .cm-ring { opacity: 1; }
+.cm-halo { transform-box: fill-box; transform-origin: center; animation: cm-halo 3.6s ease-out infinite; }
+@keyframes cm-halo { 0% { transform: scale(1); opacity: .9; } 70%, 100% { transform: scale(2.3); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .cm-halo { animation: none; display: none; } }

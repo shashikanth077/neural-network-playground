@@ -46,6 +46,6 @@ describe("language switcher", () => {
     expect(localStorage.getItem("ailab.lang")).toBe("lt");
     fireEvent.change(screen.getByLabelText("Kalba"), { target: { value: "kn" } });
     expect(screen.getByRole("button", { name: /ಲ್ಯಾಬ್‌ಗಳು/ })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { level: 1 }).textContent).toContain("ಕಲಿಯಿರಿ");
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toContain("ಚಲಾಯಿಸುವ");
   });
 });

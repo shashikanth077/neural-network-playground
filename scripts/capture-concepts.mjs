@@ -13,6 +13,9 @@ for (const lang of ["en", "lt", "kn"]) for (const w of [320, 375, 1440]) {
     await p.goto(BASE + path); await p.waitForSelector("h1");
     const over = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth);
     check(over <= 0, `[${lang}] ${w}px ${path} no overflow (${over})`);
+    const text = await p.evaluate(() => document.body.innerText);
+    check(!/\b(concept|area|cc|cov)\.[a-z0-9-]+\.?[a-z]*\b/.test(text), `[${lang}] ${w}px ${path} shows no raw i18n keys`);
+    if (lang !== "en") check(!/shown in English/i.test(text), `[${lang}] ${w}px ${path} has no English-fallback notice`);
   }
   await c.close();
 }
@@ -24,6 +27,17 @@ await p.goto(BASE + "/concepts/backprop"); await p.waitForSelector("h1");
 await p.screenshot({ path: "screenshots/concept-page.png", fullPage: true });
 await p.goto(BASE + "/coverage"); await p.waitForSelector("h1");
 await p.screenshot({ path: "screenshots/coverage.png", fullPage: true });
+// translated screenshots (lt, kn): hub and a concept page
+for (const lang of ["lt", "kn"]) {
+  const tc = await b.newContext({ viewport: { width: 1440, height: 900 } });
+  await tc.addInitScript((l) => localStorage.setItem("ailab.lang", l), lang);
+  const tp = await tc.newPage();
+  await tp.goto(BASE + "/concepts"); await tp.waitForSelector("h1");
+  await tp.screenshot({ path: `screenshots/concepts-${lang}.png`, fullPage: false });
+  await tp.goto(BASE + "/concepts/backprop"); await tp.waitForSelector("h1");
+  await tp.screenshot({ path: `screenshots/concept-page-${lang}.png`, fullPage: true });
+  await tc.close();
+}
 // deep links land on the right thing
 await p.goto(BASE + "/playground?topic=dropout#learn"); await p.waitForSelector("#learn");
 check((await p.locator("#learn [aria-current=true]").innerText()).toLowerCase().includes("dropout"), "learn deep link opens the Dropout topic");

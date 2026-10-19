@@ -2,6 +2,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { DOMAINS, getDomain, type DomainId } from "../labs/domains";
 import { readProgress } from "../labs/progress";
 import { labMinutes, LABS } from "../labs/registry";
+import { labSteps } from "../labs/LabSetupPanel";
 import { useMeta, useT } from "../i18n";
 
 type Status = "all" | "live" | "planned";
@@ -68,7 +69,7 @@ export function LabsIndex() {
           {shown.map((lab) => {
             const live = lab.status === "live";
             const d = getDomain(lab.domain);
-            const p = live ? readProgress(lab.id, lab.steps.map((s) => s.id)) : null;
+            const p = live ? readProgress(lab.id, labSteps(lab).map((s) => s.id)) : null;
             const started = !!p && p.done > 0;
             const body = (
               <>
@@ -86,7 +87,7 @@ export function LabsIndex() {
                 {live && p && (
                   <div className="mt-5">
                     <div className="flex items-center justify-between text-xs text-muted">
-                      <span>{t("home.stepsMin", undefined, { n: lab.steps.length, m: labMinutes(lab) })}</span>
+                      <span>{t("home.stepsMin", undefined, { n: labSteps(lab).length, m: labMinutes(lab) })}</span>
                       <span>{started ? t("labs.done", undefined, { a: p.done, b: p.total }) : t("labs.notStarted")}</span>
                     </div>
                     <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-raised" role="progressbar" aria-label={`${m.labTitle(lab)}`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={p.percent}>

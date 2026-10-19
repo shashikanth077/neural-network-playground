@@ -56,6 +56,8 @@ This is a plan; it has **not** been executed from this repository's authoring en
 
 The backend must stay a **single process** because sessions are in memory.
 
+**Experiment database.** Saved runs live in a SQLite file. `docker-compose.yml` sets `DB_PATH=/srv/data/ailab.db` and mounts the named volume `ailab-data` there, so runs survive `docker compose up -d --build` and instance reboots. They are lost if you run `docker compose down -v`, delete the volume, or replace the EC2 instance (back up with `docker run --rm -v <project>_ailab-data:/d -v $PWD:/b alpine tar czf /b/ailab-data.tgz -C /d .`). The CloudFormation template needs no change: it already runs `docker compose up -d --build`, which creates the volume on the instance's 16 GB gp3 disk. SQLite means one backend instance; for several instances use a managed database instead. Set `DB_ENABLED=false` to turn saving off. Not tested with Docker in the authoring environment.
+
 ## Option B: managed containers
 
 * Push `backend` and `frontend` images to ECR; run on **ECS Fargate** (one task each, desired count 1 for the backend) behind an ALB: `/api/*` → backend, everything else → frontend. App Runner works for the backend alone.

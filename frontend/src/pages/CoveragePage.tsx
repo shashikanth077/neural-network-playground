@@ -5,7 +5,7 @@ import type { Evidence } from "../concepts/types";
 import { useT } from "../i18n";
 import { COVERAGE_STYLE } from "./ConceptsHub";
 
-const KINDS: Evidence["kind"][] = ["learn", "playground", "experiment", "lab", "tool", "sheet"];
+const KINDS: Evidence["kind"][] = ["learn", "playground", "experiment", "lab", "tool", "page", "sheet"];
 
 export function CoveragePage() {
   const t = useT();

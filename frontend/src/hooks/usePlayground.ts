@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api, ApiError } from "../api/client";
 import { DEFAULT_CONFIG, DEFAULT_DATASET, type Preset, type PresetVariant } from "../lib/presets";
+import type { RestoreRequest } from "../lib/pendingRestore";
 import { hasErrors, validateConfig } from "../lib/validation";
 import type {
   DataPayload,
@@ -172,7 +173,12 @@ export function usePlayground() {
         histLen.current = 0;
         lastEpoch.current = -1;
         setHistory([]);
-        const st = await api.createModel(data!, config);
+        const source = {
+          name: datasetSpec.name,
+          n_samples: data!.labels.length,
+          ...(datasetSpec.name === "custom" ? {} : { noise: datasetSpec.noise, seed: datasetSpec.seed }),
+        };
+        const st = await api.createModel(data!, config, source);
         if (cancelled) {
           void api.remove(st.session_id).catch(() => undefined);
           return;
@@ -352,6 +358,22 @@ export function usePlayground() {
     [guarded, stopIfRunning],
   );
 
+  /** Put the settings and data of a saved run back into the Playground (stops a run in progress first). */
+  const restoreRun = useCallback(
+    (r: RestoreRequest) =>
+      guarded(async () => {
+        await stopIfRunning();
+        const d = r.dataset;
+        setDatasetSpecState({ name: d.name, n_samples: d.n_samples, noise: d.noise, seed: d.seed });
+        if (d.name === "custom") setData({ points: d.points ?? [], labels: d.labels ?? [] });
+        setConfigState({ ...DEFAULT_CONFIG, ...r.config });
+        setActivePreset(null);
+        setPinned(null);
+        setViewState(DEFAULT_VIEW);
+      }),
+    [guarded, stopIfRunning],
+  );
+
   const pinRun = useCallback(() => {
     const h = historyRef.current;
     if (!h.length) return;
@@ -374,7 +396,7 @@ export function usePlayground() {
     error, clearError: () => setError(null), backendUp, checkBackend,
     train, pause, resume, reset,
     addPoint, undoPoint, clearPoints,
-    activePreset, applyPreset, applyVariant,
+    activePreset, applyPreset, applyVariant, restoreRun,
   };
 }
 

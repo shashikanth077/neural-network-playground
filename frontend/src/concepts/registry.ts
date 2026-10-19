@@ -326,8 +326,8 @@ export const CONCEPTS: Concept[] = [
     id: "serving-models", area: "engineering", level: "intermediate", title: "Saving, serving and storing runs",
     summary: "Save a trained model, serve it behind an API and keep every experiment (settings and metrics) in a database.",
     why: "A model nobody can call, or whose settings nobody remembers, is not a product.",
-    tryIt: "Planned.", needs: ["keras-code"], evidence: [],
-    plan: "Experiment tracking in the backend (a database of runs), a model download and a prediction endpoint, shown step by step.",
+    tryIt: "Experiment tracking is live: every finished Playground run and cross-validation is saved and can be compared on the My runs page. Model download and a prediction endpoint are still planned.", needs: ["keras-code"], evidence: [{ kind: "page", to: "/runs", title: "My runs: saved experiments" }],
+    plan: "Experiment tracking is now live (a SQLite database of runs behind the My runs page). Still planned: a model download and a prediction endpoint, shown step by step.",
   },
 ];
 

@@ -10,6 +10,8 @@ export type Evidence =
   | { kind: "lab"; lab: string; step: string }
   /** A stand-alone interactive tool. */
   | { kind: "tool"; id: string }
+  /** A whole page of the app (for example My runs). The path must be a real route. */
+  | { kind: "page"; to: string; title: string }
   /** A section of a cheatsheet (reference only, not interactive). */
   | { kind: "sheet"; sheet: string; section: string };
 

@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { useT } from "../i18n";
 import { CLASS_COLORS } from "../lib/colors";
 import type { DataPayload } from "../types";
 
@@ -12,6 +13,7 @@ interface Props {
 
 /** 2-D scatter of the dataset. In custom mode a click places a point of the selected class. */
 export function DatasetCanvas({ data, editable, activeClass, onAdd }: Props) {
+  const t = useT();
   const ref = useRef<SVGSVGElement>(null);
 
   const handleClick = (e: React.MouseEvent<SVGSVGElement>) => {
@@ -31,7 +33,7 @@ export function DatasetCanvas({ data, editable, activeClass, onAdd }: Props) {
         ref={ref}
         viewBox="0 0 100 100"
         role="img"
-        aria-label={`Dataset scatter plot with ${data?.labels.length ?? 0} points`}
+        aria-label={t("pg.ds.scatter", undefined, { n: data?.labels.length ?? 0 })}
         onClick={handleClick}
         className={`aspect-square w-full rounded-xl border border-line bg-raised/50 ${editable ? "cursor-crosshair" : ""}`}
       >
@@ -51,7 +53,7 @@ export function DatasetCanvas({ data, editable, activeClass, onAdd }: Props) {
       </svg>
       {empty && (
         <p className="pointer-events-none absolute inset-0 grid place-items-center p-6 text-center text-sm text-muted">
-          {editable ? "Click anywhere to place points. You need both classes." : "Generating dataset…"}
+          {editable ? t("pg.ds.canvas.edit") : t("pg.ds.canvas.gen")}
         </p>
       )}
     </div>

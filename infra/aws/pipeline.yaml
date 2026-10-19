@@ -58,6 +58,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - codeconnections:UseConnection
+                  - codestar-connections:UseConnection
                 Resource: !Ref ConnectionArn
                 Condition:
                   StringEquals:

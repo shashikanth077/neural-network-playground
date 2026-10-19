@@ -20,8 +20,8 @@ async function open(opts = {}) {
 
 let { ctx, page } = await open();
 await page.goto(BASE);
-await page.waitForSelector("text=Explore by domain");
-check((await page.getByRole("heading", { level: 1 }).innerText()).match(/machine learning.*deep learning.*NLP/is) !== null, "home headline names ML, DL and NLP");
+await page.waitForSelector("text=Labs and tools");
+check((await page.getByRole("heading", { level: 1 }).innerText()).match(/how AI works/i) !== null, "home headline present");
 check((await page.locator('a[href^="/labs?domain="]').count()) === 3, "home has three domain tiles");
 await page.screenshot({ path: OUT + "home.png", fullPage: true });
 
@@ -158,7 +158,7 @@ await ctx.close();
 for (const w of [320, 390, 768, 1024, 1440]) {
   const { ctx: c2, page: p2 } = await open({ viewport: { width: w, height: 760 } });
   await p2.goto(BASE);
-  await p2.waitForSelector("text=Explore by domain");
+  await p2.waitForSelector("text=Labs and tools");
   for (const [btn, id] of [["Labs", "labs-menu"], ["Tools", "tools-menu"]]) {
     await p2.getByRole("button", { name: new RegExp("^" + btn) }).click();
     const box = await p2.locator("#" + id).boundingBox();

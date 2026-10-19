@@ -54,7 +54,7 @@ describe("Home", () => {
   const renderHome = () => render(<MemoryRouter><Home /></MemoryRouter>);
   it("presents the platform across all three domains", () => {
     renderHome();
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/machine learning.*deep learning.*NLP/i);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/how AI works.*running it yourself/i);
     for (const d of ["ml", "dl", "nlp"]) {
       expect(document.querySelector(`a[href="/labs?domain=${d}"]`)).not.toBeNull();
     }

@@ -8,7 +8,8 @@ import { Tex } from "./Tex";
 export function LearningCenter({ pg }: { pg: Playground }) {
   const t = useT();
   const names = useTopicNames();
-  const [id, setId] = useState(TOPICS[0].id);
+  const wanted = typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("topic");
+  const [id, setId] = useState(TOPICS.some((x) => x.id === wanted) ? (wanted as string) : TOPICS[0].id);
   const topic = TOPICS.find((x) => x.id === id)!;
   const hasVal = (pg.session?.n_val ?? 0) > 0;
   const { data: evaluation } = useEvaluation(pg.session?.session_id ?? null, pg.session?.epoch ?? 0, pg.status, hasVal ? "val" : "train", 0.5);

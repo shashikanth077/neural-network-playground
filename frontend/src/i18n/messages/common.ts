@@ -40,8 +40,6 @@ export const common = build([
   // ---- lab / tool / sheet metadata
   ["lab.lab1.title", "From messy data to a working neural network", "ಅಸ್ತವ್ಯಸ್ತ ಡೇಟಾದಿಂದ ಕೆಲಸ ಮಾಡುವ ನ್ಯೂರಲ್ ನೆಟ್‌ವರ್ಕ್‌ವರೆಗೆ", "Nuo netvarkingų duomenų iki veikiančio neuroninio tinklo"],
   ["lab.lab1.subtitle", "Clean the data, find anomalies, scale the numbers, train a network and read handwritten digits, with a live demo at every step.", "ಡೇಟಾ ಸ್ವಚ್ಛಗೊಳಿಸಿ, ಅಸಂಗತಿಗಳನ್ನು ಹುಡುಕಿ, ಸಂಖ್ಯೆಗಳನ್ನು ಮಾಪನ ಮಾಡಿ, ನೆಟ್‌ವರ್ಕ್‌ಗೆ ತರಬೇತಿ ನೀಡಿ ಮತ್ತು ಕೈಬರಹದ ಅಂಕಿಗಳನ್ನು ಓದಿ — ಪ್ರತಿ ಹಂತದಲ್ಲೂ ಲೈವ್ ಡೆಮೊ.", "Išvalykite duomenis, raskite anomalijas, normuokite skaičius, išmokykite tinklą ir atpažinkite ranka rašytus skaitmenis – kiekviename žingsnyje su gyva demonstracija."],
-  ["lab.lab2.title", "Classical machine learning", "ಶಾಸ್ತ್ರೀಯ ಯಂತ್ರ ಕಲಿಕೆ", "Klasikinis mašininis mokymasis"],
-  ["lab.lab2.subtitle", "Regression, classification and model evaluation on real tabular data.", "ನೈಜ ಕೋಷ್ಟಕ ಡೇಟಾದಲ್ಲಿ ರಿಗ್ರೆಷನ್, ವರ್ಗೀಕರಣ ಮತ್ತು ಮಾದರಿ ಮೌಲ್ಯಮಾಪನ.", "Regresija, klasifikavimas ir modelio vertinimas su realiais lentelių duomenimis."],
   ["lab.lab3.title", "Convolutional networks", "ಕನ್ವಲ್ಯೂಷನಲ್ ನೆಟ್‌ವರ್ಕ್‌ಗಳು", "Konvoliciniai tinklai"],
   ["lab.lab3.subtitle", "Slide filters over images and inspect feature maps layer by layer.", "ಚಿತ್ರಗಳ ಮೇಲೆ ಫಿಲ್ಟರ್‌ಗಳನ್ನು ಜಾರಿಸಿ ಮತ್ತು ಪದರದಿಂದ ಪದರಕ್ಕೆ ಫೀಚರ್ ಮ್ಯಾಪ್‌ಗಳನ್ನು ಪರೀಕ್ಷಿಸಿ.", "Slinkite filtrus per vaizdus ir tikrinkite požymių žemėlapius sluoksnis po sluoksnio."],
   ["lab.lab4.title", "Sequences and attention", "ಅನುಕ್ರಮಗಳು ಮತ್ತು ಗಮನ ಕಾರ್ಯವಿಧಾನ", "Sekos ir dėmesys"],

@@ -60,10 +60,11 @@ describe("LabsIndex", () => {
   });
   it("filters by domain from the URL and from the chips", async () => {
     render(app("/labs?domain=ml"));
-    expect(screen.getByText("Classical machine learning")).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /From messy data/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /Convolutional and recurrent/ })).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole("radio", { name: /DL/ }));
     expect(screen.getByRole("link", { name: /From messy data/ })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Convolutional and recurrent/ })).toBeInTheDocument();
     expect(screen.queryByText("Classical machine learning")).not.toBeInTheDocument();
   });
   it("shows an empty state with a way out when nothing matches", async () => {
@@ -128,7 +129,8 @@ describe("NavBar menus", () => {
     await userEvent.click(btn);
     expect(btn).toHaveAttribute("aria-expanded", "true");
     const menu = document.getElementById("labs-menu")!;
-    expect(within(menu).getByText(/Machine Learning/)).toBeInTheDocument();
+    // the Machine Learning domain has no labs or tools yet, and the menu hides empty domains
+    expect(within(menu).queryByText(/Machine Learning/)).not.toBeInTheDocument();
     expect(within(menu).getByText(/Deep Learning/)).toBeInTheDocument();
     expect(within(menu).getByText(/Natural Language Processing/)).toBeInTheDocument();
     expect(within(menu).getByRole("link", { name: /From messy data/ })).toHaveAttribute("href", "/labs/lab1");

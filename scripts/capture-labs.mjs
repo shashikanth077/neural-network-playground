@@ -101,6 +101,8 @@ await page.screenshot({ path: OUT + "lab1-train.png", fullPage: true });
 // ---- mnist pixel viewer hover
 await page.goto(BASE + "/labs/lab1/mnist");
 await page.waitForSelector("canvas[aria-label^='A handwritten']");
+// the step guide sits above the demos now, so bring the canvas into view before using page coordinates
+await page.locator("canvas[aria-label^='A handwritten']").scrollIntoViewIfNeeded();
 const cv = await page.locator("canvas[aria-label^='A handwritten']").boundingBox();
 await page.mouse.move(cv.x + cv.width * 0.5, cv.y + cv.height * 0.5);
 await page.waitForTimeout(200);

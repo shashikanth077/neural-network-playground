@@ -7,6 +7,8 @@ export interface Diagnosis {
   title: string;
   reason: string;
   bestEpoch: number | null;
+  /** The numbers quoted in `reason`, so the UI can render a translated sentence with the same values. */
+  vars?: Record<string, string>;
 }
 
 const tail = (a: number[], n: number) => a.slice(-Math.max(1, n));
@@ -39,6 +41,7 @@ export function diagnose(history: EpochMetrics[], loss: Loss = "bce"): Diagnosis
       title: "Overfitting",
       reason: `Validation loss was lowest at epoch ${best.epoch} (${best.val_loss!.toFixed(3)}) and has since risen to ${valLoss.toFixed(3)} while training loss kept falling (${trainAtBest.toFixed(3)} → ${trainLoss.toFixed(3)}). The model is starting to memorise. Try early stopping, dropout, L2, or a smaller network.`,
       bestEpoch: best.epoch,
+      vars: { best: String(best.epoch), bestLoss: best.val_loss!.toFixed(3), valLoss: valLoss.toFixed(3), trainBefore: trainAtBest.toFixed(3), trainAfter: trainLoss.toFixed(3) },
     };
   }
   const chance = loss === "bce" ? Math.LN2 : undefined;
@@ -48,6 +51,7 @@ export function diagnose(history: EpochMetrics[], loss: Loss = "bce"): Diagnosis
       title: "Underfitting",
       reason: `Training accuracy is only ${(trainAcc * 100).toFixed(1)}% and validation accuracy is similar (${(valAcc * 100).toFixed(1)}%): the model is too simple or trained too briefly. Add neurons or layers, train longer, or raise the learning rate.`,
       bestEpoch: best.epoch,
+      vars: { trainAcc: (trainAcc * 100).toFixed(1), valAcc: (valAcc * 100).toFixed(1) },
     };
   }
   return {
@@ -55,5 +59,6 @@ export function diagnose(history: EpochMetrics[], loss: Loss = "bce"): Diagnosis
     title: "Reasonable fit",
     reason: `Training (${(trainAcc * 100).toFixed(1)}%) and validation (${(valAcc * 100).toFixed(1)}%) accuracy are close and validation loss is not rising (best at epoch ${best.epoch}).`,
     bestEpoch: best.epoch,
+    vars: { trainAcc: (trainAcc * 100).toFixed(1), valAcc: (valAcc * 100).toFixed(1), best: String(best.epoch) },
   };
 }

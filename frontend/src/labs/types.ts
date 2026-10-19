@@ -13,6 +13,13 @@ export interface LabStep {
   Component: ComponentType;
 }
 
+/** Props of the optional per-step slots a lab can render around its step content. */
+export interface StepSlotProps {
+  stepId: string;
+  /** Ids of the steps the learner has completed. */
+  done: string[];
+}
+
 /** A guided, step-by-step project. Stand-alone apps are `Tool`s (see lib/features.ts). */
 export interface Lab {
   id: string;
@@ -24,4 +31,10 @@ export interface Lab {
   status: "live" | "planned";
   tags: string[];
   steps: LabStep[];
+  /** Optional overview (e.g. a pipeline map) shown above every step. */
+  Map?: ComponentType<StepSlotProps>;
+  /** Optional guide shown between the step heading and the step content (goal, tasks ...). */
+  Intro?: ComponentType<StepSlotProps>;
+  /** Optional guide shown after the step content (quiz, takeaways ...). */
+  Outro?: ComponentType<StepSlotProps>;
 }

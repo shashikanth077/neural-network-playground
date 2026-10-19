@@ -1,5 +1,7 @@
 import { lazy } from "react";
 import type { Lab } from "../types";
+import { PipelineMap } from "./PipelineMap";
+import { GuideIntro, GuideOutro } from "./StepGuide";
 
 /** Lab 1 · From messy data to a working neural network (VGTU, Neural Networks). */
 export const lab1: Lab = {
@@ -11,6 +13,9 @@ export const lab1: Lab = {
   course: "VGTU · Neural Networks · Laboratory work No. 1",
   status: "live",
   tags: ["Data cleaning", "Anomaly detection", "Backpropagation", "MNIST", "Optimizers"],
+  Map: PipelineMap,
+  Intro: GuideIntro,
+  Outro: GuideOutro,
   steps: [
     { id: "big-picture", group: "Orientation", minutes: 3, title: "The big picture", summary: "Six tasks, one story: why every step exists.", Component: lazy(() => import("./steps/BigPicture")) },
     { id: "real-world", group: "Orientation", minutes: 4, title: "How it works in the real world", summary: "Hospitals, sports lists and post offices: each task in real life.", Component: lazy(() => import("./steps/RealWorld")) },

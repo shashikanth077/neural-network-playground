@@ -1,3 +1,5 @@
+import { useT } from "../i18n";
+
 interface Props {
   message: string | null;
   onDismiss?: () => void;
@@ -5,7 +7,8 @@ interface Props {
   title?: string;
 }
 
-export function ErrorMessage({ message, onDismiss, onRetry, title = "Something went wrong" }: Props) {
+export function ErrorMessage({ message, onDismiss, onRetry, title }: Props) {
+  const t = useT();
   if (!message) return null;
   return (
     <div
@@ -14,18 +17,18 @@ export function ErrorMessage({ message, onDismiss, onRetry, title = "Something w
     >
       <span aria-hidden className="mt-0.5 text-bad">⚠</span>
       <div className="min-w-0 flex-1">
-        <p className="font-semibold text-bad">{title}</p>
+        <p className="font-semibold text-bad">{title ?? t("pg.err.default")}</p>
         <p className="break-words text-muted">{message}</p>
       </div>
       <div className="flex shrink-0 gap-2">
         {onRetry && (
           <button className="btn-ghost !py-1" onClick={onRetry}>
-            Retry
+            {t("pg.err.retry")}
           </button>
         )}
         {onDismiss && (
-          <button className="btn-ghost !py-1" onClick={onDismiss} aria-label="Dismiss error">
-            Dismiss
+          <button className="btn-ghost !py-1" onClick={onDismiss} aria-label={t("pg.err.dismissAria")}>
+            {t("pg.err.dismiss")}
           </button>
         )}
       </div>

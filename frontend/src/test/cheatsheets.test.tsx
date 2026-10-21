@@ -25,7 +25,7 @@ describe("cheatsheet pages", () => {
     at("/cheatsheets");
     expect(screen.getByRole("heading", { name: "Cheatsheets" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Neural Network/ })).toHaveAttribute("href", "/cheatsheets/neural-network");
-    expect(screen.getAllByText("Planned").length).toBeGreaterThanOrEqual(2);
+    expect(screen.getAllByText("Planned").length).toBeGreaterThanOrEqual(1);
   });
 
   it("renders every section of the neural network sheet", async () => {
@@ -50,7 +50,7 @@ describe("cheatsheet pages", () => {
   });
 
   it("unknown and planned sheets show a friendly message", async () => {
-    at("/cheatsheets/nlp");
+    at("/cheatsheets/machine-learning");
     expect(await screen.findByText(/planned and not written yet/)).toBeInTheDocument();
   });
 });

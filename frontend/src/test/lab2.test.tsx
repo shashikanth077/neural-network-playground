@@ -24,7 +24,7 @@ describe("Lab 2 registry", () => {
     expect(lab.steps).toHaveLength(13);
     expect(new Set(ids).size).toBe(ids.length);
     expect(LABS.find((l) => l.id === "lab2")).toBe(lab);
-    expect(LABS.filter((l) => l.status === "live").map((l) => l.id)).toEqual(["lab1", "lab2"]);
+    expect(LABS.filter((l) => l.status === "live").map((l) => l.id)).toEqual(["lab1", "lab2", "lab3"]);
   });
   it("each step has a title, a summary, a group and a time", () => {
     for (const s of lab.steps) {
@@ -34,8 +34,8 @@ describe("Lab 2 registry", () => {
       expect(s.minutes).toBeGreaterThan(0);
     }
   });
-  it("Lab 3 and Lab 4 stay planned", () => {
-    expect(getLab("lab3")!.status).toBe("planned");
+  it("Lab 3 is live (Transformers in NLP) and Lab 4 stays planned", () => {
+    expect(getLab("lab3")!.status).toBe("live");
     expect(getLab("lab4")!.status).toBe("planned");
   });
 });

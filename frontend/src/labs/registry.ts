@@ -1,5 +1,6 @@
 import { DOMAINS, type DomainId } from "./domains";
 import { lab1 } from "./lab1";
+import { lab3 } from "./lab3";
 import { lab2 } from "./lab2";
 import type { Lab } from "./types";
 import { TOOLS } from "../lib/features";
@@ -16,8 +17,8 @@ const planned = (number: number, id: string, domain: DomainId, title: string, su
 export const LABS: Lab[] = [
   lab1,
   lab2,
-  planned(3, "lab3", "dl", "Convolutional networks", "Slide filters over images and inspect feature maps layer by layer.", ["CNN", "Vision"]),
-  planned(4, "lab4", "nlp", "Sequences and attention", "Peek inside a tiny transformer and watch tokens attend to each other.", ["Transformers", "Text"]),
+  lab3,
+  planned(4, "lab4", "nlp", "Large language models and prompting", "Generate text, write prompts and measure what in-context learning can and cannot do.", ["LLMs", "Prompting"]),
 ];
 
 export const getLab = (id: string | undefined) => LABS.find((l) => l.id === id);

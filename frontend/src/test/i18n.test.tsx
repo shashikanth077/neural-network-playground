@@ -49,3 +49,26 @@ describe("language switcher", () => {
     expect(screen.getByRole("heading", { level: 1 }).textContent).toContain("ಚಲಾಯಿಸುವ");
   });
 });
+
+describe("translation scripts", () => {
+  const foreign = /[Ѐ-ӿ֐-׿؀-ۿ぀-ヿ一-鿿]/; // Cyrillic, Hebrew, Arabic, kana, CJK
+  it("no value in any language contains Cyrillic, Hebrew, Arabic, Japanese or Chinese characters", () => {
+    for (const [name, ns] of Object.entries(NAMESPACES)) {
+      for (const l of ["en", "kn", "lt"] as const) {
+        for (const [k, v] of Object.entries(ns[l])) expect(foreign.test(v), `${name}/${l}/${k}`).toBe(false);
+      }
+    }
+  });
+  it("every long Kannada value really is Kannada and every long Lithuanian value is Latin script", () => {
+    const kannada = /[ಀ-೿]/;
+    for (const [name, ns] of Object.entries(NAMESPACES)) {
+      for (const [k, v] of Object.entries(ns.kn)) if (v.length > 30 && v !== ns.en[k]) expect(kannada.test(v), `${name}/kn/${k}: ${v.slice(0, 60)}`).toBe(true);
+      for (const [k, v] of Object.entries(ns.lt)) expect(kannada.test(v), `${name}/lt/${k}`).toBe(false);
+    }
+  });
+  it("Kannada and Lithuanian are never the same long text (a swapped or copied column)", () => {
+    for (const [name, ns] of Object.entries(NAMESPACES)) {
+      for (const [k, v] of Object.entries(ns.kn)) if (v.length > 30 && v !== ns.en[k]) expect(v, `${name}/${k}`).not.toBe(ns.lt[k]);
+    }
+  });
+});

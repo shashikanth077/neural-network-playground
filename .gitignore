@@ -1,4 +1,4 @@
-node_modules/
+node_modules
 dist/
 __pycache__/
 *.pyc
@@ -15,3 +15,5 @@ coverage/
 .idea/
 .vscode/
 .claude/worktrees/
+
+backend/data/

@@ -42,6 +42,32 @@ check(!(await page.getByRole("searchbox").isVisible()), "print hides the search 
 check((await page.locator("main section[id]").count()) === total, "print keeps all sections");
 await page.emulateMedia({ media: "screen" });
 
+// NLP and Transformers sheets: sections, search, calculators, print, screenshots
+for (const [id, count, term, shot] of [["nlp", 14, "mcnemar", "cheatsheet-nlp.png"], ["transformers", 17, "qkv", "cheatsheet-transformers.png"]]) {
+  await page.goto(`${BASE}/cheatsheets/${id}`);
+  await page.waitForSelector("main section[id]");
+  const n = await page.locator("main section[id]").count();
+  check(n === count, `/${id}: ${n} sections (expected ${count})`);
+  check((await page.locator("main").innerText()).indexOf("being written") === -1, `/${id}: no placeholder sections left`);
+  check((await page.locator("main section[id] svg[role=img], main table").count()) > 0, `/${id}: tables / diagrams present`);
+  await page.getByRole("searchbox").fill(term);
+  const hit = await page.locator("main section[id]").count();
+  check(hit > 0 && hit < n, `/${id}: search '${term}' narrows ${n} -> ${hit}`);
+  await page.getByRole("searchbox").fill("");
+  check((await page.locator("main input[type=number]").count()) > 0, `/${id}: calculators present`);
+  await page.emulateMedia({ media: "print" });
+  check((await page.locator("main section[id]").count()) === n, `/${id}: print keeps all sections`);
+  check(!(await page.getByRole("searchbox").isVisible()), `/${id}: print hides the search box`);
+  await page.emulateMedia({ media: "screen" });
+  await page.screenshot({ path: OUT + shot, fullPage: true });
+}
+await page.goto(BASE + "/cheatsheets/transformers");
+await page.waitForSelector("#params");
+check((await page.getByTestId("param-total").innerText()).includes("4,386,178"), "param calculator shows BERT-tiny 4,386,178");
+await page.getByLabel("Preset").selectOption("distil");
+check((await page.getByTestId("param-total").innerText()).includes("66,955,010"), "param calculator shows DistilBERT 66,955,010");
+await page.locator("#big-picture svg[role=img]").screenshot({ path: OUT + "cheatsheet-transformers-diagram.png" });
+
 // explorers
 await page.goto(BASE + "/tools/convolution");
 await page.waitForSelector("h1:has-text('Convolution Explorer')");
@@ -64,11 +90,15 @@ await page.screenshot({ path: OUT + "tool-recurrent.png", fullPage: true });
 for (const w of [320, 375, 768, 1440]) {
   const c = await browser.newContext({ viewport: { width: w, height: 800 } });
   const p = await c.newPage();
-  for (const path of ["/", "/cheatsheets", "/cheatsheets/neural-network", "/tools", "/tools/convolution", "/tools/recurrent"]) {
+  for (const path of ["/", "/cheatsheets", "/cheatsheets/neural-network", "/cheatsheets/nlp", "/cheatsheets/transformers", "/tools", "/tools/convolution", "/tools/recurrent"]) {
     await p.goto(BASE + path);
     await p.waitForSelector("h1");
     const over = await p.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     check(over <= 0, `${w}px ${path} no horizontal page scroll (overflow ${over})`);
+    if (path === "/cheatsheets/transformers") {
+      const svgW = await p.evaluate(() => { const s = document.querySelector("main svg[role=img]"); return s ? s.getBoundingClientRect().right : 0; });
+      check(svgW > 0 && svgW <= w, `${w}px ${path} architecture diagram fits (${Math.round(svgW)})`);
+    }
   }
   await p.goto(BASE);
   for (const name of ["Labs", "Tools", "Cheatsheets"]) {
@@ -87,11 +117,15 @@ for (const lang of ["lt", "kn"]) {
     await c.addInitScript((l) => localStorage.setItem("ailab.lang", l), lang);
     const p = await c.newPage();
     p.on("pageerror", (e) => errors.push("pageerror: " + e));
-    for (const path of ["/", "/labs", "/tools", "/cheatsheets", "/cheatsheets/neural-network", "/tools/convolution", "/tools/recurrent"]) {
+    for (const path of ["/", "/labs", "/tools", "/cheatsheets", "/cheatsheets/neural-network", "/cheatsheets/nlp", "/cheatsheets/transformers", "/tools/convolution", "/tools/recurrent"]) {
       await p.goto(BASE + path);
       await p.waitForSelector("h1");
       const over = await p.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
       check(over <= 0, `[${lang}] ${w}px ${path} no horizontal overflow (${over})`);
+      if (path.startsWith("/cheatsheets/") && path !== "/cheatsheets/neural-network") {
+        const svgW = await p.evaluate(() => { const s = document.querySelector("main svg[role=img]"); return s ? s.getBoundingClientRect().right : 0; });
+        check(svgW <= w, `[${lang}] ${w}px ${path} diagram fits (${Math.round(svgW)})`);
+      }
     }
     check((await p.evaluate(() => document.documentElement.lang)) === lang, `[${lang}] <html lang> is set`);
     for (const idx of [0, 1, 2]) {

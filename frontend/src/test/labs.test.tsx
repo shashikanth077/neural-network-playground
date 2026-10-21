@@ -68,7 +68,7 @@ describe("LabsIndex", () => {
     expect(screen.queryByText("Classical machine learning")).not.toBeInTheDocument();
   });
   it("shows an empty state with a way out when nothing matches", async () => {
-    render(app("/labs?domain=nlp&status=live"));
+    render(app("/labs?domain=ml&status=live"));
     expect(screen.getByText(/No labs match/)).toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: "Clear filters" }));
     expect(screen.getByRole("link", { name: /From messy data/ })).toBeInTheDocument();

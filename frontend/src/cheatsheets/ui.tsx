@@ -3,6 +3,11 @@ import { Tex } from "../components/Tex";
 
 export const T = ({ children }: { children: string }) => <Tex>{children}</Tex>;
 
+/** Display-mode formula (centred, scrolls sideways instead of overflowing on a phone). */
+export const TB = ({ children }: { children: string }) => (
+  <div className="overflow-x-auto py-1"><Tex block>{children}</Tex></div>
+);
+
 export function Table({ head, rows, wide }: { head: string[]; rows: ReactNode[][]; wide?: boolean }) {
   return (
     <div className="overflow-x-auto">
@@ -42,7 +47,7 @@ export function Code({ children, label }: { children: string; label?: string }) 
 }
 
 export const Note = ({ children }: { children: ReactNode }) => (
-  <p className="mt-2 rounded-lg border-l-4 border-brand bg-raised/60 px-3 py-2 text-sm text-muted">{children}</p>
+  <p className="mt-2 break-words rounded-lg border-l-4 border-brand bg-raised/60 px-3 py-2 text-sm text-muted">{children}</p>
 );
 
 export const Sub = ({ children }: { children: ReactNode }) => <h4 className="mb-1 mt-4 text-sm font-semibold first:mt-0">{children}</h4>;

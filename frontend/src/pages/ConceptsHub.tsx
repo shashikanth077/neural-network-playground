@@ -4,7 +4,7 @@ import { AREAS } from "../concepts/areas";
 import { isHandsOn } from "../concepts/links";
 import { CONCEPTS, coverageOf, type Coverage } from "../concepts/registry";
 import type { Level } from "../concepts/types";
-import { useLang, useT } from "../i18n";
+import { useT } from "../i18n";
 
 export const COVERAGE_STYLE: Record<Coverage, string> = {
   live: "!border-ok/40 !bg-ok/10 !text-ok",
@@ -27,7 +27,6 @@ function Pills<T extends string>({ label, value, onChange, options }: { label: s
 
 export function ConceptsHub() {
   const t = useT();
-  const { lang } = useLang();
   const [q, setQ] = useState("");
   const [area, setArea] = useState<string>("all");
   const [level, setLevel] = useState<Level | "all">("all");
@@ -37,8 +36,8 @@ export function ConceptsHub() {
     const terms = q.toLowerCase().split(/\s+/).filter(Boolean);
     return CONCEPTS.filter((c) =>
       (area === "all" || c.area === area) && (level === "all" || c.level === level) && (cov === "all" || coverageOf(c) === cov) &&
-      terms.every((w) => `${c.title} ${c.summary} ${c.id}`.toLowerCase().includes(w)));
-  }, [q, area, level, cov]);
+      terms.every((w) => `${c.title} ${c.summary} ${c.id} ${t(`concept.${c.id}.title`, c.title)} ${t(`concept.${c.id}.summary`, c.summary)}`.toLowerCase().includes(w)));
+  }, [q, area, level, cov, t]);
 
   return (
     <main className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 sm:py-12">
@@ -46,7 +45,6 @@ export function ConceptsHub() {
       <h1 className="mt-1 text-3xl font-extrabold tracking-tight sm:text-4xl">{t("cc.title")}</h1>
       <p className="mt-2 max-w-3xl text-muted">{t("cc.intro")}</p>
       <Link to="/coverage" className="mt-2 inline-block text-sm font-semibold text-brand hover:underline">{t("cc.coverageLink")}</Link>
-      {lang !== "en" && <p className="mt-3 rounded-xl border border-line bg-raised/60 p-3 text-xs text-muted">{t("cc.partial")}</p>}
 
       <div className="mt-6 space-y-3">
         <label htmlFor="concept-search" className="sr-only">{t("cc.search")}</label>

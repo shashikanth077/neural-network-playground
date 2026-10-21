@@ -19,6 +19,21 @@ Base path `/api`. Live OpenAPI docs: `/docs`. Errors are `{"detail": "..."}`: **
 | `GET /training/{id}/evaluation?split=val&threshold=0.5` | Confusion matrix, accuracy/precision/recall/F1, ROC curve and AUC for the current weights (`split` = `train` or `val`) |
 | `POST /cross-validation` | `{dataset, config, method, k, val_fraction}` → per-fold losses, accuracy, F1 and their mean ± std. Methods: `holdout`, `kfold`, `stratified_kfold`, `shuffle_split`, `time_series`, `leave_one_out`. Total work (splits × epochs × samples) is capped, otherwise 422 |
 
+### Saved runs (experiment database)
+
+Finished training sessions (`completed`, `failed`, early-stopped) and cross-validation results are stored automatically in SQLite (`DB_PATH`, default `backend/data/ailab.db`; `DB_ENABLED=false` switches everything off). A storage error is logged and never affects training. Sessions that are reset or deleted before finishing are not saved. To record where a dataset came from, send the optional `dataset.source = {name, n_samples, noise, seed}`; points are stored only for `custom` datasets (at most 2000). `status` reports `run_id` once the run is saved, and the cross-validation response carries `run_id`.
+
+| Method & path | Purpose |
+|---|---|
+| `GET /runs/status` | `{enabled, available, count, schema_version, error}` |
+| `GET /runs?limit=50&offset=0&kind=&q=` | `{total, items}`, newest first. `kind` = `playground` or `cross-validation`; `q` matches title, notes, settings and dataset. Items hold config, dataset summary, metrics and a thinned `spark` loss curve (no full history) |
+| `GET /runs/{id}` | One run including `history` (per-epoch metrics) |
+| `PATCH /runs/{id}` | `{title?, notes?}` (title 1-200 chars, notes up to 5000) |
+| `DELETE /runs/{id}` | 204 |
+| `GET /runs/compare?ids=a,b[,c,d]` | 2-4 runs: `runs`, `epochs`, `rows` (one row per epoch, keys `"<id>.train_loss"`, `.val_loss`, `.train_acc`, `.val_acc`, null where a run is shorter) and `differing` (config keys whose values differ) |
+
+Errors: 404 unknown run, 422 invalid input (for example fewer than 2 or more than 4 ids), **503** with `{"detail", "code"}` where `code` is `disabled` or `unavailable` (directory not writable, corrupted file).
+
 Status values: `ready → running ⇄ paused → completed | failed`.
 
 `config`:

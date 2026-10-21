@@ -20,8 +20,8 @@ async function open(opts = {}) {
 
 let { ctx, page } = await open();
 await page.goto(BASE);
-await page.waitForSelector("text=Explore by domain");
-check((await page.getByRole("heading", { level: 1 }).innerText()).match(/machine learning.*deep learning.*NLP/is) !== null, "home headline names ML, DL and NLP");
+await page.waitForSelector("text=Labs and tools");
+check((await page.getByRole("heading", { level: 1 }).innerText()).match(/how AI works/i) !== null, "home headline present");
 check((await page.locator('a[href^="/labs?domain="]').count()) === 3, "home has three domain tiles");
 await page.screenshot({ path: OUT + "home.png", fullPage: true });
 
@@ -29,11 +29,11 @@ await page.screenshot({ path: OUT + "home.png", fullPage: true });
 await page.locator('a[href="/labs?domain=ml"]').click();
 await page.waitForSelector("h1:has-text('Guided labs')");
 check(page.url().includes("domain=ml"), "ML tile opens the ML-filtered Labs page");
-check((await page.getByText("Classical machine learning").count()) > 0 && (await page.getByText("From messy data").count()) === 0, "ML filter shows only ML labs");
+check((await page.getByText("From messy data").count()) === 0 && (await page.getByText("Transformers in NLP").count()) === 0, "ML filter shows only ML labs (there are none yet, so no other domain's lab appears)");
 await page.screenshot({ path: OUT + "labs-domain-ml.png" });
-await page.getByRole("radio", { name: /NLP/ }).click();
+await page.getByRole("radio", { name: /ML/ }).click();
 await page.getByRole("radio", { name: "Available" }).click();
-check((await page.getByText("No labs match these filters yet.").count()) === 1, "NLP + Available shows the empty state");
+check((await page.getByText("No labs match these filters yet.").count()) === 1, "ML + Available shows the empty state (no live ML lab yet)");
 await page.goto(BASE + "/labs");
 
 // ---- labs menu (grouped by domain) + index
@@ -158,7 +158,7 @@ await ctx.close();
 for (const w of [320, 390, 768, 1024, 1440]) {
   const { ctx: c2, page: p2 } = await open({ viewport: { width: w, height: 760 } });
   await p2.goto(BASE);
-  await p2.waitForSelector("text=Explore by domain");
+  await p2.waitForSelector("text=Labs and tools");
   for (const [btn, id] of [["Labs", "labs-menu"], ["Tools", "tools-menu"]]) {
     await p2.getByRole("button", { name: new RegExp("^" + btn) }).click();
     const box = await p2.locator("#" + id).boundingBox();

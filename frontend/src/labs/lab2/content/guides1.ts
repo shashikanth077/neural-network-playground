@@ -6,12 +6,12 @@ export const guides1: Record<string, GuideDef> = {
   pipeline: {
     goal: [
       "Know the ten stages of the lab and which code step each one is.",
-      "Знать десять этапов лабораторной работы и то, какому шагу кода соответствует каждый из них.",
+      "ಲ್ಯಾಬ್‌ನ ಹತ್ತು ಹಂತಗಳನ್ನು ಮತ್ತು ಪ್ರತಿಯೊಂದು ಯಾವ ಕೋಡ್ ಹಂತಕ್ಕೆ ಸಂಬಂಧಿಸಿದೆ ಎಂದು ತಿಳಿಯಿರಿ.",
       "Žinoti dešimt laboratorijos etapų ir tai, kuriam kodo žingsniui atitinka kiekvienas.",
     ],
     fit: [
       "Every later step zooms into one stage of this pipeline, so when the code says 'step 9' you know where you are.",
-      "Kiekvienas tolesnis žingsnis priartina vieną šio konvejerio etapą, todėl kodui sakant „žingsnis 9“ žinosite, kur esate.",
+      "ನಂತರದ ಪ್ರತಿ ಹಂತವೂ ಈ ಪೈಪ್‌ಲೈನ್‌ನ ಒಂದು ಹಂತವನ್ನು ಹತ್ತಿರದಿಂದ ತೋರಿಸುತ್ತದೆ; ಆದ್ದರಿಂದ ಕೋಡ್ ‘ಹಂತ 9’ ಎಂದು ಹೇಳಿದಾಗ ನೀವು ಎಲ್ಲಿದ್ದೀರಿ ಎಂದು ತಿಳಿಯುತ್ತದೆ.",
       "Kiekvienas vėlesnis žingsnis priartina vieną šio konvejerio etapą, todėl kai kode minimas „9 žingsnis“, žinosite, kur esate.",
     ],
     keywords: [
@@ -20,9 +20,9 @@ export const guides1: Record<string, GuideDef> = {
       [["Pipeline", "ಪೈಪ್‌ಲೈನ್", "Konvejeris"], ["A chain of stages where each output is the next stage's input.", "ಪ್ರತಿ ಹಂತದ ಔಟ್‌ಪುಟ್ ಮುಂದಿನ ಹಂತದ ಇನ್‌ಪುಟ್ ಆಗುವ ಹಂತಗಳ ಸರಣಿ.", "Etapų grandinė, kurioje kiekvienas etapo rezultatas tampa kito etapo įvestimi."]],
     ],
     tasks: [
-      ["Click all ten blocks and read one sentence for each.", "Spustelėkite visus dešimt blokų ir perskaitykite po sakinį kiekvienam.", "ಹತ್ತೂ ಬ್ಲಾಕ್‌ಗಳನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ ಮತ್ತು ಪ್ರತಿಯೊಂದರ ಒಂದು ವಾಕ್ಯವನ್ನು ಓದಿ."],
-      ["Name which block is Task 1 and which is Task 2.", "Nurodykite, kuris blokas yra 1 užduotis, o kuris – 2 užduotis.", "ಯಾವ ಬ್ಲಾಕ್ ಕಾರ್ಯ 1 ಮತ್ತು ಯಾವುದು ಕಾರ್ಯ 2 ಎಂದು ಹೆಸರಿಸಿ."],
-      ["Find the block where the best CNN is compared with the Lab 1 network.", "Raskite bloką, kuriame geriausias CNN lyginamas su 1 laboratorijos tinklu.", "ಯಾವ ಬ್ಲಾಕ್‌ನಲ್ಲಿ ಅತ್ಯುತ್ತಮ CNN ಅನ್ನು ಲ್ಯಾಬ್ 1 ನೆಟ್‌ವರ್ಕ್‌ನೊಂದಿಗೆ ಹೋಲಿಸಲಾಗುತ್ತದೆ ಎಂಬುದನ್ನು ಕಂಡುಹಿಡಿಯಿರಿ."],
+      ["Click all ten blocks and read one sentence for each.", "ಹತ್ತೂ ಬ್ಲಾಕ್‌ಗಳನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ ಮತ್ತು ಪ್ರತಿಯೊಂದರ ಒಂದು ವಾಕ್ಯವನ್ನು ಓದಿ.", "Spustelėkite visus dešimt blokų ir perskaitykite po sakinį kiekvienam."],
+      ["Name which block is Task 1 and which is Task 2.", "ಯಾವ ಬ್ಲಾಕ್ ಕಾರ್ಯ 1 ಮತ್ತು ಯಾವುದು ಕಾರ್ಯ 2 ಎಂದು ಹೆಸರಿಸಿ.", "Nurodykite, kuris blokas yra 1 užduotis, o kuris – 2 užduotis."],
+      ["Find the block where the best CNN is compared with the Lab 1 network.", "ಯಾವ ಬ್ಲಾಕ್‌ನಲ್ಲಿ ಅತ್ಯುತ್ತಮ CNN ಅನ್ನು ಲ್ಯಾಬ್ 1 ನೆಟ್‌ವರ್ಕ್‌ನೊಂದಿಗೆ ಹೋಲಿಸಲಾಗುತ್ತದೆ ಎಂಬುದನ್ನು ಕಂಡುಹಿಡಿಯಿರಿ.", "Raskite bloką, kuriame geriausias CNN lyginamas su 1 laboratorijos tinklu."],
     ],
     questions: [
       {
@@ -65,10 +65,10 @@ export const guides1: Record<string, GuideDef> = {
       [["Centre of mass", "ದ್ರವ್ಯರಾಶಿ ಕೇಂದ್ರ", "Masės centras"], ["The average position of the ink. Moving it to the middle centres the digit, as in MNIST.", "ಶಾಯಿಯ ಸರಾಸರಿ ಸ್ಥಾನ. ಅದನ್ನು ಮಧ್ಯಕ್ಕೆ ಸರಿಸಿದರೆ ಅಂಕಿ MNIST ಯಂತೆ ಕೇಂದ್ರೀಕೃತವಾಗುತ್ತದೆ.", "Vidutinė rašalo padėtis. Perkėlus į vidurį, skaitmuo centruojamas kaip MNIST."]],
     ],
     tasks: [
-      ["Draw a digit and watch stage 1 turn into stage 4.", "Nupieškite skaitmenį ir stebėkite, kaip 1 etapas virsta 4 etapu.", "ಒಂದು ಅಂಕಿ ಬರೆದು ಹಂತ 1 ಹಂತ 4 ಆಗುವುದನ್ನು ನೋಡಿ."],
-      ["Draw a small digit in a corner and read the centre-of-mass shift.", "Nupieškite mažą skaitmenį kampe ir perskaitykite masės centro poslinkį.", "ಮೂಲೆಯಲ್ಲಿ ಚಿಕ್ಕ ಅಂಕಿ ಬರೆದು ದ್ರವ್ಯರಾಶಿ ಕೇಂದ್ರದ ಸ್ಥಳಾಂತರವನ್ನು ಓದಿ."],
-      ["Press “Draw a sample 9” and read the shift it needs.", "Paspauskite „Nupiešti 9 pavyzdį“ ir perskaitykite reikalingą poslinkį.", "“Nupiešti pavyzdinį 9” ಒತ್ತಿ ಅದಕ್ಕೆ ಬೇಕಾದ ಸ್ಥಳಾಂತರವನ್ನು ಓದಿ."],
-      ["Send the digit to the convolution step with the button.", "Mygtuku išsiųskite skaitmenį į konvoliucijos žingsnį.", "ಬಟನ್ ಮೂಲಕ ಅಂಕಿಯನ್ನು ಕನ್ವಲ್ಯೂಷನ್ ಹಂತಕ್ಕೆ ಕಳುಹಿಸಿ."],
+      ["Draw a digit and watch stage 1 turn into stage 4.", "ಒಂದು ಅಂಕಿ ಬರೆದು ಹಂತ 1 ಹಂತ 4 ಆಗುವುದನ್ನು ನೋಡಿ.", "Nupieškite skaitmenį ir stebėkite, kaip 1 etapas virsta 4 etapu."],
+      ["Draw a small digit in a corner and read the centre-of-mass shift.", "ಮೂಲೆಯಲ್ಲಿ ಚಿಕ್ಕ ಅಂಕಿ ಬರೆದು ದ್ರವ್ಯರಾಶಿ ಕೇಂದ್ರದ ಸ್ಥಳಾಂತರವನ್ನು ಓದಿ.", "Nupieškite mažą skaitmenį kampe ir perskaitykite masės centro poslinkį."],
+      ["Press “Draw a sample 9” and read the shift it needs.", "“Nupiešti pavyzdinį 9” ಒತ್ತಿ ಅದಕ್ಕೆ ಬೇಕಾದ ಸ್ಥಳಾಂತರವನ್ನು ಓದಿ.", "Paspauskite „Nupiešti 9 pavyzdį“ ir perskaitykite reikalingą poslinkį."],
+      ["Send the digit to the convolution step with the button.", "ಬಟನ್ ಮೂಲಕ ಅಂಕಿಯನ್ನು ಕನ್ವಲ್ಯೂಷನ್ ಹಂತಕ್ಕೆ ಕಳುಹಿಸಿ.", "Mygtuku išsiųskite skaitmenį į konvoliucijos žingsnį."],
     ],
     questions: [
       {
@@ -78,14 +78,14 @@ export const guides1: Record<string, GuideDef> = {
         why: ["Stretching would distort the handwriting. Scaling the longest side keeps the shape and fits the 20 × 20 box that MNIST uses.", "ಎಳೆಯುವುದು ಕೈಬರಹವನ್ನು ವಿರೂಪಗೊಳಿಸುತ್ತದೆ. ಉದ್ದದ ಬದಿಯಿಂದ ಸ್ಕೇಲ್ ಮಾಡುವುದು ಆಕಾರ ಉಳಿಸಿ MNIST ಬಳಸುವ 20 × 20 ಚೌಕಟ್ಟಿಗೆ ಹೊಂದುತ್ತದೆ.", "Tempiant iškraipytume rašyseną. Ilgiausios kraštinės mastelis išsaugo formą ir telpa į 20 × 20 rėmelį, kurį naudoja MNIST."],
       },
       {
-        q: ["A 40 × 80 pixel stroke is cropped and scaled so its longest side is 20. What size is the result?", "40 × 80 pikselių brūkšnys iškerpamas ir keičiamas taip, kad ilgiausia kraštinė būtų 20. Koks gautas dydis?", "40 × 80 pikselių brūkšnys apkarpomas ir keičiamas, kad ilgiausia kraštinė būtų 20. Koks gautas dydis?"],
+        q: ["A 40 × 80 pixel stroke is cropped and scaled so its longest side is 20. What size is the result?", "40 × 80 ಪಿಕ್ಸೆಲ್‌ನ ಒಂದು ಗೆರೆಯನ್ನು ಕತ್ತರಿಸಿ, ಅದರ ಉದ್ದದ ಬದಿ 20 ಆಗುವಂತೆ ಗಾತ್ರ ಬದಲಿಸಲಾಗುತ್ತದೆ. ಫಲಿತಾಂಶದ ಗಾತ್ರ ಎಷ್ಟು?", "40 × 80 pikselių brūkšnys apkarpomas ir keičiamas, kad ilgiausia kraštinė būtų 20. Koks gautas dydis?"],
         options: [["20 × 40", "20 × 40", "20 × 40"], ["10 × 20", "10 × 20", "10 × 20"], ["20 × 20", "20 × 20", "20 × 20"]],
         correct: 1,
         why: ["The scale is 20 ÷ 80 = 0.25, so 40 × 0.25 = 10 wide and 80 × 0.25 = 20 high.", "ಮಾಪಕ 20 ÷ 80 = 0.25; ಆದ್ದರಿಂದ 40 × 0.25 = 10 ಅಗಲ ಮತ್ತು 80 × 0.25 = 20 ಎತ್ತರ.", "Mastelis 20 ÷ 80 = 0,25, todėl 40 × 0,25 = 10 pločio ir 80 × 0,25 = 20 aukščio."],
         verify: () => Math.round(40 * (20 / 80)) === 10 && Math.round(80 * (20 / 80)) === 20,
       },
       {
-        q: ["What is the centre of mass used for?", "Masės centras kam naudojamas?", "ದ್ರವ್ಯರಾಶಿ ಕೇಂದ್ರವನ್ನು ಯಾವುದಕ್ಕಾಗಿ ಬಳಸಲಾಗುತ್ತದೆ?"],
+        q: ["What is the centre of mass used for?", "ದ್ರವ್ಯರಾಶಿ ಕೇಂದ್ರವನ್ನು ಯಾವುದಕ್ಕಾಗಿ ಬಳಸಲಾಗುತ್ತದೆ?", "Masės centras kam naudojamas?"],
         options: [["To move the digit so its weight is in the middle of the 28 × 28 frame", "ಅಂಕಿಯ ತೂಕ 28 × 28 ಚೌಕಟ್ಟಿನ ಮಧ್ಯದಲ್ಲಿರುವಂತೆ ಸರಿಸಲು", "Kad skaitmuo būtų perkeliamas taip, kad jo svoris būtų 28 × 28 rėmelio viduryje"], ["To count the pixels", "ಪಿಕ್ಸೆಲ್‌ಗಳನ್ನು ಎಣಿಸಲು", "Kad būtų suskaičiuoti taškai"], ["To choose the best kernel", "ಅತ್ಯುತ್ತಮ ಕರ್ನಲ್ ಆಯ್ಕೆ ಮಾಡಲು", "Kad būtų pasirinktas geriausias branduolys"]],
         correct: 0,
         why: ["The centre of mass is the average position of the ink; the digit is shifted so that this average is at (13.5, 13.5).", "ದ್ರವ್ಯರಾಶಿ ಕೇಂದ್ರ ಶಾಯಿಯ ಸರಾಸರಿ ಸ್ಥಾನ; ಈ ಸರಾಸರಿ (13.5, 13.5) ಬಿಂದುವಿಗೆ ಬರುವಂತೆ ಅಂಕಿ ಸರಿಸಲಾಗುತ್ತದೆ.", "Masės centras – tai vidutinė rašalo padėtis; skaitmuo perkeliamas taip, kad ši padėtis būtų taške (13,5; 13,5)."],
@@ -119,10 +119,10 @@ export const guides1: Record<string, GuideDef> = {
       [["ReLU", "ReLU", "ReLU"], ["max(0, x): negative responses become 0.", "max(0, x): ಋಣ ಪ್ರತಿಕ್ರಿಯೆಗಳು 0 ಆಗುತ್ತವೆ.", "max(0, x): neigiami atsakymai tampa 0."]],
     ],
     tasks: [
-      ["Choose 'Vertical edge' and hover a pixel on the left side of the ring.", "Pasirinkite „Vertikalus kraštas“ ir užveskite pelę ant taško žiedo kairėje.", "‘Vertical edge’ ಆಯ್ಕೆ ಮಾಡಿ ಮತ್ತು ಉಂಗುರದ ಎಡಭಾಗದ ಪಿಕ್ಸೆಲ್ ಮೇಲೆ ಹೋಗಿ."],
-      ["Switch padding to 'valid' and check that the feature map is 26 × 26.", "Pakeiskite užpildymą į „valid“ ir patikrinkite, ar požymių žemėlapis yra 26 × 26.", "ಪ್ಯಾಡಿಂಗ್ ಅನ್ನು 'valid' ಗೆ ಬದಲಿಸಿ ಮತ್ತು ಫೀಚರ್ ಮ್ಯಾಪ್ 26 × 26 ಎಂದು ಪರಿಶೀಲಿಸಿ."],
-      ["Turn ReLU off and find a negative value in the hover calculation.", "ReLU išjunkite ir raskite neigiamą reikšmę užvedimo skaičiavime.", "ReLU išjunkite ir užvedimo skaičiavime raskite neigiamą reikšmę."],
-      ["Type your own nine kernel numbers and watch the map change.", "Įveskite savo devynis branduolio skaičius ir stebėkite, kaip keičiasi žemėlapis.", "ನಿಮ್ಮ ಸ್ವಂತ ಒಂಬತ್ತು ಕರ್ನಲ್ ಸಂಖ್ಯೆಗಳನ್ನು ಟೈಪ್ ಮಾಡಿ ನಕ್ಷೆ ಬದಲಾಗುವುದನ್ನು ನೋಡಿ."],
+      ["Choose 'Vertical edge' and hover a pixel on the left side of the ring.", "‘Vertical edge’ ಆಯ್ಕೆ ಮಾಡಿ ಮತ್ತು ಉಂಗುರದ ಎಡಭಾಗದ ಪಿಕ್ಸೆಲ್ ಮೇಲೆ ಹೋಗಿ.", "Pasirinkite „Vertikalus kraštas“ ir užveskite pelę ant taško žiedo kairėje."],
+      ["Switch padding to 'valid' and check that the feature map is 26 × 26.", "ಪ್ಯಾಡಿಂಗ್ ಅನ್ನು 'valid' ಗೆ ಬದಲಿಸಿ ಮತ್ತು ಫೀಚರ್ ಮ್ಯಾಪ್ 26 × 26 ಎಂದು ಪರಿಶೀಲಿಸಿ.", "Pakeiskite užpildymą į „valid“ ir patikrinkite, ar požymių žemėlapis yra 26 × 26."],
+      ["Turn ReLU off and find a negative value in the hover calculation.", "ReLU ಅನ್ನು ಆಫ್ ಮಾಡಿ ಮತ್ತು ಹೋವರ್ ಲೆಕ್ಕಾಚಾರದಲ್ಲಿ ಋಣ ಮೌಲ್ಯವನ್ನು ಹುಡುಕಿ.", "ReLU išjunkite ir užvedimo skaičiavime raskite neigiamą reikšmę."],
+      ["Type your own nine kernel numbers and watch the map change.", "ನಿಮ್ಮ ಸ್ವಂತ ಒಂಬತ್ತು ಕರ್ನಲ್ ಸಂಖ್ಯೆಗಳನ್ನು ಟೈಪ್ ಮಾಡಿ ನಕ್ಷೆ ಬದಲಾಗುವುದನ್ನು ನೋಡಿ.", "Įveskite savo devynis branduolio skaičius ir stebėkite, kaip keičiasi žemėlapis."],
     ],
     questions: [
       {
@@ -177,10 +177,10 @@ export const guides1: Record<string, GuideDef> = {
       [["Stride 2", "ಸ್ಟ್ರೈಡ್ 2", "Žingsnis 2"], ["The window moves two pixels at a time, so the map halves.", "ಕಿಟಕಿ ಒಂದು ಬಾರಿ ಎರಡು ಪಿಕ್ಸೆಲ್ ಚಲಿಸುತ್ತದೆ; ಆದ್ದರಿಂದ ನಕ್ಷೆ ಅರ್ಧವಾಗುತ್ತದೆ.", "Langas juda po du taškus, todėl žemėlapis perpus mažėja."]],
     ],
     tasks: [
-      ["Click a cell and watch the 2 × 2 result change.", "Spustelėkite langelį ir stebėkite, kaip keičiasi 2 × 2 rezultatas.", "ಒಂದು ಕೋಶ ಕ್ಲಿಕ್ ಮಾಡಿ 2 × 2 ಫಲಿತಾಂಶ ಬದಲಾಗುವುದನ್ನು ನೋಡಿ."],
-      ["Press Max and then Average on the same grid.", "Tame pačiame tinklelyje paspauskite „Didžiausias“, tada „Vidurkis“.", "ಅದೇ ಗ್ರಿಡ್‌ನಲ್ಲಿ Max ಮತ್ತು ನಂತರ Average ಒತ್ತಿ."],
-      ["Randomise the grid and check the max of the first block by eye.", "Tinklelį atsitiktinai sumaišykite ir akimi patikrinkite pirmo bloko didžiausią reikšmę.", "ಗ್ರಿಡ್ ಅನ್ನು ಯಾದೃಚ್ಛಿಕಗೊಳಿಸಿ ಮೊದಲ ಬ್ಲಾಕ್‌ನ ಗರಿಷ್ಠ ಮೌಲ್ಯವನ್ನು ನೋಡಿ."],
-      ["Find a grid where max and average differ most.", "Raskite tinklelį, kuriame didžiausias ir vidurkis skiriasi labiausiai.", "ಮ್ಯಾಕ್ಸ್ ಮತ್ತು ಸರಾಸರಿ ಅತಿ ಹೆಚ್ಚು ಭಿನ್ನವಾಗುವ ಗ್ರಿಡ್ ಹುಡುಕಿ."],
+      ["Click a cell and watch the 2 × 2 result change.", "ಒಂದು ಕೋಶ ಕ್ಲಿಕ್ ಮಾಡಿ 2 × 2 ಫಲಿತಾಂಶ ಬದಲಾಗುವುದನ್ನು ನೋಡಿ.", "Spustelėkite langelį ir stebėkite, kaip keičiasi 2 × 2 rezultatas."],
+      ["Press Max and then Average on the same grid.", "ಅದೇ ಗ್ರಿಡ್‌ನಲ್ಲಿ Max ಮತ್ತು ನಂತರ Average ಒತ್ತಿ.", "Tame pačiame tinklelyje paspauskite „Didžiausias“, tada „Vidurkis“."],
+      ["Randomise the grid and check the max of the first block by eye.", "ಗ್ರಿಡ್ ಅನ್ನು ಯಾದೃಚ್ಛಿಕಗೊಳಿಸಿ ಮೊದಲ ಬ್ಲಾಕ್‌ನ ಗರಿಷ್ಠ ಮೌಲ್ಯವನ್ನು ನೋಡಿ.", "Tinklelį atsitiktinai sumaišykite ir akimi patikrinkite pirmo bloko didžiausią reikšmę."],
+      ["Find a grid where max and average differ most.", "ಮ್ಯಾಕ್ಸ್ ಮತ್ತು ಸರಾಸರಿ ಅತಿ ಹೆಚ್ಚು ಭಿನ್ನವಾಗುವ ಗ್ರಿಡ್ ಹುಡುಕಿ.", "Raskite tinklelį, kuriame didžiausias ir vidurkis skiriasi labiausiai."],
     ],
     questions: [
       {
@@ -236,10 +236,10 @@ export const guides1: Record<string, GuideDef> = {
       [["Weight sharing", "ತೂಕ ಹಂಚಿಕೆ", "Svorių dalijimasis"], ["The same kernel is reused at every position.", "ಅದೇ ಕರ್ನಲ್ ಪ್ರತಿ ಸ್ಥಾನದಲ್ಲೂ ಮರುಬಳಕೆಯಾಗುತ್ತದೆ.", "Tas pats branduolys naudojamas kiekvienoje padėtyje."]],
     ],
     tasks: [
-      ["Set 3 blocks, 32 filters and kernel 3, then read the total.", "Nustatykite 3 blokus, 32 filtrus ir branduolį 3, tada perskaitykite sumą.", "3 ಬ್ಲಾಕ್, 32 ಫಿಲ್ಟರ್ ಮತ್ತು ಕರ್ನಲ್ 3 ಹೊಂದಿಸಿ, ನಂತರ ಒಟ್ಟು ಓದಿ."],
-      ["Check that the total equals the recorded run 4 (241 546).", "Patikrinkite, ar suma lygi įrašytam 4 paleidimui (241 546).", "ಒಟ್ಟು ದಾಖಲಾದ ರನ್ 4 (241 546) ಗೆ ಸಮವಾಗಿದೆಯೇ ಪರಿಶೀಲಿಸಿ."],
-      ["Change the kernel to 5 and see the CNN grow.", "Branduolį pakeiskite į 5 ir stebėkite, kaip auga CNN.", "ಕರ್ನಲ್ ಅನ್ನು 5 ಗೆ ಬದಲಿಸಿ CNN ಬೆಳೆಯುವುದನ್ನು ನೋಡಿ."],
-      ["Compare with the Lab 1 network (575 050).", "Palyginkite su 1 laboratorijos tinklu (575 050).", "ಲ್ಯಾಬ್ 1 ನೆಟ್‌ವರ್ಕ್ (575 050) ಜೊತೆ ಹೋಲಿಸಿ."],
+      ["Set 3 blocks, 32 filters and kernel 3, then read the total.", "3 ಬ್ಲಾಕ್, 32 ಫಿಲ್ಟರ್ ಮತ್ತು ಕರ್ನಲ್ 3 ಹೊಂದಿಸಿ, ನಂತರ ಒಟ್ಟು ಓದಿ.", "Nustatykite 3 blokus, 32 filtrus ir branduolį 3, tada perskaitykite sumą."],
+      ["Check that the total equals the recorded run 4 (241 546).", "ಒಟ್ಟು ದಾಖಲಾದ ರನ್ 4 (241 546) ಗೆ ಸಮವಾಗಿದೆಯೇ ಪರಿಶೀಲಿಸಿ.", "Patikrinkite, ar suma lygi įrašytam 4 paleidimui (241 546)."],
+      ["Change the kernel to 5 and see the CNN grow.", "ಕರ್ನಲ್ ಅನ್ನು 5 ಗೆ ಬದಲಿಸಿ CNN ಬೆಳೆಯುವುದನ್ನು ನೋಡಿ.", "Branduolį pakeiskite į 5 ir stebėkite, kaip auga CNN."],
+      ["Compare with the Lab 1 network (575 050).", "ಲ್ಯಾಬ್ 1 ನೆಟ್‌ವರ್ಕ್ (575 050) ಜೊತೆ ಹೋಲಿಸಿ.", "Palyginkite su 1 laboratorijos tinklu (575 050)."],
     ],
     questions: [
       {
@@ -292,10 +292,10 @@ export const guides1: Record<string, GuideDef> = {
       [["Divergence", "ವಿಭಿನ್ನತೆ (ಡೈವರ್ಜೆನ್ಸ್)", "Divergavimas"], ["Steps so big that the loss grows.", "ಹೆಜ್ಜೆಗಳು ಎಷ್ಟು ದೊಡ್ಡವೆಂದರೆ ನಷ್ಟ ಹೆಚ್ಚುತ್ತದೆ.", "Žingsniai tokie dideli, kad nuostolis auga."]],
     ],
     tasks: [
-      ["Keep the rate at 0.3 and 10 epochs, then read the final w.", "Greitį 0,3 ir 10 epochų palikite, tada perskaitykite galutinį w.", "ದರ 0.3 ಮತ್ತು 10 ಎಪೋಕ್ ಇಟ್ಟು ಅಂತಿಮ w ಓದಿ."],
-      ["Set the rate to 1.1 and watch the value jump across zero.", "Greitį nustatykite 1,1 ir stebėkite, kaip reikšmė peršoka per nulį.", "ದರ 1.1 ಗೆ ಹೊಂದಿಸಿ ಮೌಲ್ಯ ಶೂನ್ಯವನ್ನು ದಾಟಿ ಜಿಗಿಯುವುದನ್ನು ನೋಡಿ."],
-      ["Set the rate to 0.02 and raise the epochs until the loss is almost zero.", "Greitį nustatykite 0,02 ir didinkite epochas, kol nuostolis beveik nulis.", "ದರ 0.02 ಗೆ ಹೊಂದಿಸಿ, ನಷ್ಟ ಬಹುತೇಕ ಶೂನ್ಯವಾಗುವವರೆಗೆ ಎಪೋಕ್ ಹೆಚ್ಚಿಸಿ."],
-      ["Find the rate that is most reasonable for a few epochs.", "Kelioms epochoms tinkamiausią greitį raskite.", "ಕೆಲವು ಎಪೋಕ್‌ಗಳಿಗೆ ಅತ್ಯಂತ ಸೂಕ್ತ ದರ ಕಂಡುಹಿಡಿಯಿರಿ."],
+      ["Keep the rate at 0.3 and 10 epochs, then read the final w.", "ದರ 0.3 ಮತ್ತು 10 ಎಪೋಕ್ ಇಟ್ಟು ಅಂತಿಮ w ಓದಿ.", "Greitį 0,3 ir 10 epochų palikite, tada perskaitykite galutinį w."],
+      ["Set the rate to 1.1 and watch the value jump across zero.", "ದರ 1.1 ಗೆ ಹೊಂದಿಸಿ ಮೌಲ್ಯ ಶೂನ್ಯವನ್ನು ದಾಟಿ ಜಿಗಿಯುವುದನ್ನು ನೋಡಿ.", "Greitį nustatykite 1,1 ir stebėkite, kaip reikšmė peršoka per nulį."],
+      ["Set the rate to 0.02 and raise the epochs until the loss is almost zero.", "ದರ 0.02 ಗೆ ಹೊಂದಿಸಿ, ನಷ್ಟ ಬಹುತೇಕ ಶೂನ್ಯವಾಗುವವರೆಗೆ ಎಪೋಕ್ ಹೆಚ್ಚಿಸಿ.", "Greitį nustatykite 0,02 ir didinkite epochas, kol nuostolis beveik nulis."],
+      ["Find the rate that is most reasonable for a few epochs.", "ಕೆಲವು ಎಪೋಕ್‌ಗಳಿಗೆ ಅತ್ಯಂತ ಸೂಕ್ತ ದರ ಕಂಡುಹಿಡಿಯಿರಿ.", "Kelioms epochoms tinkamiausią greitį raskite."],
     ],
     questions: [
       {

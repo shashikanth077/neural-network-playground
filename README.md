@@ -173,6 +173,7 @@ The app is container-ready. The quickest route is the CloudFormation template in
 
 ## Limitations and future work
 
+* Finished runs are stored in SQLite (`DB_PATH`, see `docs/API.md`), which suits one backend instance; there are no user accounts, so every visitor sees the same "My runs".
 * Sessions live in process memory: run **one** backend worker/instance. Scaling out needs sticky sessions or an external store (Redis).
 * Training is intentionally small (≤ 2000 points, ≤ 2000 epochs, 2 input features). No auth or rate limiting yet.
 * Polling rather than WebSocket/SSE streaming.

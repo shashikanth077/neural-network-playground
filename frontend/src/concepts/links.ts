@@ -8,6 +8,7 @@ export function evidenceHref(e: Evidence): string {
     case "experiment": return "/playground#section-experiments";
     case "lab": return `/labs/${e.lab}/${e.step}`;
     case "tool": return e.id === "playground" ? "/playground" : `/tools/${e.id}`;
+    case "page": return e.to;
     case "sheet": return `/cheatsheets/${e.sheet}#${e.section}`;
   }
 }
@@ -17,6 +18,7 @@ export const evidenceKindLabel: Record<Evidence["kind"], string> = {
   playground: "Playground",
   experiment: "Guided experiment",
   lab: "Lab step",
+  page: "Page",
   tool: "Tool",
   sheet: "Cheatsheet",
 };

@@ -3,9 +3,13 @@ import { common } from "./messages/common";
 import { playground } from "./messages/playground";
 import { lab1 } from "./messages/lab1";
 import { lab2 } from "./messages/lab2";
+import { lab3 } from "./messages/lab3";
 import { cheatsheet } from "./messages/cheatsheet";
 import { explorers } from "./messages/explorers";
 import { concepts } from "./messages/concepts";
+import { home } from "./messages/home";
+import { labsetup } from "./messages/labsetup";
+import { runs } from "./messages/runs";
 
 export type Lang = "en" | "kn" | "lt";
 export const LANGS: { id: Lang; label: string; native: string }[] = [
@@ -18,7 +22,7 @@ export const LANGS: { id: Lang; label: string; native: string }[] = [
 export type Messages = Record<Lang, Record<string, string>>;
 
 /** Add a namespace here; keys must be unique across namespaces (prefix them: `pg.`, `lab1.`, `cs.`). */
-export const NAMESPACES: Record<string, Messages> = { common, playground, lab1, lab2, cheatsheet, explorers, concepts };
+export const NAMESPACES: Record<string, Messages> = { common, playground, lab1, lab2, lab3, cheatsheet, explorers, concepts, home, labsetup, runs };
 
 const merged: Record<Lang, Record<string, string>> = { en: {}, kn: {}, lt: {} };
 for (const ns of Object.values(NAMESPACES)) for (const l of Object.keys(merged) as Lang[]) Object.assign(merged[l], ns[l]);

@@ -1,6 +1,7 @@
 import { lazy } from "react";
 import type { Lab } from "../types";
 import { GuideIntro, GuideOutro } from "./StepGuide";
+import { lab3Setup } from "./setup";
 
 /**
  * Lab 3 · Transformers in NLP (VGTU group project: Shashikanth Hosur Ramegowda, Shaeed Khan, Rimsha Tariq).
@@ -15,6 +16,7 @@ export const lab3: Lab = {
   subtitle: "How a Transformer works, step by step, and what it really buys you for sentiment analysis: ten models compared on quality, cost, data efficiency and difficult sentences.",
   course: "VGTU · Engineering of Artificial Intelligence · Group project",
   status: "live",
+  setup: lab3Setup,
   tags: ["Self-attention", "BERT", "DistilBERT", "SST-2", "Fine-tuning", "Zero-shot"],
   Intro: GuideIntro,
   Outro: GuideOutro,

@@ -1,7 +1,7 @@
 // Concepts hub, concept pages and the coverage report: overflow at phone widths in en/lt/kn, deep links, screenshots.
-// Usage: node scripts/capture-concepts.mjs (frontend dev server on :5200; no backend needed).
+// Usage: node scripts/capture-concepts.mjs (frontend dev server on :5290 via `cd frontend && npx vite --port 5290 --strictPort`; no backend needed).
 import { chromium } from "playwright";
-const BASE = process.env.BASE_URL ?? "http://127.0.0.1:5200";
+const BASE = process.env.BASE_URL ?? "http://127.0.0.1:5290";
 const b = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
 const errs = [];
 let ok = true; const check = (c, m) => { console.log((c ? "PASS " : "FAIL ") + m); if (!c) ok = false; };
@@ -9,12 +9,15 @@ for (const lang of ["en", "lt", "kn"]) for (const w of [320, 375, 1440]) {
   const c = await b.newContext({ viewport: { width: w, height: 800 } });
   await c.addInitScript((l) => localStorage.setItem("ailab.lang", l), lang);
   const p = await c.newPage(); p.on("pageerror", (e) => errs.push(String(e))); p.on("console", (m) => m.type() === "error" && !m.text().includes("Failed to load resource") && errs.push(m.text()));
-  for (const path of ["/concepts", "/concepts/backprop", "/concepts/attention", "/coverage"]) {
+  for (const path of ["/", "/concepts", "/concepts/backprop", "/concepts/attention", "/concepts/pretraining-finetuning", "/coverage"]) {
     await p.goto(BASE + path); await p.waitForSelector("h1");
+    if (path === "/") await p.waitForSelector('[data-testid="concept-map"]');
     const over = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth);
     check(over <= 0, `[${lang}] ${w}px ${path} no overflow (${over})`);
     const text = await p.evaluate(() => document.body.innerText);
     check(!/\b(concept|area|cc|cov)\.[a-z0-9-]+\.?[a-z]*\b/.test(text), `[${lang}] ${w}px ${path} shows no raw i18n keys`);
+    if (path === "/") check((await p.locator("[data-testid=learning-path]").count()) >= 4, `[${lang}] ${w}px home lists the Transformers in NLP path`);
+    if (path === "/concepts/attention") check((await p.locator('a[href="/labs/lab3/attention"]').count()) > 0, `[${lang}] ${w}px attention page links to Lab 3`);
     if (lang !== "en") check(!/shown in English/i.test(text), `[${lang}] ${w}px ${path} has no English-fallback notice`);
   }
   await c.close();
@@ -38,6 +41,14 @@ for (const lang of ["lt", "kn"]) {
   await tp.screenshot({ path: `screenshots/concept-page-${lang}.png`, fullPage: true });
   await tc.close();
 }
+// the home map lays out every concept in the registry (compare with the hub's cards)
+await p.goto(BASE + "/concepts"); await p.waitForSelector("h1");
+const hubCards = await p.locator('main a[href^="/concepts/"]').count();
+await p.goto(BASE + "/"); await p.waitForSelector('[data-testid="concept-map"]');
+const mapNodes = await p.locator("[data-testid=concept-map] a[data-concept]").count();
+check(mapNodes > 50 && mapNodes === hubCards, `home map shows every concept (${mapNodes} nodes, ${hubCards} hub cards)`);
+await p.goto(BASE + "/concepts/pretraining-finetuning"); await p.waitForSelector("h1");
+await p.screenshot({ path: "screenshots/concept-page-pretraining.png", fullPage: true });
 // deep links land on the right thing
 await p.goto(BASE + "/playground?topic=dropout#learn"); await p.waitForSelector("#learn");
 check((await p.locator("#learn [aria-current=true]").innerText()).toLowerCase().includes("dropout"), "learn deep link opens the Dropout topic");

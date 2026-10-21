@@ -1,0 +1,216 @@
+{
+  "area.sequences.blurb": [
+    "ಸಂಖ್ಯೆಗಳಾಗಿ ಪಠ್ಯ, ಎಂಬೆಡ್ಡಿಂಗ್‌ಗಳು, Conv1D, ಪುನರಾವರ್ತಿತ ಕೋಶಗಳು ಮತ್ತು ಟ್ರಾನ್ಸ್‌ಫಾರ್ಮರ್‌ಗಳು.",
+    "Tekstas kaip skaičiai, įterpiniai, Conv1D, rekurentinės ląstelės ir transformeriai."
+  ],
+  "area.advanced.blurb": [
+    "ಅತಿ ಆಳವಾದ ನೆಟ್‌ವರ್ಕ್‌ಗಳು, ಡೇಟಾ ವರ್ಧನೆ, ಆಟೋಎನ್‌ಕೋಡರ್‌ಗಳು, ಜನರೇಟಿವ್ ಮಾದರಿಗಳು ಮತ್ತು ಇನ್ನಷ್ಟು. ಯೋಜಿತ.",
+    "Labai gilūs tinklai, duomenų papildymas, autokoduotuvai, generatyviniai modeliai ir kt. Planuojama."
+  ],
+
+  "concept.tokenization.title": ["ಟೋಕನ್‌ಗಳು ಮತ್ತು ಉಪಪದಗಳು (WordPiece)", "Žetonai ir žodžio dalys (WordPiece)"],
+  "concept.tokenization.summary": [
+    "ಪಠ್ಯವನ್ನು ಉಪಪದ ತುಣುಕುಗಳಾಗಿ ಒಡೆಯಲಾಗುತ್ತದೆ: ಸಾಮಾನ್ಯ ಪದಗಳು ಪೂರ್ಣವಾಗಿ ಉಳಿಯುತ್ತವೆ, ಅಪರೂಪದವು ತುಂಡಾಗುತ್ತವೆ, ಉದಾಹರಣೆಗೆ “unwatchable” ಎಂಬುದು “un”, “##watch”, “##able” ಆಗುತ್ತದೆ. ಆರಂಭದಲ್ಲಿ [CLS] ಮತ್ತು ಕೊನೆಯಲ್ಲಿ [SEP] ಸೇರಿಸಲಾಗುತ್ತದೆ.",
+    "Tekstas skaidomas į žodžio dalis: dažni žodžiai lieka sveiki, reti suskyla, pavyzdžiui „unwatchable“ tampa „un“, „##watch“, „##able“. Pradžioje pridedamas [CLS], pabaigoje [SEP]."
+  ],
+  "concept.tokenization.why": [
+    "ಶಬ್ದಕೋಶ ಚಿಕ್ಕದಾಗಿಯೇ ಇರುತ್ತದೆ (BERT ಗೆ ಸುಮಾರು 30,000 ಘಟಕಗಳು) ಮತ್ತು ಯಾವ ಪದವೂ ಅಪರಿಚಿತವಾಗುವುದಿಲ್ಲ. ಮಾದರಿಗೆ ಕಾಣುವುದು ನಿಮ್ಮ ಪದಗಳಲ್ಲ, ಈ ತುಣುಕುಗಳು.",
+    "Žodynas lieka mažas (apie 30 000 vienetų BERT modeliui) ir joks žodis nebūna nežinomas. Modelis mato šias dalis, o ne jūsų žodžius."
+  ],
+  "concept.tokenization.try": [
+    "Lab 3 ರ ಟೋಕನ್ ಹಂತವನ್ನು ತೆರೆದು WordPiece ವಾಕ್ಯವನ್ನು ಹೇಗೆ ಒಡೆಯುತ್ತದೆ ಮತ್ತು ಪ್ರತಿ ತುಣುಕು ಯಾವ ಎಂಬೆಡ್ಡಿಂಗ್ ಸಾಲನ್ನು ನೋಡುತ್ತದೆ ಎಂಬುದನ್ನು ಅನುಸರಿಸಿ.",
+    "Atidarykite 3 laboratorijos žetonų žingsnį ir sekite, kaip WordPiece skaido sakinį ir kurią įterpinių eilutę paima kiekviena dalis."
+  ],
+
+  "concept.positional-encoding.title": ["ಸ್ಥಾನ ಎನ್‌ಕೋಡಿಂಗ್", "Pozicinis kodavimas"],
+  "concept.positional-encoding.summary": [
+    "ಸ್ವ-ಅಟೆನ್ಷನ್ ವಾಕ್ಯವನ್ನು ಟೋಕನ್‌ಗಳ ಚೀಲದಂತೆ ನೋಡುತ್ತದೆ, ಆದ್ದರಿಂದ ಪದಗಳ ಕ್ರಮವನ್ನು ಎಂಬೆಡ್ಡಿಂಗ್‌ಗಳಿಗೆ ಸೇರಿಸಲಾಗುತ್ತದೆ: ಮೂಲ ಟ್ರಾನ್ಸ್‌ಫಾರ್ಮರ್‌ನಲ್ಲಿ ಸ್ಥಿರ ಸೈನ್ ತರಂಗಗಳು, BERT ನಲ್ಲಿ ಕಲಿತ ವೆಕ್ಟರ್‌ಗಳು.",
+    "Savęs dėmesys sakinį traktuoja kaip žetonų maišą, todėl žodžių tvarka pridedama prie įterpinių: pirminiame transformeryje – pastovios sinusoidės, BERT – išmokti vektoriai."
+  ],
+  "concept.positional-encoding.why": [
+    "ಇದಿಲ್ಲದಿದ್ದರೆ “dog bites man” ಮತ್ತು “man bites dog” ಅಟೆನ್ಷನ್ ಪದರಕ್ಕೆ ಒಂದೇ ರೀತಿ ಕಾಣುತ್ತವೆ.",
+    "Be jo „dog bites man“ ir „man bites dog“ dėmesio sluoksniui atrodo vienodai."
+  ],
+  "concept.positional-encoding.try": [
+    "Lab 3 ರ ಸ್ಥಾನ ಹಂತವನ್ನು ತೆರೆದು ವಿವಿಧ ಸ್ಥಾನಗಳ ಸೈನ್ ತರಂಗ ಎನ್‌ಕೋಡಿಂಗ್‌ಗಳನ್ನು ಹೋಲಿಸಿ.",
+    "Atidarykite 3 laboratorijos pozicijos žingsnį ir palyginkite skirtingų pozicijų sinusoidinius kodus."
+  ],
+
+  "concept.attention.title": ["ಅಟೆನ್ಷನ್ ಮತ್ತು ಟ್ರಾನ್ಸ್‌ಫಾರ್ಮರ್‌ಗಳು", "Dėmesys ir transformeriai"],
+  "concept.attention.summary": [
+    "ಪ್ರತಿ ಟೋಕನ್ ಉಳಿದೆಲ್ಲ ಟೋಕನ್‌ಗಳಿಗೆ ಕ್ವೆರಿ ಮತ್ತು ಕೀ ಬಳಸಿ ಅಂಕ ನೀಡುತ್ತದೆ, ಅಂಕಗಳನ್ನು ಸಾಫ್ಟ್‌ಮ್ಯಾಕ್ಸ್‌ನಿಂದ ತೂಕಗಳಾಗಿ ಬದಲಿಸುತ್ತದೆ ಮತ್ತು ವ್ಯಾಲ್ಯೂಗಳ ತೂಕದ ಮಿಶ್ರಣವನ್ನು ತೆಗೆದುಕೊಳ್ಳುತ್ತದೆ. ಇಂತಹ ಬ್ಲಾಕ್‌ಗಳನ್ನು ಒಂದರ ಮೇಲೊಂದು ಜೋಡಿಸಿದರೆ ಟ್ರಾನ್ಸ್‌ಫಾರ್ಮರ್ ಆಗುತ್ತದೆ.",
+    "Kiekvienas žetonas užklausa ir raktu įvertina visus kitus žetonus, įverčius softmax paverčia svoriais ir paima svertinį reikšmių mišinį. Sudėjus tokius blokus gaunamas transformeris."
+  ],
+  "concept.attention.why": [
+    "ಪ್ರತಿ ಪದವೂ ಉಳಿದೆಲ್ಲ ಪದಗಳನ್ನು ಒಂದೇ ಸಮಾನಾಂತರ ಹಂತದಲ್ಲಿ ನೋಡುತ್ತದೆ; ಇದು ಹೆಚ್ಚಿನ ಪಠ್ಯ ಕಾರ್ಯಗಳಲ್ಲಿ ಪುನರಾವರ್ತಿತ ಕೋಶಗಳ ಸ್ಥಾನವನ್ನು ಪಡೆದುಕೊಂಡಿತು. ವೆಚ್ಚವು ವಾಕ್ಯದ ಉದ್ದದ ವರ್ಗದಷ್ಟು ಬೆಳೆಯುತ್ತದೆ, ಆದರೆ ವಾಕ್ಯಗಳಿಗೆ ಇದು ಸಮಸ್ಯೆಯಲ್ಲ.",
+    "Kiekvienas žodis mato visus kitus vienu lygiagrečiu žingsniu, todėl dėmesys daugumoje teksto užduočių pakeitė rekurentines ląsteles. Kaina auga kaip sakinio ilgio kvadratas, bet sakiniams tai nesvarbu."
+  ],
+  "concept.attention.try": [
+    "Lab 3 ರ ಅಟೆನ್ಷನ್ ಹಂತದಲ್ಲಿ ಕ್ವೆರಿ, ಕೀ ಮತ್ತು ವ್ಯಾಲ್ಯೂಗಳನ್ನು ಸಂಪಾದಿಸಿ ಸಾಫ್ಟ್‌ಮ್ಯಾಕ್ಸ್ ತೂಕಗಳು ಹೇಗೆ ಬದಲಾಗುತ್ತವೆ ಎಂದು ನೋಡಿ, ನಂತರ ನಿಜವಾದ DistilBERT ಅಟೆನ್ಷನ್ ನಕ್ಷೆಗಳನ್ನು ನೋಡಿ.",
+    "3 laboratorijos dėmesio žingsnyje redaguokite užklausas, raktus ir reikšmes ir stebėkite, kaip juda softmax svoriai, o tada pažiūrėkite tikrus DistilBERT dėmesio žemėlapius."
+  ],
+
+  "concept.multi-head-attention.title": ["ಬಹು-ಹೆಡ್ ಅಟೆನ್ಷನ್", "Daugiagalvis dėmesys"],
+  "concept.multi-head-attention.summary": [
+    "ವೆಕ್ಟರ್‌ನ ಚಿಕ್ಕ ಭಾಗಗಳ ಮೇಲೆ ಹಲವಾರು ಅಟೆನ್ಷನ್ ಕಾರ್ಯಗಳು ಸಮಾನಾಂತರವಾಗಿ ನಡೆಯುತ್ತವೆ ಮತ್ತು ಅವುಗಳ ಫಲಿತಾಂಶಗಳನ್ನು ಜೋಡಿಸಲಾಗುತ್ತದೆ. BERT-tiny ಪ್ರತಿ ಪದರಕ್ಕೆ 2 ಹೆಡ್‌ಗಳನ್ನು, BERT-small 8 ಮತ್ತು DistilBERT 12 ಹೆಡ್‌ಗಳನ್ನು ಬಳಸುತ್ತವೆ.",
+    "Keletas dėmesio funkcijų veikia lygiagrečiai su mažesnėmis vektoriaus dalimis, o jų rezultatai sujungiami. BERT-tiny kiekviename sluoksnyje naudoja 2 galvutes, BERT-small – 8, DistilBERT – 12."
+  ],
+  "concept.multi-head-attention.why": [
+    "ಬೇರೆ ಬೇರೆ ಹೆಡ್‌ಗಳು ವಿಶೇಷತೆ ಪಡೆಯಬಲ್ಲವು: ಒಂದು ವಿಶೇಷಣಗಳನ್ನು ಅವುಗಳ ನಾಮಪದಗಳಿಗೆ ಜೋಡಿಸಬಹುದು, ಇನ್ನೊಂದು ನಿರಾಕರಣೆಯ ಪದವನ್ನು ಅದು ನಿರಾಕರಿಸುವುದಕ್ಕೆ ಜೋಡಿಸಬಹುದು.",
+    "Skirtingos galvutės gali specializuotis: viena gali sieti būdvardžius su daiktavardžiais, kita – neiginio žodį su tuo, ką jis neigia."
+  ],
+  "concept.multi-head-attention.try": [
+    "Lab 3 ರ ಹೆಡ್ಸ್ ಹಂತವನ್ನು ತೆರೆದು ಒಂದೇ ವಾಕ್ಯದಲ್ಲಿ ವಿವಿಧ ಅಟೆನ್ಷನ್ ಹೆಡ್‌ಗಳು ಏನನ್ನು ಹುಡುಕುತ್ತವೆ ಎಂದು ಹೋಲಿಸಿ.",
+    "Atidarykite 3 laboratorijos galvučių žingsnį ir palyginkite, ko tame pačiame sakinyje ieško skirtingos dėmesio galvutės."
+  ],
+
+  "concept.residual-layernorm.title": ["ಬ್ಲಾಕ್‌ನಲ್ಲಿ ರೆಸಿಡ್ಯುಯಲ್ ಸಂಪರ್ಕಗಳು ಮತ್ತು ಲೇಯರ್ ನಾರ್ಮಲೈಸೇಶನ್", "Liekamieji ryšiai ir sluoksnio normalizavimas bloke"],
+  "concept.residual-layernorm.summary": [
+    "ಟ್ರಾನ್ಸ್‌ಫಾರ್ಮರ್ ಎನ್‌ಕೋಡರ್ ಬ್ಲಾಕ್ ಅಟೆನ್ಷನ್ ಮತ್ತು ಫೀಡ್-ಫಾರ್ವರ್ಡ್ ಪದರವನ್ನು ಒಳಗೊಂಡಿದೆ; ಪ್ರತಿಯೊಂದಕ್ಕೂ ಇನ್‌ಪುಟ್ ಅನ್ನು ಔಟ್‌ಪುಟ್‌ಗೆ ಸೇರಿಸುವ ಶಾರ್ಟ್‌ಕಟ್ ಇದೆ, ಅದರ ನಂತರ ಒಂದು ಟೋಕನ್‌ನ ಲಕ್ಷಣಗಳ ಮೇಲೆ ಲೇಯರ್ ನಾರ್ಮಲೈಸೇಶನ್ ಬರುತ್ತದೆ.",
+    "Transformerio kodavimo blokas apima dėmesį ir tiesioginio sklidimo sluoksnį; kiekvienas turi trumpesnį kelią, pridedantį įvestį prie išvesties, o po to – sluoksnio normalizavimą vieno žetono požymiams."
+  ],
+  "concept.residual-layernorm.why": [
+    "ಶಾರ್ಟ್‌ಕಟ್‌ಗಳು ಮತ್ತು ನಾರ್ಮಲೈಸೇಶನ್ ಆಳವಾದ ಜೋಡಣೆಗಳನ್ನು ತರಬೇತಿಗೆ ಯೋಗ್ಯವಾಗಿರಿಸುತ್ತವೆ, ಮತ್ತು ಬ್ಲಾಕ್‌ನ ಆಕಾರಗಳು ಪ್ಯಾರಾಮೀಟರ್ ಸಂಖ್ಯೆಯನ್ನು ನಿರ್ಧರಿಸುತ್ತವೆ: Lab 3 ರ ಕೌಂಟರ್ ಅನ್ನು ನಿಜವಾದ BERT-tiny, BERT-small ಮತ್ತು DistilBERT (4.4, 29 ಮತ್ತು 67 ಮಿಲಿಯನ್) ವಿರುದ್ಧ ಪರಿಶೀಲಿಸಲಾಗಿದೆ.",
+    "Trumpesni keliai ir normalizavimas išlaiko gilius klodus apmokomus, o bloko formos nulemia parametrų skaičių: 3 laboratorijos skaitiklis patikrintas pagal tikrus BERT-tiny, BERT-small ir DistilBERT (4,4, 29 ir 67 mln.)."
+  ],
+  "concept.residual-layernorm.try": [
+    "Lab 3 ರ ಎನ್‌ಕೋಡರ್ ಹಂತದ ಪ್ಯಾರಾಮೀಟರ್ ಕೌಂಟರ್ ಬಳಸಿ ಅದರ ಒಟ್ಟು ಮೊತ್ತವನ್ನು ನಿಜವಾದ ಮಾದರಿಗಳೊಂದಿಗೆ ಹೋಲಿಸಿ.",
+    "Naudokite parametrų skaitiklį 3 laboratorijos kodavimo žingsnyje ir palyginkite jo sumą su tikrais modeliais."
+  ],
+
+  "concept.pretraining-finetuning.title": ["ಪೂರ್ವ-ತರಬೇತಿ ಮತ್ತು ಫೈನ್-ಟ್ಯೂನಿಂಗ್", "Išankstinis mokymas ir tikslinimas (fine-tuning)"],
+  "concept.pretraining-finetuning.summary": [
+    "BERT ಅನ್ನು ಮೊದಲು ಮಾಸ್ಕ್ಡ್ ಭಾಷಾ ಮಾದರೀಕರಣದಿಂದ ಪೂರ್ವ-ತರಬೇತಿ ಮಾಡಲಾಗುತ್ತದೆ: 15 % ಟೋಕನ್‌ಗಳನ್ನು ಮರೆಮಾಡಿ ಎರಡೂ ಬದಿಗಳಿಂದ ಊಹಿಸಲಾಗುತ್ತದೆ. ಒಂದು ಕಾರ್ಯಕ್ಕಾಗಿ [CLS] ವೆಕ್ಟರ್ ಮೇಲೆ ಚಿಕ್ಕ ವರ್ಗೀಕರಣ ಪದರವನ್ನು ಇಟ್ಟು ಎಲ್ಲವನ್ನೂ AdamW, ವಾರ್ಮ್-ಅಪ್ ಮತ್ತು ರೇಖೀಯ ಇಳಿಕೆಯೊಂದಿಗೆ ಫೈನ್-ಟ್ಯೂನ್ ಮಾಡಲಾಗುತ್ತದೆ.",
+    "BERT pirmiausia išmokomas užmaskuotu kalbos modeliavimu: 15 % žetonų paslepiama ir atspėjama iš abiejų pusių. Užduočiai ant [CLS] vektoriaus uždedamas mažas klasifikavimo sluoksnis ir viskas tikslinama (fine-tuning) su AdamW, apšilimu ir tiesiniu mažinimu."
+  ],
+  "concept.pretraining-finetuning.why": [
+    "ಪೂರ್ವ-ತರಬೇತಿಯನ್ನು ಪುನರಾವರ್ತಿಸುವುದು ತುಂಬಾ ದುಬಾರಿ (ಹಲವು GPU ಗಳ ಮೇಲೆ ದಿನಗಳು), ಆದ್ದರಿಂದ ತೂಕಗಳನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ ಫೈನ್-ಟ್ಯೂನ್ ಮಾಡುತ್ತೀರಿ. ಭಾಷೆಯನ್ನು ಈಗಾಗಲೇ ತಿಳಿದಿರುವ ಮಾದರಿಗೆ ಕಡಿಮೆ ಲೇಬಲ್ ಮಾಡಿದ ಉದಾಹರಣೆಗಳು ಸಾಕು.",
+    "Išankstinio mokymo kartoti per brangu (dienos su daugybe GPU), todėl atsisiunčiami svoriai ir modelis patikslinamas. Modeliui, kuris kalbą jau žino, pakanka nedaug pažymėtų pavyzdžių."
+  ],
+  "concept.pretraining-finetuning.try": [
+    "Lab 3 ರ ತರಬೇತಿ ಹಂತವನ್ನು ತೆರೆದು ಮಾಸ್ಕ್ಡ್ ಭಾಷಾ ಮಾದರೀಕರಣ, [CLS] ವರ್ಗೀಕರಣ ಹೆಡ್ ಮತ್ತು ವಾರ್ಮ್-ಅಪ್ ಹಾಗೂ ಇಳಿಕೆಯ ವೇಳಾಪಟ್ಟಿಯನ್ನು ಅನುಸರಿಸಿ.",
+    "Atidarykite 3 laboratorijos mokymo žingsnį ir sekite užmaskuotą kalbos modeliavimą, [CLS] klasifikavimo galvutę bei apšilimo ir mažinimo grafiką."
+  ],
+
+  "concept.bag-of-words-tfidf.title": ["ಬ್ಯಾಗ್ ಆಫ್ ವರ್ಡ್ಸ್ ಮತ್ತು TF-IDF", "Žodžių maišas ir TF-IDF"],
+  "concept.bag-of-words-tfidf.summary": [
+    "ವಾಕ್ಯವು ಪದ ಎಣಿಕೆಗಳ ವೆಕ್ಟರ್ ಆಗುತ್ತದೆ, ಪ್ರತಿ ಪದ ಎಷ್ಟು ಅಪರೂಪ ಎಂಬುದರ ಆಧಾರದ ಮೇಲೆ ತೂಕ ಹಾಕಲಾಗುತ್ತದೆ, ಮತ್ತು ರೇಖೀಯ ಮಾದರಿ (ನೈವ್ ಬೇಯ್ಸ್, ಲಾಜಿಸ್ಟಿಕ್ ರಿಗ್ರೆಷನ್, SVM) ಆ ತೂಕಗಳನ್ನು ಓದುತ್ತದೆ. ಪದಗಳ ಕ್ರಮವನ್ನು ಕಡೆಗಣಿಸಲಾಗುತ್ತದೆ.",
+    "Sakinys tampa žodžių skaičių vektoriumi, pasvertu pagal tai, kiek retas kiekvienas žodis, o tiesinis modelis (naivusis Bajesas, logistinė regresija, SVM) skaito svorius. Žodžių tvarka ignoruojama."
+  ],
+  "concept.bag-of-words-tfidf.why": [
+    "ಇದು ಅಗ್ಗದ, ಬಲವಾದ ಮೂಲರೇಖೆ: SST-2 ನಲ್ಲಿ ಶಾಸ್ತ್ರೀಯ ಮಾದರಿಗಳು 81.9 ರಿಂದ 82.9 % ಗಳಿಸುತ್ತವೆ, ಸೆಕೆಂಡುಗಳಲ್ಲಿ ತರಬೇತಿ ಪಡೆಯುತ್ತವೆ ಮತ್ತು ಸುಮಾರು 0.05 ms ನಲ್ಲಿ ಉತ್ತರಿಸುತ್ತವೆ.",
+    "Tai pigus ir stiprus pradinis variantas: SST-2 klasikiniai modeliai pasiekia 81,9–82,9 %, mokosi per sekundes ir atsako maždaug per 0,05 ms."
+  ],
+  "concept.bag-of-words-tfidf.try": [
+    "Lab 3 ರ ಬೇಸ್‌ಲೈನ್ ಹಂತವನ್ನು ತೆರೆದು ಶಾಸ್ತ್ರೀಯ ಮಾದರಿಗಳ ನಿಜವಾದ ತೂಕಗಳನ್ನು ಓದಿ.",
+    "Atidarykite 3 laboratorijos bazinių modelių žingsnį ir perskaitykite tikrus klasikinių modelių svorius."
+  ],
+
+  "concept.zero-shot-nli.title": ["NLI ಬಳಸಿ ಜೀರೋ-ಶಾಟ್ ವರ್ಗೀಕರಣ", "Nulinio šūvio (zero-shot) klasifikavimas su NLI"],
+  "concept.zero-shot-nli.summary": [
+    "ಒಂದು ವಾಕ್ಯ ಇನ್ನೊಂದನ್ನು ಅನುಸರಿಸುತ್ತದೆಯೇ ಎಂದು ಹೇಳಲು ತರಬೇತಿ ಪಡೆದ ಮಾದರಿ ಲೇಬಲ್ ಮಾಡಿದ ಉದಾಹರಣೆಗಳಿಲ್ಲದೆ ವರ್ಗೀಕರಿಸಬಲ್ಲದು: ವಿಮರ್ಶೆ ಪೂರ್ವಭಾವನೆ (premise), “The sentiment of this movie review is positive” ಊಹೆ (hypothesis), ಮತ್ತು ಅತಿ ಹೆಚ್ಚು ಅನುಸರಣೆ (entailment) ಅಂಕ ಪಡೆದ ಲೇಬಲ್ ಗೆಲ್ಲುತ್ತದೆ.",
+    "Modelis, išmokytas spręsti, ar vienas sakinys išplaukia iš kito, gali klasifikuoti be pažymėtų pavyzdžių: atsiliepimas yra prielaida, „The sentiment of this movie review is positive“ – hipotezė, o laimi didžiausią išplaukimo (entailment) įvertį gavusi etiketė."
+  ],
+  "concept.zero-shot-nli.why": [
+    "ಇದು ಎಂದೂ ಭಾವನೆಯ ಲೇಬಲ್ ನೋಡದೆ SST-2 ನಲ್ಲಿ 81.8 % ಗಳಿಸಿತು, 65 ಸಾವಿರ ವಾಕ್ಯಗಳ ಮೇಲೆ ತರಬೇತಿ ಪಡೆದ ಲಾಜಿಸ್ಟಿಕ್ ರಿಗ್ರೆಷನ್‌ಗೆ ಸಮ, ಆದರೆ ಪ್ರತಿ ವಾಕ್ಯ ಪ್ರತಿ ಲೇಬಲ್‌ಗೆ ಒಮ್ಮೆ ಓಡುವುದರಿಂದ ಇದು ಅತಿ ನಿಧಾನ ಮಾದರಿ.",
+    "Jis pasiekė 81,8 % SST-2 niekada nematęs nuotaikos etiketės – tiek pat, kiek logistinė regresija, mokyta su 65 tūkst. sakinių, bet tai lėčiausias modelis, nes kiekvienas sakinys apdorojamas po kartą kiekvienai etiketei."
+  ],
+  "concept.zero-shot-nli.try": [
+    "Lab 3 ರ ರೆಡಿಮೇಡ್ ಹಂತದಲ್ಲಿ ಸಿದ್ಧ ಮತ್ತು ಜೀರೋ-ಶಾಟ್ ಮಾದರಿಗಳನ್ನು ನೋಡಿ ಮತ್ತು ಅವುಗಳ ನಿಖರತೆ ಹಾಗೂ ವೆಚ್ಚವನ್ನು ಬೇಸ್‌ಲೈನ್‌ಗಳೊಂದಿಗೆ ಹೋಲಿಸಿ.",
+    "Peržiūrėkite paruoštus ir nulinio šūvio modelius 3 laboratorijos paruoštų modelių žingsnyje ir palyginkite jų tikslumą bei kainą su baziniais modeliais."
+  ],
+
+  "concept.model-comparison-statistics.title": ["ಒಂದು ಮಾದರಿ ನಿಜವಾಗಿ ಉತ್ತಮವೇ? ಬೂಟ್‌ಸ್ಟ್ರ್ಯಾಪ್ ಮತ್ತು McNemar", "Ar vienas modelis tikrai geresnis? Bootstrap ir McNemar"],
+  "concept.model-comparison-statistics.summary": [
+    "95 % ಬೂಟ್‌ಸ್ಟ್ರ್ಯಾಪ್ ಅಂತರವು ಪರೀಕ್ಷಾ ಸೆಟ್ ಅನ್ನು ಪುನರ್‌ಮಾದರಿ ಮಾಡಿ ನಿಖರತೆ ಎಷ್ಟು ಬದಲಾಗಬಹುದು ಎಂದು ತೋರಿಸುತ್ತದೆ. McNemar ಪರೀಕ್ಷೆಯು ಎರಡು ಮಾದರಿಗಳು ಬೇರೆ ಬೇರೆ ಉತ್ತರ ನೀಡಿದ ವಾಕ್ಯಗಳನ್ನು ಮಾತ್ರ ನೋಡುತ್ತದೆ.",
+    "95 % įkrovos (bootstrap) intervalas perrenka testo aibę ir parodo, kiek gali svyruoti tikslumas. McNemar testas žiūri tik į sakinius, į kuriuos du modeliai atsakė skirtingai."
+  ],
+  "concept.model-comparison-statistics.why": [
+    "872 ಪರೀಕ್ಷಾ ವಾಕ್ಯಗಳೊಂದಿಗೆ ಅಂತರಗಳು ಸುಮಾರು ±2.5 ಅಂಕ ಅಗಲವಿರುತ್ತವೆ, ಆದ್ದರಿಂದ ಒಂದು ಅಂಕದ ವ್ಯತ್ಯಾಸ ಕೇವಲ ಅದೃಷ್ಟವಾಗಿರಬಹುದು. ಪ್ರಬಂಧದಲ್ಲಿ BERT-small ಮತ್ತು SVM ನಡುವೆ (71 ವಿರುದ್ಧ 64 ವಾಕ್ಯಗಳು, p = 0.61) ನಿಜವಾದ ವ್ಯತ್ಯಾಸವಿಲ್ಲ.",
+    "Su 872 testo sakiniais intervalai yra maždaug ±2,5 punkto pločio, todėl vieno punkto skirtumas gali būti tik sėkmė. Straipsnyje BERT-small ir SVM (71 prieš 64 sakinius, p = 0,61) tikro skirtumo neturi."
+  ],
+  "concept.model-comparison-statistics.try": [
+    "Lab 3 ರ ಫಲಿತಾಂಶ ಹಂತವನ್ನು ತೆರೆದು ಹತ್ತು ಮಾದರಿಗಳ ಬೂಟ್‌ಸ್ಟ್ರ್ಯಾಪ್ ಅಂತರಗಳು ಮತ್ತು McNemar ಪರೀಕ್ಷೆಗಳನ್ನು ಓದಿ, ಇವನ್ನು ನಿಜವಾದ ಭವಿಷ್ಯವಾಣಿಗಳಿಂದ ಮರುಲೆಕ್ಕ ಹಾಕಲಾಗಿದೆ.",
+    "Atidarykite 3 laboratorijos rezultatų žingsnį ir perskaitykite dešimties modelių įkrovos intervalus bei McNemar testus, perskaičiuotus iš tikrų prognozių."
+  ],
+
+  "concept.cost-latency-tradeoff.title": ["ನಿಖರತೆ ಮತ್ತು ವೆಚ್ಚ ಹಾಗೂ ಲೇಟೆನ್ಸಿ", "Tikslumas, kaina ir vėlinimas"],
+  "concept.cost-latency-tradeoff.summary": [
+    "ನಿಖರತೆ ಕೇವಲ ಒಂದು ಆಯಾಮ: ತರಬೇತಿ ಸಮಯ, ಪ್ರತಿ ವಾಕ್ಯಕ್ಕೆ ಮಿಲಿಸೆಕೆಂಡುಗಳು ಮತ್ತು ಮಾದರಿಯ ಗಾತ್ರವೂ ಮುಖ್ಯ, ಮತ್ತು ಇವು ಕುಟುಂಬಗಳ ನಡುವೆ ಹಲವು ಪಟ್ಟು ಬದಲಾಗುತ್ತವೆ.",
+    "Tikslumas – tik viena ašis: svarbu ir mokymo laikas, milisekundės vienam sakiniui bei modelio dydis, o skirtingose šeimose jie skiriasi eilėmis."
+  ],
+  "concept.cost-latency-tradeoff.why": [
+    "CPU ಮೇಲೆ ಶಾಸ್ತ್ರೀಯ ಮಾದರಿಗಳಿಗೆ ಪ್ರತಿ ವಾಕ್ಯಕ್ಕೆ ಸುಮಾರು 0.05 ms, BERT-small ಗೆ 14 ms ಮತ್ತು DistilBERT ಗೆ 39 ms ಬೇಕು; ಸಿದ್ಧ ದೊಡ್ಡ ಮಾದರಿಗಳಿಗೆ 45 ರಿಂದ 107 ms. ನಿಜವಾದ ಯೋಜನೆ ಪ್ರತಿ ವಿನಂತಿಗೂ ಈ ಬಿಲ್ ಪಾವತಿಸುತ್ತದೆ.",
+    "Procesoriuje klasikiniams modeliams reikia apie 0,05 ms vienam sakiniui, BERT-small – 14 ms, DistilBERT – 39 ms; paruoštiems dideliems modeliams – 45–107 ms. Tikras projektas moka šią kainą už kiekvieną užklausą."
+  ],
+  "concept.cost-latency-tradeoff.try": [
+    "Lab 3 ರ ವೆಚ್ಚ ಹಂತವನ್ನು ತೆರೆದು ಹತ್ತು ಮಾದರಿಗಳ ತರಬೇತಿ ಸಮಯ, ಲೇಟೆನ್ಸಿ ಮತ್ತು ಗಾತ್ರವನ್ನು ಹೋಲಿಸಿ, ಯಾವುವು ತಮ್ಮ ವೆಚ್ಚಕ್ಕೆ ಯೋಗ್ಯವಲ್ಲ ಎಂದು ಕಂಡುಹಿಡಿಯಿರಿ.",
+    "Atidarykite 3 laboratorijos kainos žingsnį, palyginkite dešimties modelių mokymo laiką, vėlinimą ir dydį ir raskite, kurie neverti savo kainos."
+  ],
+
+  "concept.data-efficiency.title": ["ಡೇಟಾ ದಕ್ಷತೆ ಮತ್ತು ಕಲಿಕಾ ವಕ್ರರೇಖೆಗಳು", "Duomenų efektyvumas ir mokymosi kreivės"],
+  "concept.data-efficiency.summary": [
+    "ಕಲಿಕಾ ವಕ್ರರೇಖೆಯು ಬೆಳೆಯುತ್ತಿರುವ ಉಪಸೆಟ್‌ಗಳ ಮೇಲೆ ತರಬೇತಿ ನೀಡಿ ಪರೀಕ್ಷಾ ನಿಖರತೆಯನ್ನು ಚಿತ್ರಿಸುತ್ತದೆ. ಪ್ರತಿ ವಿಧಾನಕ್ಕೆ ಎಷ್ಟು ಲೇಬಲ್ ಮಾಡಿದ ವಾಕ್ಯಗಳು ಬೇಕು ಎಂದು ಇದು ತೋರಿಸುತ್ತದೆ.",
+    "Mokymosi kreivė moko su augančiais poaibiais ir braižo testo tikslumą. Ji parodo, kiek pažymėtų sakinių reikia kiekvienam metodui."
+  ],
+  "concept.data-efficiency.why": [
+    "500 ವಾಕ್ಯಗಳೊಂದಿಗೆ BERT-small 75.9 % ಗಳಿಸಿದರೆ TF-IDF 61.8 %. 4,000 ವಾಕ್ಯಗಳ ಮೇಲಿನ BERT-small ಈಗಾಗಲೇ ಎಲ್ಲ 65,349 ವಾಕ್ಯಗಳ ಮೇಲಿನ ಅತ್ಯುತ್ತಮ ಶಾಸ್ತ್ರೀಯ ಮಾದರಿಗೆ ಸಮ, ಅಂದರೆ ಸುಮಾರು 16 ಪಟ್ಟು ಕಡಿಮೆ ಲೇಬಲ್ ಡೇಟಾ; ಇದು ಲಿಥುವೇನಿಯನ್‌ನಂತಹ ಭಾಷೆಗಳಿಗೆ ಮುಖ್ಯ.",
+    "Su 500 sakinių BERT-small pasiekia 75,9 %, o TF-IDF – 61,8 %. BERT-small su 4 000 sakinių jau prilygsta geriausiam klasikiniam modeliui su visais 65 349, t. y. maždaug 16 kartų mažiau pažymėtų duomenų, o tai svarbu tokioms kalboms kaip lietuvių."
+  ],
+  "concept.data-efficiency.try": [
+    "Lab 3 ರ ದಕ್ಷತೆ ಹಂತವನ್ನು ತೆರೆದು ಕಲಿಕಾ ವಕ್ರರೇಖೆಗಳನ್ನು ಓದಿ, ಶಾಸ್ತ್ರೀಯ ಮಾದರಿ ಎಲ್ಲಿ ಹಿಡಿದುಕೊಳ್ಳುತ್ತದೆ ಎಂದು ಕಂಡುಹಿಡಿಯಿರಿ.",
+    "Atidarykite 3 laboratorijos efektyvumo žingsnį ir perskaitykite mokymosi kreives, kad rastumėte, kur klasikinis modelis pasivaro."
+  ],
+
+  "concept.negation-error-analysis.title": ["ದೋಷ ವಿಶ್ಲೇಷಣೆ: ನಿರಾಕರಣೆ ಮತ್ತು ವ್ಯತಿರಿಕ್ತತೆ", "Klaidų analizė: neiginys ir kontrastas"],
+  "concept.negation-error-analysis.summary": [
+    "ನಿರಾಕರಣೆ (184) ಅಥವಾ “but” ನಂತಹ ವ್ಯತಿರಿಕ್ತ ಪದಗಳು (130) ಇರುವ ವಾಕ್ಯಗಳ ಮೇಲೆ ನಿಖರತೆಯನ್ನು ಮತ್ತೆ ಅಳೆಯಲಾಗುತ್ತದೆ, ಪ್ರತಿ ಮಾದರಿ ಎಲ್ಲಿ ವಿಫಲವಾಗುತ್ತದೆ ಎಂದು ನೋಡಲು.",
+    "Tikslumas matuojamas iš naujo sakiniuose su neiginiu (184) arba kontrasto žodžiais, pvz., „but“ (130), kad matytume, kur kiekvienas modelis klysta."
+  ],
+  "concept.negation-error-analysis.why": [
+    "ಬ್ಯಾಗ್-ಆಫ್-ವರ್ಡ್ಸ್ ಮಾದರಿಗಳು ನಿರಾಕರಣೆಯಲ್ಲಿ 8 ರಿಂದ 9 ಅಂಕ ಕಳೆದುಕೊಳ್ಳುತ್ತವೆ, ಏಕೆಂದರೆ “not good” ನಲ್ಲಿ “good” ಇದೆ. ದೊಡ್ಡ ಟ್ರಾನ್ಸ್‌ಫಾರ್ಮರ್‌ಗಳು 2 ರಿಂದ 4 ಅಂಕ ಕಳೆದುಕೊಳ್ಳುತ್ತವೆ, ಆದರೆ BERT-small 9.3 ಕಳೆದುಕೊಳ್ಳುತ್ತದೆ; ಅಂದರೆ ದೃಢತೆ ವಾಸ್ತುಶಿಲ್ಪದಿಂದ ಮಾತ್ರವಲ್ಲ, ಗಾತ್ರ ಮತ್ತು ಪೂರ್ವ-ತರಬೇತಿ ಒಟ್ಟಾಗಿ ಬರುತ್ತದೆ.",
+    "Žodžių maišo modeliai neiginiuose praranda 8–9 punktus, nes „not good“ sudėtyje yra „good“. Dideli transformeriai praranda 2–4 punktus, bet BERT-small – 9,3, taigi patikimumą lemia dydis ir išankstinis mokymas kartu, o ne vien architektūra."
+  ],
+  "concept.negation-error-analysis.try": [
+    "Lab 3 ರ ದೋಷಗಳ ಹಂತವನ್ನು ತೆರೆದು ನಿರಾಕರಣೆ ಮತ್ತು ವ್ಯತಿರಿಕ್ತತೆ ಇರುವ ವಾಕ್ಯಗಳಿಗೆ ಹತ್ತು ಮಾದರಿಗಳು ಹೇಗೆ ಉತ್ತರಿಸುತ್ತವೆ ಎಂದು ಹೋಲಿಸಿ.",
+    "Atidarykite 3 laboratorijos klaidų žingsnį ir palyginkite, kaip dešimt modelių atsako į sakinius su neiginiu ir kontrastu."
+  ],
+
+  "concept.choosing-a-model.title": ["ನಿಜವಾದ ಕಾರ್ಯಕ್ಕೆ ಮಾದರಿಯ ಆಯ್ಕೆ", "Modelio pasirinkimas tikrai užduočiai"],
+  "concept.choosing-a-model.summary": [
+    "ನಿಖರತೆ, ವೆಚ್ಚ, ಲೇಬಲ್ ಮಾಡಿದ ಡೇಟಾ, ಭಾಷೆ ಮತ್ತು ಅಪಾಯವನ್ನು ಒಟ್ಟಿಗೆ ತೂಗಿ ನೋಡಿ: ಅಗ್ಗದ ಶಾಸ್ತ್ರೀಯ ಮೂಲರೇಖೆ, ಸಣ್ಣ ಫೈನ್-ಟ್ಯೂನ್ ಮಾಡಿದ ಟ್ರಾನ್ಸ್‌ಫಾರ್ಮರ್, ಸಿದ್ಧ ಅದೇ-ಕ್ಷೇತ್ರದ ಮಾದರಿ ಅಥವಾ ಜೀರೋ-ಶಾಟ್ ಮಾದರಿ.",
+    "Kartu įvertinkite tikslumą, kainą, pažymėtus duomenis, kalbą ir riziką: pigų klasikinį bazinį modelį, kompaktišką patikslintą transformerį, paruoštą tos pačios srities modelį ar nulinio šūvio modelį."
+  ],
+  "concept.choosing-a-model.why": [
+    "ಟ್ರಾನ್ಸ್‌ಫಾರ್ಮರ್ ತಾನಾಗಿ ಉತ್ತಮವಲ್ಲ (BERT-tiny 76.6 % ನೊಂದಿಗೆ ಅತಿ ದುರ್ಬಲ ಮಾದರಿ), ಆದರೆ ಸಾಕಷ್ಟು ದೊಡ್ಡ ಪೂರ್ವ-ತರಬೇತಿ ಪಡೆದ ಮಾದರಿ ಅತ್ಯುತ್ತಮ ಶಾಸ್ತ್ರೀಯ ಮಾದರಿಯನ್ನು ಸುಮಾರು 6 ಅಂಕಗಳಿಂದ ಮೀರಿಸಿತು.",
+    "Transformeris automatiškai negeresnis (BERT-tiny buvo silpniausias – 76,6 %), bet pakankamai didelis išankstinio mokymo modelis pranoko geriausią klasikinį maždaug 6 punktais."
+  ],
+  "concept.choosing-a-model.try": [
+    "Lab 3 ರ ನಿರ್ಧಾರ ಸಹಾಯಕದ ಪ್ರಶ್ನೆಗಳಿಗೆ ನಿಮ್ಮ ಸ್ವಂತ ಪರಿಸ್ಥಿತಿಗಾಗಿ ಉತ್ತರಿಸಿ ಮತ್ತು ಅದು ಯಾವ ಮಾದರಿಯನ್ನು ಏಕೆ ಸೂಚಿಸುತ್ತದೆ ಎಂದು ನೋಡಿ.",
+    "Atsakykite į 3 laboratorijos sprendimo pagalbininko klausimus savo situacijai ir pažiūrėkite, kokį modelį jis siūlo ir kodėl."
+  ],
+
+  "concept.residual-connections.title": ["ಅತಿ ಆಳವಾದ ನೆಟ್‌ವರ್ಕ್‌ಗಳಲ್ಲಿ ರೆಸಿಡ್ಯುಯಲ್ ಸಂಪರ್ಕಗಳು (ResNet)", "Liekamieji ryšiai labai giluose tinkluose (ResNet)"],
+  "concept.residual-connections.summary": [
+    "ResNet ನಲ್ಲಿ ಶಾರ್ಟ್‌ಕಟ್ ಪದರದ ಇನ್‌ಪುಟ್ ಅನ್ನು ಅದರ ಔಟ್‌ಪುಟ್‌ಗೆ ಸೇರಿಸುತ್ತದೆ, ಇದರಿಂದ ನೂರಾರು ಕನ್ವಲ್ಯೂಷನ್ ಪದರಗಳ ಜೋಡಣೆಯ ಮೂಲಕ ಗ್ರೇಡಿಯಂಟ್‌ಗಳು ಹರಿಯುತ್ತವೆ.",
+    "ResNet tinkle trumpesnis kelias prideda sluoksnio įvestį prie jo išvesties, todėl gradientai prateka per šimtus konvoliucinių sluoksnių."
+  ],
+  "concept.residual-connections.why": [
+    "ಇದರಿಂದಲೇ ಅತಿ ಆಳವಾದ ಚಿತ್ರ ನೆಟ್‌ವರ್ಕ್‌ಗಳು ತರಬೇತಿಗೆ ಯೋಗ್ಯವಾದವು. ಅದೇ ಶಾರ್ಟ್‌ಕಟ್ ಪ್ರತಿ ಟ್ರಾನ್ಸ್‌ಫಾರ್ಮರ್ ಬ್ಲಾಕ್‌ನೊಳಗೂ ಇದೆ; ಅದನ್ನು Lab 3 ರ ಎನ್‌ಕೋಡರ್ ಹಂತ ಲೈವ್ ಆಗಿ ತೋರಿಸುತ್ತದೆ.",
+    "Taip labai gilūs vaizdų tinklai tapo apmokomi. Tas pats trumpesnis kelias yra kiekviename transformerio bloke, ir tai gyvai parodo 3 laboratorijos kodavimo žingsnis."
+  ],
+
+  "concept.data-augmentation.title": ["ಡೇಟಾ ವರ್ಧನೆ", "Duomenų papildymas"],
+  "concept.data-augmentation.summary": [
+    "ಸಣ್ಣ ಡೇಟಾಸೆಟ್ ಅನ್ನು ವಿಸ್ತರಿಸಲು ತರಬೇತಿ ಡೇಟಾವನ್ನು ತಿರುಗಿಸಿ, ಕತ್ತರಿಸಿ, ಸುತ್ತಿಸಿ ಅಥವಾ ಶಬ್ದ ಸೇರಿಸಿ. ಪೂರ್ವ-ತರಬೇತಿ ಪಡೆದ ನೆಟ್‌ವರ್ಕ್ ಅನ್ನು ಮರುಬಳಸುವುದು ಪೂರ್ವ-ತರಬೇತಿ ಮತ್ತು ಫೈನ್-ಟ್ಯೂನಿಂಗ್ ಅಡಿಯಲ್ಲಿ ಬರುತ್ತದೆ.",
+    "Apverskite, apkirpkite, pasukite ar pridėkite triukšmo mokymo duomenims, kad išplėstumėte mažą duomenų rinkinį. Išankstinio mokymo tinklo pakartotinis naudojimas aprašytas prie išankstinio mokymo ir tikslinimo."
+  ],
+  "concept.data-augmentation.why": [
+    "ಹೆಚ್ಚಿನ ನಿಜವಾದ ಯೋಜನೆಗಳಲ್ಲಿ ಡೇಟಾ ಕಡಿಮೆ ಇರುತ್ತದೆ; ಓವರ್‌ಫಿಟ್ಟಿಂಗ್ ಕಡಿಮೆ ಮಾಡಲು ಡೇಟಾ ವರ್ಧನೆ ಅಗ್ಗದ ಮಾರ್ಗ.",
+    "Daugumoje tikrų projektų duomenų mažai; papildymas yra pigus būdas sumažinti persimokymą."
+  ],
+  "concept.data-augmentation.plan": [
+    "ಕೆಲವು ಚಿತ್ರಗಳ ಮೇಲೆ ತಿರುಗಿಸುವಿಕೆ, ಕತ್ತರಿಸುವಿಕೆ ಮತ್ತು ಶಬ್ದದ ಮುನ್ನೋಟ ತೋರಿಸಿ, ನಂತರ ಅದೇ ಸಣ್ಣ CNN ಅನ್ನು ವರ್ಧನೆಯೊಂದಿಗೆ ಮತ್ತು ಇಲ್ಲದೆ ತರಬೇತಿ ಮಾಡಿ ಮೌಲ್ಯೀಕರಣ ವಕ್ರರೇಖೆಗಳನ್ನು ಹೋಲಿಸಿ.",
+    "Parodykite keleto vaizdų apvertimų, apkirpimų ir triukšmo peržiūrą, tada apmokykite tą patį mažą CNN su papildymu ir be jo ir palyginkite validacijos kreives."
+  ]
+}

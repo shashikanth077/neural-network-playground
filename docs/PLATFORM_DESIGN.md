@@ -23,18 +23,27 @@ what it leads to, and `/coverage` is a generated table of every concept against 
 form a cycle, or if a planned concept has no description of its future live example, so the coverage claim cannot
 quietly rot.
 
-## Coverage of the neural-network material (from the five lectures)
+## Coverage of the concept map (from the registry)
 
-Live example: neuron, activation functions, layers and the forward pass, output layers and softmax, weight
-initialisation, loss functions, gradient descent, backpropagation, learning rate, batches and epochs, optimizers,
-vanishing gradients, under/over-fitting, L1/L2, dropout, batch norm, early stopping, cross-validation, metrics,
-decision boundaries, convolution, stride and padding, pooling, receptive field, CNN parameter counts, preparing an
-image, text as numbers, Conv1D, RNN/LSTM/GRU, Keras code, diagnosing a failing run, plus the data-preparation
-concepts of Lab 1.
+55 concepts: 49 with a live example, 0 reference only, 6 planned.
 
-Planned (each has its intended live example written in the registry): attention and transformers, residual
-connections, transfer learning and augmentation, autoencoders, generative models, hyperparameter search,
-explainability, and saving/serving models with an experiment database.
+Live example (neural-network lectures and Labs 1 and 2): missing values, outliers, scaling, train/validation/test
+sets, neuron, activation functions, layers and the forward pass, output layers and softmax, weight initialisation,
+loss functions, gradient descent, backpropagation, learning rate, batches and epochs, optimizers, vanishing
+gradients, under/over-fitting, L1/L2, dropout, batch norm, early stopping, cross-validation, metrics, decision
+boundaries, convolution, stride and padding, pooling, receptive field, CNN parameter counts, preparing an image,
+text as numbers, Conv1D, RNN/LSTM/GRU, Keras code, diagnosing a failing run, and saving/serving models (experiment
+tracking is live; model download and a prediction endpoint are still planned).
+
+Live example (Transformers and NLP, Lab 3 and the NLP and Transformers cheatsheets): tokens and sub-words
+(WordPiece), positional encoding, attention and transformers, multi-head attention, residual connections and layer
+normalisation in a block (with the parameter counter), pre-training and fine-tuning, bag of words and TF-IDF,
+zero-shot classification with NLI, bootstrap and McNemar model comparison, accuracy against cost and latency, data
+efficiency, error analysis on negation and contrast, and choosing a model. The home page has a "Transformers in
+NLP" learning path through these.
+
+Planned (each has its intended live example written in the registry): residual connections in very deep nets
+(ResNet), data augmentation, autoencoders, generative models, hyperparameter search and explainability.
 
 ## Python to frontend (how a lab is wired)
 

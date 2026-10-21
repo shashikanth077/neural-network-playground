@@ -2,8 +2,11 @@ import type { Concept, Evidence } from "./types";
 
 const L1 = (step: string): Evidence => ({ kind: "lab", lab: "lab1", step });
 const L2 = (step: string): Evidence => ({ kind: "lab", lab: "lab2", step });
+const L3 = (step: string): Evidence => ({ kind: "lab", lab: "lab3", step });
 const learn = (topic: string): Evidence => ({ kind: "learn", topic });
 const sheet = (section: string): Evidence => ({ kind: "sheet", sheet: "neural-network", section });
+const nlpSheet = (section: string): Evidence => ({ kind: "sheet", sheet: "nlp", section });
+const trSheet = (section: string): Evidence => ({ kind: "sheet", sheet: "transformers", section });
 const pg = (section: Extract<Evidence, { kind: "playground" }>["section"], note: string): Evidence => ({ kind: "playground", section, note });
 const exp = (id: string): Evidence => ({ kind: "experiment", id });
 
@@ -256,6 +259,100 @@ export const CONCEPTS: Concept[] = [
     needs: ["text-encoding", "vanishing-gradients"], evidence: [{ kind: "tool", id: "recurrent" }, L2("rnn"), sheet("rnn")],
   },
 
+  // ------------------------------------------------------------------ Transformers and NLP (Lab 3)
+  {
+    id: "tokenization", area: "sequences", level: "intermediate", title: "Tokens and sub-words (WordPiece)",
+    summary: "Text is split into sub-word pieces: frequent words stay whole and rare ones break up, for example “unwatchable” becomes “un”, “##watch”, “##able”. [CLS] is added at the start and [SEP] at the end.",
+    why: "The vocabulary stays small (about 30,000 units for BERT) and no word is ever unknown. What the model sees is these pieces, not your words.",
+    tryIt: "Open Lab 3's tokens step and follow how WordPiece splits a sentence and which embedding row each piece looks up.",
+    needs: ["text-encoding"], evidence: [L3("tokens"), trSheet("tokens"), nlpSheet("preprocessing")],
+  },
+  {
+    id: "positional-encoding", area: "sequences", level: "intermediate", title: "Positional encoding",
+    summary: "Self-attention treats a sentence as a bag of tokens, so word order is added to the embeddings: fixed sinusoids in the original Transformer, learned vectors in BERT.",
+    why: "Without it “dog bites man” and “man bites dog” look identical to the attention layer.",
+    tryIt: "Open Lab 3's position step and compare the sinusoidal encodings of different positions.",
+    needs: ["tokenization"], evidence: [L3("position"), trSheet("positions")],
+  },
+  {
+    id: "attention", area: "sequences", level: "advanced", title: "Attention and transformers",
+    summary: "Each token scores every other token with a query and a key, turns the scores into weights with softmax and takes a weighted mix of the values. Stacked blocks of this make a Transformer.",
+    why: "Every word sees every other word in one parallel step, which replaced recurrent cells for most text tasks. The cost grows with the square of the sentence length, which is fine for sentences.",
+    tryIt: "Edit the queries, keys and values in Lab 3's attention step and watch the softmax weights move, then look at the real DistilBERT attention maps.",
+    needs: ["tokenization", "positional-encoding", "softmax-output"],
+    evidence: [L3("attention"), L3("heads"), L3("encoder"), trSheet("attention"), nlpSheet("attention-intro")],
+  },
+  {
+    id: "multi-head-attention", area: "sequences", level: "advanced", title: "Multi-head attention",
+    summary: "Several attention functions run in parallel on smaller slices of the vector and their results are joined. BERT-tiny uses 2 heads per layer, BERT-small 8 and DistilBERT 12.",
+    why: "Different heads can specialise: one may link adjectives to their nouns, another a negation word to what it negates.",
+    tryIt: "Open Lab 3's heads step and compare what different attention heads look for in the same sentence.",
+    needs: ["attention"], evidence: [L3("heads"), trSheet("multihead")],
+  },
+  {
+    id: "residual-layernorm", area: "sequences", level: "advanced", title: "Residual connections and layer normalisation in a block",
+    summary: "A Transformer encoder block wraps attention and a feed-forward layer, each with a shortcut that adds the input to the output, followed by layer normalisation over the features of one token.",
+    why: "The shortcuts and normalisation keep deep stacks trainable, and the block's shapes fix the parameter count: Lab 3's counter is checked against the real BERT-tiny, BERT-small and DistilBERT (4.4, 29 and 67 million).",
+    tryIt: "Use the parameter counter in Lab 3's encoder step and compare its total with the real models.",
+    needs: ["multi-head-attention", "batch-norm", "vanishing-gradients"], evidence: [L3("encoder"), trSheet("block"), trSheet("params")],
+  },
+  {
+    id: "pretraining-finetuning", area: "sequences", level: "advanced", title: "Pre-training and fine-tuning",
+    summary: "BERT is first pre-trained by masked language modelling: 15 % of the tokens are hidden and predicted from both sides. For a task, a small classification layer is put on the [CLS] vector and everything is fine-tuned with AdamW, warm-up and linear decay.",
+    why: "Pre-training is far too expensive to repeat (days on many GPUs), so you download the weights and fine-tune. A model that already knows the language needs few labelled examples.",
+    tryIt: "Open Lab 3's training step and follow masked language modelling, the [CLS] classification head and the warm-up and decay schedule.",
+    needs: ["residual-layernorm", "optimizers"], evidence: [L3("training"), trSheet("objectives"), trSheet("finetune")],
+  },
+  {
+    id: "bag-of-words-tfidf", area: "sequences", level: "beginner", title: "Bag of words and TF-IDF",
+    summary: "A sentence becomes a vector of word counts weighted by how rare each word is, and a linear model (naive Bayes, logistic regression, SVM) reads the weights. Word order is ignored.",
+    why: "It is a cheap, strong baseline: on SST-2 the classical models score 81.9 to 82.9 %, train in seconds and answer in about 0.05 ms.",
+    tryIt: "Open Lab 3's baselines step and read the real weights of the classical models.",
+    needs: ["text-encoding"], evidence: [L3("baselines"), nlpSheet("representations")],
+  },
+  {
+    id: "zero-shot-nli", area: "sequences", level: "advanced", title: "Zero-shot classification with NLI",
+    summary: "A model trained to say whether one sentence entails another can classify with no labelled examples: the review is the premise, “The sentiment of this movie review is positive” is the hypothesis, and the label with the highest entailment score wins.",
+    why: "It reached 81.8 % on SST-2 without ever seeing a sentiment label, level with logistic regression trained on 65 thousand sentences, but it is the slowest model because each sentence runs once per label.",
+    tryIt: "Look at the ready-made and zero-shot models in Lab 3's ready-made step and compare their accuracy and cost with the baselines.",
+    needs: ["pretraining-finetuning", "softmax-output"], evidence: [L3("readymade"), nlpSheet("pretrained")],
+  },
+  {
+    id: "model-comparison-statistics", area: "generalisation", level: "advanced", title: "Is one model really better? Bootstrap and McNemar",
+    summary: "A 95 % bootstrap interval resamples the test set to show how much an accuracy could move. McNemar's test looks only at the sentences two models answer differently.",
+    why: "With 872 test sentences the intervals are about ±2.5 points wide, so a one-point gap may be luck. In the paper BERT-small against the SVM (71 against 64 sentences, p = 0.61) is not a real difference.",
+    tryIt: "Open Lab 3's results step and read the bootstrap intervals and McNemar tests of the ten models, recomputed from the real predictions.",
+    needs: ["metrics", "validation-methods"], evidence: [L3("results"), trSheet("evaluation"), nlpSheet("metrics")],
+  },
+  {
+    id: "cost-latency-tradeoff", area: "engineering", level: "intermediate", title: "Accuracy against cost and latency",
+    summary: "Accuracy is only one axis: training time, milliseconds per sentence and model size matter too, and they differ by orders of magnitude between families.",
+    why: "On a CPU the classical models need about 0.05 ms per sentence, BERT-small 14 ms and DistilBERT 39 ms; the ready-made large models need 45 to 107 ms. A real project pays this bill on every request.",
+    tryIt: "Open Lab 3's cost step and compare training time, latency and size of the ten models, then find which are not worth their cost.",
+    needs: ["pretraining-finetuning", "bag-of-words-tfidf"], evidence: [L3("cost"), trSheet("cost")],
+  },
+  {
+    id: "data-efficiency", area: "generalisation", level: "advanced", title: "Data efficiency and learning curves",
+    summary: "A learning curve trains on growing subsets and plots test accuracy. It shows how many labelled sentences each approach needs.",
+    why: "With 500 sentences BERT-small scores 75.9 % against 61.8 % for TF-IDF. BERT-small on 4,000 sentences already matches the best classical model on all 65,349, about 16 times less labelled data, which matters for languages such as Lithuanian.",
+    tryIt: "Open Lab 3's efficiency step and read the learning curves to find where the classical model catches up.",
+    needs: ["pretraining-finetuning", "bag-of-words-tfidf", "over-underfitting"], evidence: [L3("efficiency")],
+  },
+  {
+    id: "negation-error-analysis", area: "generalisation", level: "advanced", title: "Error analysis: negation and contrast",
+    summary: "Accuracy is measured again on the sentences that contain negation (184) or contrast words such as “but” (130) to see where each model fails.",
+    why: "Bag-of-words models lose 8 to 9 points on negation, because “not good” contains “good”. Large Transformers lose 2 to 4 points, but BERT-small loses 9.3, so robustness comes from size and pre-training together, not from the architecture alone.",
+    tryIt: "Open Lab 3's errors step and compare how the ten models answer sentences with negation and contrast.",
+    needs: ["bag-of-words-tfidf", "attention"], evidence: [L3("errors")],
+  },
+  {
+    id: "choosing-a-model", area: "engineering", level: "advanced", title: "Choosing a model for a real task",
+    summary: "Weigh accuracy, cost, labelled data, language and risk together: a cheap classical baseline, a compact fine-tuned Transformer, a ready-made in-domain model or a zero-shot model.",
+    why: "A Transformer is not automatically better (BERT-tiny was the weakest model at 76.6 %), but a large enough pre-trained one beat the best classical model by about 6 points.",
+    tryIt: "Answer the questions in Lab 3's decision helper for your own situation and see which model it suggests and why.",
+    needs: ["cost-latency-tradeoff", "data-efficiency", "model-comparison-statistics", "zero-shot-nli"], evidence: [L3("decide"), nlpSheet("choose")],
+  },
+
   // ------------------------------------------------------------------ engineering
   {
     id: "keras-code", area: "engineering", level: "intermediate", title: "From idea to Keras code",
@@ -274,25 +371,18 @@ export const CONCEPTS: Concept[] = [
 
   // ------------------------------------------------------------------ planned
   {
-    id: "attention", area: "advanced", level: "advanced", title: "Attention and transformers",
-    summary: "Each token looks at every other token and weights them by relevance; stacked, this is a transformer.",
-    why: "It underlies modern language models and replaced recurrent cells for most text tasks.",
-    tryIt: "Planned.", needs: ["text-encoding", "softmax-output"], evidence: [],
-    plan: "A tiny transformer: type a sentence, see each token's attention weights as a heat map, with real computed values.",
-  },
-  {
-    id: "residual-connections", area: "advanced", level: "advanced", title: "Residual connections and very deep nets",
-    summary: "A shortcut adds a layer's input to its output so gradients flow through deep stacks (ResNet).",
-    why: "It is how networks with hundreds of layers became trainable.",
+    id: "residual-connections", area: "advanced", level: "advanced", title: "Residual connections in very deep nets (ResNet)",
+    summary: "In a ResNet a shortcut adds a layer's input to its output so gradients flow through stacks of hundreds of convolutional layers.",
+    why: "It is how very deep image networks became trainable. The same shortcut sits inside every Transformer block, which Lab 3's encoder step covers live.",
     tryIt: "Planned.", needs: ["vanishing-gradients"], evidence: [],
     plan: "Train a plain and a residual network of growing depth on the same data and plot gradient norms per layer.",
   },
   {
-    id: "transfer-learning", area: "advanced", level: "advanced", title: "Transfer learning and data augmentation",
-    summary: "Reuse a network trained on a large dataset and flip, crop or noise the data to stretch a small one.",
-    why: "Most real projects have little data; this is the standard remedy.",
+    id: "data-augmentation", area: "advanced", level: "advanced", title: "Data augmentation",
+    summary: "Flip, crop, rotate or add noise to the training data to stretch a small dataset. Reusing a pre-trained network is covered under pre-training and fine-tuning.",
+    why: "Most real projects have little data; augmentation is a cheap way to reduce overfitting.",
     tryIt: "Planned.", needs: ["cnn-parameters", "over-underfitting"], evidence: [],
-    plan: "Fine-tune a small pretrained CNN on a few images, with an augmentation preview.",
+    plan: "Preview flips, crops and noise on a few images, then train the same small CNN with and without augmentation and compare the validation curves.",
   },
   {
     id: "autoencoders", area: "advanced", level: "advanced", title: "Autoencoders and embeddings",

@@ -181,4 +181,4 @@ Resources:
             Push:
               - Branches:
                   Includes:
-                    - master
+                    - !Ref Branch

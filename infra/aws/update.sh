@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Update an already-deployed AI Lab server to the latest commit of its branch.
-# Run on the server (SSH or SSM): bash /opt/neural-network-playground/infra/aws/update.sh
+# Run on the server (SSH or SSM): bash /opt/nn-playground/infra/aws/update.sh
 set -euo pipefail
-APP_DIR="${APP_DIR:-/opt/neural-network-playground}"
+APP_DIR="${APP_DIR:-/opt/nn-playground}"
 DEPLOY_BRANCH="${DEPLOY_BRANCH:-master}"
 cd "$APP_DIR"
 git config --global --add safe.directory "$APP_DIR" || true

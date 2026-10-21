@@ -34,7 +34,7 @@ Parameters:
 
   RepoBranch:
     Type: String
-    Default: claude/sharp-planck-u964bu
+    Default: master
     Description: Branch or tag to deploy.
 
   LatestAmiId:

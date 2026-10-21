@@ -1,4 +1,5 @@
 import { build } from "./common";
+import { labsetup3Rows } from "./labsetup3";
 
 /**
  * "Setup & run" guides of the labs (see `labs/LabSetupPanel.tsx` and each lab's `setup.ts`).
@@ -7,6 +8,7 @@ import { build } from "./common";
  * The Kannada and Lithuanian texts have not been reviewed by a native speaker.
  */
 export const labsetup = build([
+  ...labsetup3Rows,
   // ---- shell: the extra first step
   ["lab.group.Setup & run", "Setup & run", "ಸೆಟಪ್ ಮತ್ತು ಚಾಲನೆ", "Paruošimas ir paleidimas"],
   ["step.lab1.setup.title", "Setup & run", "ಸೆಟಪ್ ಮತ್ತು ಚಾಲನೆ", "Paruošimas ir paleidimas"],

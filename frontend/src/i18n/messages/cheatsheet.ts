@@ -1,6 +1,8 @@
 import { build } from "./common";
 
 const P = "cs.neural-network.";
+const N = "cs.nlp.";
+const TR = "cs.transformers.";
 
 export const cheatsheet = build([
   ["sheet.neural-network.subtitle",
@@ -91,4 +93,192 @@ export const cheatsheet = build([
     "Symptom → likely cause → what to try: loss not decreasing, NaN, chance-level accuracy, overfitting, divergence.",
     "ಲಕ್ಷಣ → ಸಂಭಾವ್ಯ ಕಾರಣ → ಏನು ಪ್ರಯತ್ನಿಸಬೇಕು: ನಷ್ಟ ಇಳಿಯದಿರುವುದು, NaN, ಯಾದೃಚ್ಛಿಕ ಮಟ್ಟದ ನಿಖರತೆ, ಅತಿಹೊಂದಾಣಿಕೆ, ಅಪಸರಣ.",
     "Simptomas → tikėtina priežastis → ką išbandyti: nuostolis nemažėja, NaN, atsitiktinio lygio tikslumas, persimokymas, divergencija."],
+
+  // ---------------------------------------------------------------- NLP cheatsheet
+  [N + "tasks.title", "1 · NLP task map", "1 · NLP ಕಾರ್ಯಗಳ ನಕ್ಷೆ", "1 · NKA uždavinių žemėlapis"],
+  [N + "tasks.sum",
+    "Classification, entity recognition, question answering, summarisation, translation, generation, inference and retrieval: the usual model and metric for each task.",
+    "ವರ್ಗೀಕರಣ, ಘಟಕ ಗುರುತಿಸುವಿಕೆ, ಪ್ರಶ್ನೋತ್ತರ, ಸಾರಾಂಶ, ಅನುವಾದ, ಪಠ್ಯ ಉತ್ಪಾದನೆ, ನಿರ್ಣಯ ಮತ್ತು ಹುಡುಕಾಟ: ಪ್ರತಿ ಕಾರ್ಯಕ್ಕೆ ಸಾಮಾನ್ಯ ಮಾದರಿ ಮತ್ತು ಮೆಟ್ರಿಕ್.",
+    "Klasifikavimas, esybių atpažinimas, atsakymai į klausimus, santraukos, vertimas, generavimas, išvada ir paieška: įprastas modelis ir metrika kiekvienam uždaviniui."],
+
+  [N + "preprocessing.title", "2 · Text preprocessing", "2 · ಪಠ್ಯ ಪೂರ್ವಸಂಸ್ಕರಣೆ", "2 · Teksto paruošimas"],
+  [N + "preprocessing.sum",
+    "Tokenisation, normalisation, stop-words, stemming versus lemmatisation, WordPiece, BPE and SentencePiece, padding and truncation.",
+    "ಟೋಕನೈಸೇಷನ್, ಸಾಮಾನ್ಯೀಕರಣ, ಸ್ಟಾಪ್-ವರ್ಡ್‌ಗಳು, ಸ್ಟೆಮ್ಮಿಂಗ್ ಮತ್ತು ಲೆಮ್ಮಟೈಸೇಷನ್ ಹೋಲಿಕೆ, WordPiece, BPE, SentencePiece, ಪ್ಯಾಡಿಂಗ್ ಮತ್ತು ಕತ್ತರಿಸುವಿಕೆ.",
+    "Žetonizavimas, normalizavimas, nereikšmingi žodžiai, stemingas ir lemos, WordPiece, BPE ir SentencePiece, užpildymas ir trumpinimas."],
+
+  [N + "representations.title", "3 · Text representations", "3 · ಪಠ್ಯ ಪ್ರತಿನಿಧಿತ್ವಗಳು", "3 · Teksto vaizdavimai"],
+  [N + "representations.sum",
+    "Bag of words, n-grams and TF-IDF with the project's settings (unigrams and bigrams, minimum document frequency 2, unit length) and the classical classifiers on top.",
+    "ಪದಗಳ ಚೀಲ, n-ಗ್ರಾಮ್‌ಗಳು ಮತ್ತು ಯೋಜನೆಯ ಸೆಟ್ಟಿಂಗ್‌ಗಳೊಂದಿಗೆ TF-IDF (ಯೂನಿಗ್ರಾಮ್ ಮತ್ತು ಬೈಗ್ರಾಮ್, ಕನಿಷ್ಠ ದಾಖಲೆ ಆವರ್ತನ 2, ಏಕಮಾನ ಉದ್ದ) ಮತ್ತು ಅದರ ಮೇಲಿನ ಕ್ಲಾಸಿಕಲ್ ವರ್ಗೀಕಾರಕಗಳು.",
+    "Žodžių maišas, n-gramos ir TF-IDF su projekto nustatymais (vienagramos ir dvigramos, mažiausias dokumentų dažnis 2, vienetinis ilgis) bei klasikiniai klasifikatoriai."],
+
+  [N + "embeddings.title", "4 · Word and sentence embeddings", "4 · ಪದ ಮತ್ತು ವಾಕ್ಯ ಎಂಬೆಡ್ಡಿಂಗ್‌ಗಳು", "4 · Žodžių ir sakinių įterpiniai"],
+  [N + "embeddings.sum",
+    "word2vec, GloVe, fastText, ELMo, BERT and sentence embeddings, and why one static vector per word fails on ambiguous words.",
+    "word2vec, GloVe, fastText, ELMo, BERT ಮತ್ತು ವಾಕ್ಯ ಎಂಬೆಡ್ಡಿಂಗ್‌ಗಳು, ಹಾಗೂ ಪ್ರತಿ ಪದಕ್ಕೆ ಒಂದೇ ಸ್ಥಿರ ವೆಕ್ಟರ್ ಅಸ್ಪಷ್ಟ ಪದಗಳಲ್ಲಿ ಏಕೆ ವಿಫಲವಾಗುತ್ತದೆ.",
+    "word2vec, GloVe, fastText, ELMo, BERT ir sakinių įterpiniai, taip pat kodėl vienas statinis vektorius žodžiui netinka dviprasmiškiems žodžiams."],
+
+  [N + "language-models.title", "5 · Language models", "5 · ಭಾಷಾ ಮಾದರಿಗಳು", "5 · Kalbos modeliai"],
+  [N + "language-models.sum",
+    "n-gram models, perplexity, and the difference between causal and masked language models.",
+    "n-ಗ್ರಾಮ್ ಮಾದರಿಗಳು, ಪರ್ಪ್ಲೆಕ್ಸಿಟಿ, ಹಾಗೂ ಕಾರಣಾತ್ಮಕ ಮತ್ತು ಮಾಸ್ಕ್ ಮಾಡಿದ ಭಾಷಾ ಮಾದರಿಗಳ ವ್ಯತ್ಯಾಸ.",
+    "n-gramų modeliai, perpleksija ir skirtumas tarp priežastinių ir kauke užmaskuotų kalbos modelių."],
+
+  [N + "sequence-models.title", "6 · Sequence models (RNN, LSTM, GRU)", "6 · ಅನುಕ್ರಮ ಮಾದರಿಗಳು (RNN, LSTM, GRU)", "6 · Sekų modeliai (RNN, LSTM, GRU)"],
+  [N + "sequence-models.sum",
+    "Recurrent cells with their gate equations and parameter counts, the bidirectional LSTM baseline, seq2seq and Bahdanau attention.",
+    "ಗೇಟ್ ಸಮೀಕರಣಗಳು ಮತ್ತು ಪ್ಯಾರಾಮೀಟರ್ ಸಂಖ್ಯೆಯೊಂದಿಗೆ ಪುನರಾವರ್ತಿತ ಕೋಶಗಳು, ದ್ವಿದಿಕ್ಕಿನ LSTM ಆಧಾರರೇಖೆ, seq2seq ಮತ್ತು ಬಹ್ದಾನೌ ಅಟೆನ್ಷನ್.",
+    "Rekurentinės ląstelės su vartų lygtimis ir parametrų skaičiumi, dvikryptis LSTM kaip bazinis modelis, seq2seq ir Bahdanau dėmesys."],
+
+  [N + "attention-intro.title", "7 · Attention in one page", "7 · ಅಟೆನ್ಷನ್ ಒಂದೇ ಪುಟದಲ್ಲಿ", "7 · Dėmesys viename puslapyje"],
+  [N + "attention-intro.sum",
+    "Queries, keys and values in words and formulas: additive, self- and cross-attention, and why attention helps.",
+    "ಕ್ವೆರಿ, ಕೀ ಮತ್ತು ವ್ಯಾಲ್ಯೂ ಪದಗಳಲ್ಲಿ ಮತ್ತು ಸೂತ್ರಗಳಲ್ಲಿ: ಸಂಕಲನ, ಸ್ವ- ಮತ್ತು ಅಡ್ಡ-ಅಟೆನ್ಷನ್, ಮತ್ತು ಅಟೆನ್ಷನ್ ಏಕೆ ಸಹಾಯಕ.",
+    "Užklausos, raktai ir reikšmės žodžiais ir formulėmis: adityvusis, savęs ir kryžminis dėmesys bei kodėl dėmesys padeda."],
+
+  [N + "pretrained.title", "8 · Pre-trained models", "8 · ಪೂರ್ವ-ತರಬೇತಿ ಮಾದರಿಗಳು", "8 · Iš anksto apmokyti modeliai"],
+  [N + "pretrained.sum",
+    "Model families from static embeddings to BERT, DistilBERT, XLM-RoBERTa, GPT, T5 and BART, and what each is best for.",
+    "ಸ್ಥಿರ ಎಂಬೆಡ್ಡಿಂಗ್‌ಗಳಿಂದ BERT, DistilBERT, XLM-RoBERTa, GPT, T5 ಮತ್ತು BART ವರೆಗಿನ ಮಾದರಿ ಕುಟುಂಬಗಳು ಮತ್ತು ಪ್ರತಿಯೊಂದು ಯಾವುದಕ್ಕೆ ಉತ್ತಮ.",
+    "Modelių šeimos nuo statinių įterpinių iki BERT, DistilBERT, XLM-RoBERTa, GPT, T5 ir BART bei kam kiekvienas geriausiai tinka."],
+
+  [N + "metrics.title", "9 · Evaluation metrics", "9 · ಮೌಲ್ಯಮಾಪನ ಮೆಟ್ರಿಕ್‌ಗಳು", "9 · Vertinimo metrikos"],
+  [N + "metrics.sum",
+    "Accuracy, precision, recall, F1, confusion matrix, ROC/AUC, BLEU, ROUGE, chrF, perplexity, bootstrap intervals and McNemar's test, with when to use which.",
+    "ನಿಖರತೆ, ಪ್ರೆಸಿಷನ್, ರಿಕಾಲ್, F1, ಗೊಂದಲ ಮ್ಯಾಟ್ರಿಕ್ಸ್, ROC/AUC, BLEU, ROUGE, chrF, ಪರ್ಪ್ಲೆಕ್ಸಿಟಿ, ಬೂಟ್‌ಸ್ಟ್ರ್ಯಾಪ್ ಅಂತರಗಳು ಮತ್ತು ಮೆಕ್‌ನೆಮಾರ್ ಪರೀಕ್ಷೆ, ಯಾವುದನ್ನು ಯಾವಾಗ ಬಳಸಬೇಕು ಎಂಬುದರೊಂದಿಗೆ.",
+    "Tikslumas, preciziškumas, atkūrimas, F1, painiavos matrica, ROC/AUC, BLEU, ROUGE, chrF, perpleksija, bootstrap intervalai ir McNemar testas, su patarimu, kada kurį naudoti."],
+
+  [N + "hf-code.title", "10 · Hugging Face quick reference", "10 · Hugging Face ತ್ವರಿತ ಉಲ್ಲೇಖ", "10 · Hugging Face trumpa nuoroda"],
+  [N + "hf-code.sum",
+    "Copy-ready code: pipelines for each task, tokenizer and model loading, Trainer versus a manual loop, zero-shot classification and CPU-only advice.",
+    "ನಕಲಿಸಲು ಸಿದ್ಧ ಕೋಡ್: ಪ್ರತಿ ಕಾರ್ಯಕ್ಕೆ ಪೈಪ್‌ಲೈನ್‌ಗಳು, ಟೋಕನೈಸರ್ ಮತ್ತು ಮಾದರಿ ಲೋಡಿಂಗ್, Trainer ಮತ್ತು ಕೈಯಿಂದ ಬರೆದ ಲೂಪ್, ಝೀರೋ-ಶಾಟ್ ವರ್ಗೀಕರಣ ಮತ್ತು CPU-ಮಾತ್ರದ ಸಲಹೆ.",
+    "Paruoštas kopijuoti kodas: kiekvieno uždavinio konvejeriai (pipeline), žetonizatoriaus ir modelio įkėlimas, Trainer ir rankinis ciklas, nulinio pavyzdžio klasifikavimas ir patarimai tik su CPU."],
+
+  [N + "data.title", "11 · Datasets and benchmarks", "11 · ಡೇಟಾಸೆಟ್‌ಗಳು ಮತ್ತು ಮಾನದಂಡಗಳು", "11 · Duomenų rinkiniai ir etalonai"],
+  [N + "data.sum",
+    "The project's SST-2 splits (65,349 / 2,000 / 872) and the common benchmarks: GLUE, SuperGLUE, SQuAD, MNLI, CoNLL and others.",
+    "ಯೋಜನೆಯ SST-2 ವಿಭಜನೆಗಳು (65,349 / 2,000 / 872) ಮತ್ತು ಸಾಮಾನ್ಯ ಮಾನದಂಡಗಳು: GLUE, SuperGLUE, SQuAD, MNLI, CoNLL ಮತ್ತು ಇತರೆ.",
+    "Projekto SST-2 skaidymas (65 349 / 2 000 / 872) ir dažni etalonai: GLUE, SuperGLUE, SQuAD, MNLI, CoNLL ir kiti."],
+
+  [N + "choose.title", "12 · Which approach to choose", "12 · ಯಾವ ವಿಧಾನವನ್ನು ಆರಿಸಬೇಕು", "12 · Kurį metodą rinktis"],
+  [N + "choose.sum",
+    "The project's four practical recommendations as a decision table, with the measured accuracy, latency and training cost of each option.",
+    "ಯೋಜನೆಯ ನಾಲ್ಕು ಪ್ರಾಯೋಗಿಕ ಶಿಫಾರಸುಗಳು ನಿರ್ಧಾರ ಕೋಷ್ಟಕದ ರೂಪದಲ್ಲಿ, ಪ್ರತಿ ಆಯ್ಕೆಯ ಅಳತೆ ಮಾಡಿದ ನಿಖರತೆ, ವಿಳಂಬ ಮತ್ತು ತರಬೇತಿ ವೆಚ್ಚದೊಂದಿಗೆ.",
+    "Keturios praktinės projekto rekomendacijos sprendimų lentelėje, su išmatuotu kiekvienos parinkties tikslumu, vėlavimu ir mokymo kaina."],
+
+  [N + "lithuanian.title", "13 · Lithuanian and small languages", "13 · ಲಿಥುವೇನಿಯನ್ ಮತ್ತು ಸಣ್ಣ ಭಾಷೆಗಳು", "13 · Lietuvių ir mažos kalbos"],
+  [N + "lithuanian.sum",
+    "Studies on Lithuanian sentiment and language models (LitLat BERT, multilingual BERT and T5, Lithuanian Llama 2 models, XLM-RoBERTa) and practical advice for less-resourced languages.",
+    "ಲಿಥುವೇನಿಯನ್ ಭಾವನೆ ವಿಶ್ಲೇಷಣೆ ಮತ್ತು ಭಾಷಾ ಮಾದರಿಗಳ ಅಧ್ಯಯನಗಳು (LitLat BERT, ಬಹುಭಾಷಾ BERT ಮತ್ತು T5, ಲಿಥುವೇನಿಯನ್ Llama 2 ಮಾದರಿಗಳು, XLM-RoBERTa) ಮತ್ತು ಕಡಿಮೆ ಸಂಪನ್ಮೂಲದ ಭಾಷೆಗಳಿಗೆ ಪ್ರಾಯೋಗಿಕ ಸಲಹೆ.",
+    "Lietuvių kalbos nuotaikų analizės ir kalbos modelių tyrimai (LitLat BERT, daugiakalbiai BERT ir T5, lietuviški Llama 2 modeliai, XLM-RoBERTa) bei praktiniai patarimai mažiau išteklių turinčioms kalboms."],
+
+  [N + "pitfalls.title", "14 · Pitfalls and quick diagnosis", "14 · ಅಪಾಯಗಳು ಮತ್ತು ತ್ವರಿತ ರೋಗನಿರ್ಣಯ", "14 · Spąstai ir greita diagnostika"],
+  [N + "pitfalls.sum",
+    "Data leakage, class imbalance, train/test length mismatch (9.4 versus 19.5 words), tokenizer mismatch, random seeds and tiny test sets where one point is about nine sentences.",
+    "ಡೇಟಾ ಸೋರಿಕೆ, ವರ್ಗ ಅಸಮತೋಲನ, ತರಬೇತಿ/ಪರೀಕ್ಷೆ ಉದ್ದದ ಹೊಂದಾಣಿಕೆಯಿಲ್ಲದಿರುವುದು (9.4 ವರ್ಸಸ್ 19.5 ಪದಗಳು), ಟೋಕನೈಸರ್ ಹೊಂದಾಣಿಕೆಯಿಲ್ಲದಿರುವುದು, ಯಾದೃಚ್ಛಿಕ ಬೀಜಗಳು ಮತ್ತು ಒಂದು ಅಂಕ ಸುಮಾರು ಒಂಬತ್ತು ವಾಕ್ಯಗಳಾಗುವ ಚಿಕ್ಕ ಪರೀಕ್ಷಾ ಸೆಟ್‌ಗಳು.",
+    "Duomenų nutekėjimas, klasių disbalansas, mokymo ir testo ilgių neatitikimas (9,4 prieš 19,5 žodžio), žetonizatoriaus neatitikimas, atsitiktinės sėklos ir maži testo rinkiniai, kuriuose vienas punktas yra apie devyni sakiniai."],
+
+  // ---------------------------------------------------------------- Transformers cheatsheet
+  [TR + "big-picture.title", "1 · The Transformer in one picture", "1 · ಟ್ರಾನ್ಸ್‌ಫಾರ್ಮರ್ ಒಂದೇ ಚಿತ್ರದಲ್ಲಿ", "1 · Transformeris viename paveiksle"],
+  [TR + "big-picture.sum",
+    "A block diagram from input text to class probabilities, the shape at every stage, and the three flavours: encoder-only, decoder-only and encoder–decoder.",
+    "ಇನ್‌ಪುಟ್ ಪಠ್ಯದಿಂದ ವರ್ಗ ಸಂಭವನೀಯತೆಗಳವರೆಗಿನ ಬ್ಲಾಕ್ ರೇಖಾಚಿತ್ರ, ಪ್ರತಿ ಹಂತದ ಆಕಾರ, ಮತ್ತು ಮೂರು ರೂಪಗಳು: ಎನ್‌ಕೋಡರ್-ಮಾತ್ರ, ಡಿಕೋಡರ್-ಮಾತ್ರ ಮತ್ತು ಎನ್‌ಕೋಡರ್–ಡಿಕೋಡರ್.",
+    "Blokinė schema nuo įvesties teksto iki klasių tikimybių, forma kiekviename etape ir trys variantai: tik kodavimo, tik dekodavimo ir kodavimo–dekodavimo."],
+
+  [TR + "tokens.title", "2 · Tokens and embeddings", "2 · ಟೋಕನ್‌ಗಳು ಮತ್ತು ಎಂಬೆಡ್ಡಿಂಗ್‌ಗಳು", "2 · Žetonai ir įterpiniai"],
+  [TR + "tokens.sum",
+    "WordPiece and BPE sub-words, the special tokens [CLS], [SEP] and [PAD], the embedding matrix and the maximum length of 64 used in the project.",
+    "WordPiece ಮತ್ತು BPE ಉಪಪದಗಳು, [CLS], [SEP], [PAD] ವಿಶೇಷ ಟೋಕನ್‌ಗಳು, ಎಂಬೆಡ್ಡಿಂಗ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್ ಮತ್ತು ಯೋಜನೆಯಲ್ಲಿ ಬಳಸಿದ ಗರಿಷ್ಠ ಉದ್ದ 64.",
+    "WordPiece ir BPE požodžiai, specialūs žetonai [CLS], [SEP] ir [PAD], įterpinių matrica ir projekte naudotas didžiausias ilgis 64."],
+
+  [TR + "positions.title", "3 · Positional encoding", "3 · ಸ್ಥಾನ ಎನ್‌ಕೋಡಿಂಗ್", "3 · Pozicinis kodavimas"],
+  [TR + "positions.sum",
+    "Why attention needs word order, the sinusoidal formula with a computed table, and the learned position embeddings of BERT.",
+    "ಅಟೆನ್ಷನ್‌ಗೆ ಪದಕ್ರಮ ಏಕೆ ಬೇಕು, ಲೆಕ್ಕಹಾಕಿದ ಕೋಷ್ಟಕದೊಂದಿಗೆ ಸೈನುಸಾಯ್ಡಲ್ ಸೂತ್ರ, ಮತ್ತು BERT ನ ಕಲಿತ ಸ್ಥಾನ ಎಂಬೆಡ್ಡಿಂಗ್‌ಗಳು.",
+    "Kodėl dėmesiui reikia žodžių tvarkos, sinusoidinė formulė su apskaičiuota lentele ir BERT išmokti pozicijų įterpiniai."],
+
+  [TR + "attention.title", "4 · Scaled dot-product attention", "4 · ಮಾಪಿತ ಡಾಟ್-ಗುಣಲಬ್ಧ ಅಟೆನ್ಷನ್", "4 · Mastelizuotas skaliarinės sandaugos dėmesys"],
+  [TR + "attention.sum",
+    "Queries, keys and values, softmax(QKᵀ/√d_k)V, masks, and a small worked example with real numbers.",
+    "ಕ್ವೆರಿ, ಕೀ ಮತ್ತು ವ್ಯಾಲ್ಯೂ, softmax(QKᵀ/√d_k)V, ಮಾಸ್ಕ್‌ಗಳು, ಮತ್ತು ನಿಜವಾದ ಸಂಖ್ಯೆಗಳೊಂದಿಗೆ ಸಣ್ಣ ಉದಾಹರಣೆ.",
+    "Užklausos, raktai ir reikšmės, softmax(QKᵀ/√d_k)V, kaukės ir nedidelis pavyzdys su tikrais skaičiais."],
+
+  [TR + "multihead.title", "5 · Multi-head attention", "5 · ಬಹು-ಹೆಡ್ ಅಟೆನ್ಷನ್", "5 · Daugiagalvis dėmesys"],
+  [TR + "multihead.sum",
+    "h heads of size d_k = d / h run in parallel and are concatenated; the head count does not change the parameter count.",
+    "d_k = d / h ಗಾತ್ರದ h ಹೆಡ್‌ಗಳು ಸಮಾನಾಂತರವಾಗಿ ಓಡುತ್ತವೆ ಮತ್ತು ಜೋಡಿಸಲ್ಪಡುತ್ತವೆ; ಹೆಡ್ ಸಂಖ್ಯೆ ಪ್ಯಾರಾಮೀಟರ್ ಸಂಖ್ಯೆಯನ್ನು ಬದಲಿಸುವುದಿಲ್ಲ.",
+    "h galvų, kurių dydis d_k = d / h, veikia lygiagrečiai ir sujungiamos; galvų skaičius nekeičia parametrų skaičiaus."],
+
+  [TR + "block.title", "6 · The encoder block", "6 · ಎನ್‌ಕೋಡರ್ ಬ್ಲಾಕ್", "6 · Kodavimo blokas"],
+  [TR + "block.sum",
+    "Feed-forward network with GELU, residual connections, layer normalisation, and the classification head with cross-entropy loss.",
+    "GELU ಹೊಂದಿರುವ ಫೀಡ್-ಫಾರ್ವರ್ಡ್ ಜಾಲ, ಉಳಿಕೆ ಸಂಪರ್ಕಗಳು, ಲೇಯರ್ ನಾರ್ಮಲೈಸೇಷನ್, ಮತ್ತು ಕ್ರಾಸ್-ಎಂಟ್ರೊಪಿ ನಷ್ಟದೊಂದಿಗೆ ವರ್ಗೀಕರಣ ಹೆಡ್.",
+    "Tiesioginio sklidimo tinklas su GELU, liekamieji ryšiai, sluoksnio normalizavimas ir klasifikavimo galva su kryžminės entropijos nuostoliu."],
+
+  [TR + "params.title", "7 · Shapes and parameter counts", "7 · ಆಕಾರಗಳು ಮತ್ತು ಪ್ಯಾರಾಮೀಟರ್ ಸಂಖ್ಯೆ", "7 · Formos ir parametrų skaičius"],
+  [TR + "params.sum",
+    "The exact parameter formula with a calculator that reproduces the project's models: 4,386,178 (BERT-tiny), 28,764,674 (BERT-small) and 66,955,010 (DistilBERT).",
+    "ನಿಖರ ಪ್ಯಾರಾಮೀಟರ್ ಸೂತ್ರ ಮತ್ತು ಯೋಜನೆಯ ಮಾದರಿಗಳನ್ನು ಪುನರುತ್ಪಾದಿಸುವ ಕ್ಯಾಲ್ಕುಲೇಟರ್: 4,386,178 (BERT-tiny), 28,764,674 (BERT-small) ಮತ್ತು 66,955,010 (DistilBERT).",
+    "Tiksli parametrų formulė ir skaičiuotuvas, atkartojantis projekto modelius: 4 386 178 (BERT-tiny), 28 764 674 (BERT-small) ir 66 955 010 (DistilBERT)."],
+
+  [TR + "complexity.title", "8 · Complexity", "8 · ಸಂಕೀರ್ಣತೆ", "8 · Sudėtingumas"],
+  [TR + "complexity.sum",
+    "Self-attention costs O(n²·d) against O(n·d²) for a recurrent layer, but needs one sequential step instead of n; a calculator shows the numbers.",
+    "ಸ್ವ-ಅಟೆನ್ಷನ್‌ಗೆ O(n²·d) ವೆಚ್ಚ, ಪುನರಾವರ್ತಿತ ಪದರಕ್ಕೆ O(n·d²); ಆದರೆ n ಬದಲು ಒಂದೇ ಅನುಕ್ರಮ ಹಂತ ಸಾಕು; ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಸಂಖ್ಯೆಗಳನ್ನು ತೋರಿಸುತ್ತದೆ.",
+    "Savęs dėmesys kainuoja O(n²·d), o rekurentinis sluoksnis O(n·d²), bet reikia vieno nuoseklaus žingsnio vietoje n; skaičiuotuvas parodo skaičius."],
+
+  [TR + "objectives.title", "9 · Pre-training objectives", "9 · ಪೂರ್ವ-ತರಬೇತಿ ಗುರಿಗಳು", "9 · Išankstinio mokymo tikslai"],
+  [TR + "objectives.sum",
+    "Masked language modelling (15 % masked, the 80/10/10 rule of BERT), replaced-token detection, causal language modelling, text-to-text and distillation.",
+    "ಮಾಸ್ಕ್ ಮಾಡಿದ ಭಾಷಾ ಮಾದರಿ (15 % ಮಾಸ್ಕ್, BERT ನ 80/10/10 ನಿಯಮ), ಬದಲಿಸಿದ ಟೋಕನ್ ಪತ್ತೆ, ಕಾರಣಾತ್ಮಕ ಭಾಷಾ ಮಾದರಿ, ಪಠ್ಯದಿಂದ-ಪಠ್ಯಕ್ಕೆ ಮತ್ತು ಡಿಸ್ಟಿಲೇಷನ್.",
+    "Kauke užmaskuotas kalbos modeliavimas (15 % maskuojama, BERT 80/10/10 taisyklė), pakeistų žetonų aptikimas, priežastinis kalbos modeliavimas, tekstas į tekstą ir distiliavimas."],
+
+  [TR + "families.title", "10 · Model families", "10 · ಮಾದರಿ ಕುಟುಂಬಗಳು", "10 · Modelių šeimos"],
+  [TR + "families.sum",
+    "BERT (110 M, 340 M), RoBERTa, ALBERT, ELECTRA, DeBERTa, XLM-RoBERTa, DistilBERT (40 % smaller, 60 % faster, about 97 %), GPT, GPT-3 (175 B), T5 and BART as the project paper states them.",
+    "BERT (110 M, 340 M), RoBERTa, ALBERT, ELECTRA, DeBERTa, XLM-RoBERTa, DistilBERT (40 % ಚಿಕ್ಕದು, 60 % ವೇಗ, ಸುಮಾರು 97 %), GPT, GPT-3 (175 B), T5 ಮತ್ತು BART, ಯೋಜನಾ ಪ್ರಬಂಧ ಹೇಳಿದಂತೆ.",
+    "BERT (110 M, 340 M), RoBERTa, ALBERT, ELECTRA, DeBERTa, XLM-RoBERTa, DistilBERT (40 % mažesnis, 60 % greitesnis, apie 97 %), GPT, GPT-3 (175 B), T5 ir BART, kaip nurodo projekto straipsnis."],
+
+  [TR + "finetune.title", "11 · Fine-tuning recipe", "11 · ಫೈನ್-ಟ್ಯೂನಿಂಗ್ ವಿಧಾನ", "11 · Derinimo receptas"],
+  [TR + "finetune.sum",
+    "The project's fine-tuning steps and its hyper-parameter table for BERT-tiny, BERT-small and DistilBERT, with computed step counts.",
+    "ಯೋಜನೆಯ ಫೈನ್-ಟ್ಯೂನಿಂಗ್ ಹಂತಗಳು ಮತ್ತು BERT-tiny, BERT-small, DistilBERT ಗಾಗಿ ಹೈಪರ್‌ಪ್ಯಾರಾಮೀಟರ್ ಕೋಷ್ಟಕ, ಲೆಕ್ಕಹಾಕಿದ ಹಂತ ಸಂಖ್ಯೆಗಳೊಂದಿಗೆ.",
+    "Projekto derinimo žingsniai ir hiperparametrų lentelė BERT-tiny, BERT-small ir DistilBERT, su apskaičiuotais žingsnių skaičiais."],
+
+  [TR + "optimizer.title", "12 · AdamW, warm-up and clipping", "12 · AdamW, ವಾರ್ಮ್-ಅಪ್ ಮತ್ತು ಕ್ಲಿಪ್ಪಿಂಗ್", "12 · AdamW, apšilimas ir apkirpimas"],
+  [TR + "optimizer.sum",
+    "The AdamW update, 10 % linear warm-up then linear decay, gradient clipping at 1.0, and a computed learning-rate table.",
+    "AdamW ನವೀಕರಣ, 10 % ರೇಖೀಯ ವಾರ್ಮ್-ಅಪ್ ನಂತರ ರೇಖೀಯ ಇಳಿಕೆ, 1.0 ನಲ್ಲಿ ಗ್ರೇಡಿಯಂಟ್ ಕ್ಲಿಪ್ಪಿಂಗ್, ಮತ್ತು ಲೆಕ್ಕಹಾಕಿದ ಕಲಿಕಾ ದರ ಕೋಷ್ಟಕ.",
+    "AdamW atnaujinimas, 10 % tiesinis apšilimas, tada tiesinis mažinimas, gradientų apkirpimas ties 1,0 ir apskaičiuota mokymosi greičio lentelė."],
+
+  [TR + "cost.title", "13 · Cost on a CPU (measured)", "13 · CPU ಮೇಲಿನ ವೆಚ್ಚ (ಅಳತೆ)", "13 · Kaina su CPU (išmatuota)"],
+  [TR + "cost.sum",
+    "Measured training time, latency, parameters and memory of all ten models on a CPU laptop, plus a latency × sentences calculator.",
+    "CPU ಲ್ಯಾಪ್‌ಟಾಪ್‌ನಲ್ಲಿ ಎಲ್ಲಾ ಹತ್ತು ಮಾದರಿಗಳ ಅಳತೆ ಮಾಡಿದ ತರಬೇತಿ ಸಮಯ, ವಿಳಂಬ, ಪ್ಯಾರಾಮೀಟರ್‌ಗಳು ಮತ್ತು ಮೆಮೊರಿ, ಜೊತೆಗೆ ವಿಳಂಬ × ವಾಕ್ಯಗಳ ಕ್ಯಾಲ್ಕುಲೇಟರ್.",
+    "Išmatuotas visų dešimties modelių mokymo laikas, vėlavimas, parametrai ir atmintis nešiojamajame kompiuteryje su CPU, ir vėlavimo × sakinių skaičiuotuvas."],
+
+  [TR + "evaluation.title", "14 · Evaluating honestly", "14 · ಪ್ರಾಮಾಣಿಕ ಮೌಲ್ಯಮಾಪನ", "14 · Sąžiningas vertinimas"],
+  [TR + "evaluation.sum",
+    "Bootstrap intervals (2,000 resamples), exact McNemar test, why one point is about 9 sentences on 872, learning curves and negation or contrast errors.",
+    "ಬೂಟ್‌ಸ್ಟ್ರ್ಯಾಪ್ ಅಂತರಗಳು (2,000 ಮರುಮಾದರಿ), ನಿಖರ ಮೆಕ್‌ನೆಮಾರ್ ಪರೀಕ್ಷೆ, 872 ರಲ್ಲಿ ಒಂದು ಅಂಕ ಸುಮಾರು 9 ವಾಕ್ಯಗಳು ಏಕೆ, ಕಲಿಕಾ ವಕ್ರರೇಖೆಗಳು ಮತ್ತು ನಿರಾಕರಣೆ ಅಥವಾ ವೈರುಧ್ಯ ದೋಷಗಳು.",
+    "Bootstrap intervalai (2 000 perrinkimų), tikslus McNemar testas, kodėl iš 872 vienas punktas yra apie 9 sakinius, mokymosi kreivės ir neiginio ar kontrasto klaidos."],
+
+  [TR + "hf-code.title", "15 · Hugging Face quick reference", "15 · Hugging Face ತ್ವರಿತ ಉಲ್ಲೇಖ", "15 · Hugging Face trumpa nuoroda"],
+  [TR + "hf-code.sum",
+    "Copy-ready code: pipeline, AutoTokenizer, AutoModelForSequenceClassification, the project's manual fine-tuning loop, Trainer, zero-shot and attention weights.",
+    "ನಕಲಿಸಲು ಸಿದ್ಧ ಕೋಡ್: pipeline, AutoTokenizer, AutoModelForSequenceClassification, ಯೋಜನೆಯ ಕೈಯಿಂದ ಬರೆದ ಫೈನ್-ಟ್ಯೂನಿಂಗ್ ಲೂಪ್, Trainer, ಝೀರೋ-ಶಾಟ್ ಮತ್ತು ಅಟೆನ್ಷನ್ ತೂಕಗಳು.",
+    "Paruoštas kopijuoti kodas: pipeline, AutoTokenizer, AutoModelForSequenceClassification, projekto rankinis derinimo ciklas, Trainer, nulinio pavyzdžio klasifikavimas ir dėmesio svoriai."],
+
+  [TR + "pitfalls.title", "16 · Pitfalls and quick diagnosis", "16 · ಅಪಾಯಗಳು ಮತ್ತು ತ್ವರಿತ ರೋಗನಿರ್ಣಯ", "16 · Spąstai ir greita diagnostika"],
+  [TR + "pitfalls.sum",
+    "Symptom → likely cause → what to try for Transformer fine-tuning: stuck loss, tokenizer mismatch, label mapping, seeds, overfitting and slow CPU training.",
+    "ಲಕ್ಷಣ → ಸಂಭಾವ್ಯ ಕಾರಣ → ಏನು ಪ್ರಯತ್ನಿಸಬೇಕು, ಟ್ರಾನ್ಸ್‌ಫಾರ್ಮರ್ ಫೈನ್-ಟ್ಯೂನಿಂಗ್‌ಗೆ: ಸಿಲುಕಿದ ನಷ್ಟ, ಟೋಕನೈಸರ್ ಹೊಂದಾಣಿಕೆಯಿಲ್ಲದಿರುವುದು, ಲೇಬಲ್ ನಕ್ಷೆ, ಬೀಜಗಳು, ಅತಿಹೊಂದಾಣಿಕೆ ಮತ್ತು ನಿಧಾನ CPU ತರಬೇತಿ.",
+    "Simptomas → tikėtina priežastis → ką išbandyti derinant transformerį: nejudantis nuostolis, žetonizatoriaus neatitikimas, etikečių atvaizdavimas, sėklos, persimokymas ir lėtas mokymas su CPU."],
+
+  [TR + "glossary.title", "17 · Glossary", "17 · ಪದಕೋಶ", "17 · Žodynėlis"],
+  [TR + "glossary.sum",
+    "The paper's acronyms and key terms: AdamW, BERT, BiLSTM, CI, CLS, GPT, LLM, MLM, NB, NLI, NLP, RNN, SST-2, SVM, TF-IDF and more.",
+    "ಪ್ರಬಂಧದ ಸಂಕ್ಷಿಪ್ತ ರೂಪಗಳು ಮತ್ತು ಮುಖ್ಯ ಪದಗಳು: AdamW, BERT, BiLSTM, CI, CLS, GPT, LLM, MLM, NB, NLI, NLP, RNN, SST-2, SVM, TF-IDF ಮತ್ತು ಇನ್ನಷ್ಟು.",
+    "Straipsnio santrumpos ir pagrindinės sąvokos: AdamW, BERT, BiLSTM, CI, CLS, GPT, LLM, MLM, NB, NLI, NLP, RNN, SST-2, SVM, TF-IDF ir kt."],
 ]);

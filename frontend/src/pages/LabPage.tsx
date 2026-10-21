@@ -129,7 +129,7 @@ export function LabPage() {
       </aside>
 
       {/* top bar (mobile / tablet) */}
-      <div className="lg:hidden">
+      <div className="min-w-0 lg:hidden">
         <button className="card flex w-full items-center justify-between gap-3 p-3 text-left" aria-expanded={drawer} aria-controls="lab-drawer" onClick={() => setDrawer((d) => !d)}>
           <span className="min-w-0">
             <span className="block text-xs text-muted">{t("lab.stepOfShort", undefined, { n: lab.number, a: index + 1, b: steps.length })}</span>

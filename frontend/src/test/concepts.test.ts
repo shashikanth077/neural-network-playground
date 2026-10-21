@@ -67,4 +67,32 @@ describe("concept registry", () => {
       "over-underfitting", "l1-l2", "dropout", "batch-norm", "early-stopping", "validation-methods", "metrics", "convolution", "pooling", "recurrent-cells"];
     for (const id of need) expect(coverageOf(CONCEPTS.find((c) => c.id === id)!), id).toBe("live");
   });
+
+  const NLP_IDS = ["tokenization", "positional-encoding", "multi-head-attention", "residual-layernorm", "pretraining-finetuning", "bag-of-words-tfidf",
+    "zero-shot-nli", "model-comparison-statistics", "cost-latency-tradeoff", "data-efficiency", "negation-error-analysis", "choosing-a-model"];
+
+  it("the Transformers and NLP concepts exist and each has a Lab 3 step as evidence", () => {
+    for (const id of [...NLP_IDS, "attention"]) {
+      const c = CONCEPTS.find((x) => x.id === id);
+      expect(c, id).toBeDefined();
+      expect(c!.evidence.some((e) => e.kind === "lab" && e.lab === "lab3"), `${id} has a lab3 step`).toBe(true);
+      expect(coverageOf(c!), id).toBe("live");
+    }
+  });
+
+  it("Lab 3 sheet evidence points at existing sections of the NLP and Transformers cheatsheets", () => {
+    const sheets = CONCEPTS.flatMap((c) => c.evidence.filter((e) => e.kind === "sheet" && (e.sheet === "nlp" || e.sheet === "transformers")));
+    expect(sheets.length).toBeGreaterThan(10);
+    for (const e of sheets) if (e.kind === "sheet") expect(getSheet(e.sheet)!.sections.some((s) => s.id === e.section), JSON.stringify(e)).toBe(true);
+  });
+
+  it("splits residual connections (Transformer block, live) from ResNets (planned) and data augmentation from fine-tuning", () => {
+    const byId = (id: string) => CONCEPTS.find((c) => c.id === id)!;
+    expect(coverageOf(byId("residual-layernorm"))).toBe("live");
+    expect(coverageOf(byId("residual-connections"))).toBe("planned");
+    expect(byId("residual-connections").why).toContain("Lab 3");
+    expect(coverageOf(byId("pretraining-finetuning"))).toBe("live");
+    expect(coverageOf(byId("data-augmentation"))).toBe("planned");
+    expect(CONCEPTS.some((c) => c.id === "transfer-learning")).toBe(false);
+  });
 });

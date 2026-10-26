@@ -4,7 +4,7 @@ import { GuideIntro, GuideOutro } from "./StepGuide";
 import { lab3Setup } from "./setup";
 
 /**
- * Lab 3 · Transformers in NLP (VGTU group project: Shashikanth Hosur Ramegowda, Shaeed Khan, Rimsha Tariq).
+ * Lab 3 · Transformers in NLP (VGTU group project: Shashikanth Hosur Ramegowda, Shaeed Khan; the revised paper has two authors).
  * Theory steps live in `theory/` and the experiment steps in `experiment/`; the real data comes from the team's
  * public repository (github.com/shashikanth077/Transformers-NLP).
  */

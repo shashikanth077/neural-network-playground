@@ -15,6 +15,8 @@ const CheatsheetPage = lazy(() => import("./pages/CheatsheetPage").then((m) => (
 const ConvolutionExplorer = lazy(() => import("./pages/ConvolutionExplorer").then((m) => ({ default: m.ConvolutionExplorer })));
 const RecurrentExplorer = lazy(() => import("./pages/RecurrentExplorer").then((m) => ({ default: m.RecurrentExplorer })));
 const RunsPage = lazy(() => import("./pages/RunsPage").then((m) => ({ default: m.RunsPage })));
+const TransformersPaper = lazy(() => import("./pages/TransformersPaper").then((m) => ({ default: m.TransformersPaper })));
+const TransformersSlides = lazy(() => import("./pages/TransformersSlides").then((m) => ({ default: m.TransformersSlides })));
 const LabPage = lazy(() => import("./pages/LabPage").then((m) => ({ default: m.LabPage })));
 
 export default function App() {
@@ -40,6 +42,8 @@ export default function App() {
             <Route path="/cheatsheets/:sheetId" element={<CheatsheetPage />} />
             <Route path="/tools/convolution" element={<ConvolutionExplorer />} />
             <Route path="/tools/recurrent" element={<RecurrentExplorer />} />
+            <Route path="/tools/transformers" element={<TransformersPaper />} />
+            <Route path="/tools/transformers/slides" element={<TransformersSlides />} />
             <Route path="/playground" element={<Playground />} />
             <Route path="/runs" element={<RunsPage />} />
             <Route path="*" element={<Home />} />

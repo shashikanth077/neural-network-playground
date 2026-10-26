@@ -79,7 +79,8 @@ describe("ToolsIndex", () => {
   it("groups tools by domain and shows empty domains honestly", () => {
     render(<MemoryRouter><ToolsIndex /></MemoryRouter>);
     expect(screen.getByRole("link", { name: /Neural Network Playground/ })).toHaveAttribute("href", "/playground");
-    expect(screen.getAllByText(/No tools in this domain yet/).length).toBe(2);
+    expect(screen.getByRole("link", { name: /Transformers in NLP/ })).toHaveAttribute("href", "/tools/transformers");
+    expect(screen.getAllByText(/No tools in this domain yet/).length).toBe(1);
   });
 });
 

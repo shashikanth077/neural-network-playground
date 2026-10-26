@@ -41,4 +41,13 @@ export const TOOLS: Tool[] = [
     tags: ["RNN", "LSTM", "GRU", "Gates"],
     needsBackend: false,
   },
+  {
+    id: "transformers",
+    domain: "nlp",
+    title: "Transformers in NLP: the project paper, end to end",
+    tagline: "How a Transformer works and what ten sentiment classifiers show on a laptop CPU, section by section as in the paper, with every figure and number live, plus the presentation.",
+    path: "/tools/transformers",
+    tags: ["Paper", "Self-attention", "SST-2", "Presentation"],
+    needsBackend: false,
+  },
 ];

@@ -43,6 +43,25 @@ Parameters:
     Description: Latest Amazon Linux 2023 AMI, resolved from the public SSM parameter.
 
 Resources:
+  AppInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+
+  AppInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref AppInstanceRole
+
   AppSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -70,6 +89,7 @@ Resources:
       ImageId: !Ref LatestAmiId
       InstanceType: !Ref InstanceType
       KeyName: !Ref KeyName
+      IamInstanceProfile: !Ref AppInstanceProfile
       SecurityGroupIds:
         - !GetAtt AppSecurityGroup.GroupId
       BlockDeviceMappings:
@@ -89,8 +109,9 @@ Resources:
           exec > >(tee /var/log/nn-playground-setup.log) 2>&1
           trap '/opt/aws/bin/cfn-signal -e 1 --stack ${AWS::StackName} --resource AppInstance --region ${AWS::Region}' ERR
 
-          # Docker and the Compose v2 plugin
-          dnf install -y docker git
+          # SSM, Docker and the Compose v2 plugin
+          dnf install -y amazon-ssm-agent docker git
+          systemctl enable --now amazon-ssm-agent
           systemctl enable --now docker
           mkdir -p /usr/local/lib/docker/cli-plugins
           curl -fsSL https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-linux-x86_64 \
@@ -106,8 +127,8 @@ Resources:
           fi
 
           # Application
-          git clone --depth 1 --branch "${RepoBranch}" "${RepoUrl}" /opt/nn-playground
-          cd /opt/nn-playground
+          git clone --depth 1 --branch "${RepoBranch}" "${RepoUrl}" /opt/neural-network-playground
+          cd /opt/neural-network-playground
           docker compose up -d --build
 
           # Wait until the API answers through nginx, then report success to CloudFormation
@@ -142,4 +163,4 @@ Outputs:
 
   UpdateCommand:
     Description: Run on the server (after SSH) to pull the latest code and rebuild. The stack clones the repo only once, at first boot.
-    Value: "bash /opt/nn-playground/infra/aws/update.sh"
+    Value: "bash /opt/neural-network-playground/infra/aws/update.sh"

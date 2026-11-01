@@ -15,7 +15,7 @@ The template `infra/aws/nn-playground.yaml` creates a security group and one `t3
 
 **Before you start**
 
-* An AWS account with permission to use CloudFormation, EC2 and SSM.
+* An AWS account with permission to use CloudFormation, EC2, IAM and SSM.
 * A default VPC in the region (new accounts have one).
 * An EC2 key pair in that region (only needed for SSH).
 * The repository must be publicly cloneable, or change `RepoUrl` to one you can reach.
@@ -25,7 +25,7 @@ The template `infra/aws/nn-playground.yaml` creates a security group and one `t3
 1. Open **CloudFormation → Create stack → With new resources (standard)**.
 2. Choose **Upload a template file** and select `infra/aws/nn-playground.yaml`, or paste its URL.
 3. Fill in the parameters. Set `AllowedSshCidr` and `AllowedAppCidr` to your own IP as `x.x.x.x/32` if you want the app private.
-4. Accept the defaults for the rest and click **Submit**. The template creates no IAM resources, so no capability acknowledgement is needed.
+4. Accept the defaults for the rest and click **Submit**. The template creates an EC2 IAM role for SSM, so acknowledge **CAPABILITY_IAM** when prompted.
 5. Wait about 10–15 minutes for `CREATE_COMPLETE`. Open the **Outputs** tab and click `AppUrl`.
 
 **Launch from VS Code (AWS Toolkit)**
@@ -36,10 +36,10 @@ Open the template in VS Code. With the AWS Toolkit connected, right-click the fi
 
 CloudFormation → select the stack → **Delete**. This terminates the instance and removes the security group.
 
-**Updating the app.** The stack clones the repository at `/opt/neural-network-playground` on first boot. The pipeline also supports the older `/opt/nn-playground` location. When the pipeline is installed, a push to its configured branch (default: `master`) automatically fetches that branch, rebuilds the containers, and waits for `/api/health`. If a new page or feature is missing on your deployed site (for example the Cheatsheets menu), verify the pipeline source branch and build result, then SSH in and run:
+**Updating the app.** The stack clones the repository at `/opt/neural-network-playground` on first boot. The pipeline and update script also support the older `/opt/nn-playground` location so existing instances can be updated in place. When the pipeline is installed, a push to its configured branch (default: `master`) automatically fetches that branch, rebuilds the containers, and waits for `/api/health`. If a new page or feature is missing on your deployed site (for example the Cheatsheets menu), verify the pipeline source branch and build result, then SSH in and run:
 
 ```bash
-bash /opt/neural-network-playground/infra/aws/update.sh   # fetches the branch, resets to it, rebuilds, waits for /api/health
+bash /opt/neural-network-playground/infra/aws/update.sh   # use /opt/nn-playground if that is the existing checkout
 ```
 
 Then hard-refresh the browser (Ctrl+Shift+R). If the file is missing, run `cd /opt/neural-network-playground && git fetch --depth 1 origin <branch> && git checkout -B <branch> FETCH_HEAD && docker compose up -d --build` once. You can also replace the instance by deleting and re-creating the stack. The stack's `RepoBranch` parameter and the pipeline's `Branch` parameter must name the same branch that holds the latest code.

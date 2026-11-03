@@ -88,3 +88,34 @@
 .cm-halo { transform-box: fill-box; transform-origin: center; animation: cm-halo 3.6s ease-out infinite; }
 @keyframes cm-halo { 0% { transform: scale(1); opacity: .9; } 70%, 100% { transform: scale(2.3); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .cm-halo { animation: none; display: none; } }
+
+/* ---- Transformers paper page (/tools/transformers) ---- */
+.tp-node rect { transition: stroke-width .12s; }
+.tp-node:hover rect { stroke-width: 2.6; }
+.tp-node:focus-visible rect { stroke-width: 3.4; stroke: rgb(var(--brand)); }
+.tp-p { overflow-wrap: anywhere; }
+.tp-eq .katex { font-size: 1.05em; }
+.tp-printonly { display: none; }
+
+/* The page prints as a document: no app bar, outline, progress bar, buttons or live demos; light colours; figures and tables stay whole. */
+@media print {
+  @page { margin: 16mm 14mm; }
+  :root, :root.dark, .dark {
+    --bg: 255 255 255; --surface: 255 255 255; --raised: 245 246 248; --line: 205 210 220;
+    --ink: 17 24 39; --muted: 75 85 99; --brand: 67 56 202; --pos: 29 78 216; --neg: 194 65 12; --ok: 4 120 87;
+    --bad: 185 28 28; --c-teal: 13 120 108; --c-amber: 161 98 7; --c-purple: 109 40 217;
+  }
+  body { background: #fff; font-size: 10.5pt; }
+  header.sticky, .tp-noprint, .tp-outline, .tp-progress, a.sr-only { display: none !important; }
+  .tp-printonly { display: block !important; margin: .4rem 0; font-style: italic; }
+  .tp-root { max-width: none; padding: 0; }
+  .tp-grid { display: block !important; }
+  .card { box-shadow: none; }
+  .tp-hero { break-inside: avoid; }
+  .tp-chapter { break-before: page; }
+  .tp-heading, .tp-chapter h2 { break-after: avoid; }
+  .tp-figure, .tp-table, .tp-eq, .tp-plain, table { break-inside: avoid; }
+  .tp-section { border-top: 0; }
+  a[href] { color: inherit; text-decoration: none; }
+  .overflow-x-auto, .overflow-hidden { overflow: visible !important; }
+}

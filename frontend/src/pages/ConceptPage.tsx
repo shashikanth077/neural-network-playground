@@ -1,4 +1,8 @@
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { hasDeep, loadDeep } from "../concepts/deep";
+import { DeepDiveView } from "../concepts/deep/DeepDiveView";
+import type { DeepDive } from "../concepts/deep/types";
 import { getArea } from "../concepts/areas";
 import { evidenceHref, isHandsOn } from "../concepts/links";
 import { CONCEPTS, coverageOf, getConcept } from "../concepts/registry";
@@ -44,6 +48,13 @@ export function ConceptPage() {
   const c = getConcept(conceptId);
   const t = useT();
   const label = useEvidenceLabel();
+  const [deep, setDeep] = useState<DeepDive | null>(null);
+  useEffect(() => {
+    let live = true;
+    setDeep(null);
+    if (conceptId && hasDeep(conceptId)) loadDeep(conceptId).then((d) => { if (live) setDeep(d); });
+    return () => { live = false; };
+  }, [conceptId]);
   if (!c) {
     return (
       <main className="mx-auto max-w-2xl px-4 py-16 text-center">
@@ -105,6 +116,8 @@ export function ConceptPage() {
           </section>
         </>
       )}
+
+      {hasDeep(c.id) && (deep ? <DeepDiveView deep={deep} /> : <p className="mt-8 text-sm text-muted" role="status">{t("cc.deep.loading")}</p>)}
 
       <div className="mt-8 grid gap-4 md:grid-cols-2">
         <section aria-labelledby="c-needs">

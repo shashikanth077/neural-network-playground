@@ -1,0 +1,16 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+      nodejs: 22
+    commands:
+      - pip install -r backend/requirements-dev.txt
+      - cd frontend && npm ci
+  build:
+    commands:
+      - cd backend && pytest -q
+      - cd frontend && npm run typecheck
+      - cd frontend && npm test
+      - cd frontend && npm run build

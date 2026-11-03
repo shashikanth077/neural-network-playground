@@ -3,9 +3,11 @@
 ## Automatic deployment from GitHub
 
 The production pipeline is defined in [`infra/aws/pipeline.yaml`](../infra/aws/pipeline.yaml).
-It uses CodeConnections for GitHub, CodeBuild for orchestration, and SSM Run Command
+It uses CodeConnections for GitHub, CodeBuild for testing and orchestration, and SSM Run Command
 to execute [`infra/aws/update.sh`](../infra/aws/update.sh) on the existing EC2 instance.
-Pushes to the configured branch (default: `master`) trigger a queued deployment. The GitHub connection must be approved
+Pushes to the configured branch (default: `master`) trigger a queued pipeline. The test stage
+must pass backend tests, frontend type checks/tests, and the production frontend build before
+the deployment stage runs. The GitHub connection must be approved
 once in the AWS Console because connections created by CLI or CloudFormation remain
 `PENDING` until OAuth is completed.
 

@@ -75,7 +75,9 @@ Resources:
                 Action:
                   - codebuild:StartBuild
                   - codebuild:BatchGetBuilds
-                Resource: !GetAtt BuildProject.Arn
+                Resource:
+                  - !GetAtt TestProject.Arn
+                  - !GetAtt BuildProject.Arn
 
   BuildRole:
     Type: AWS::IAM::Role
@@ -135,6 +137,20 @@ Resources:
             Value: !Ref Branch
       TimeoutInMinutes: 30
 
+  TestProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      ServiceRole: !GetAtt BuildRole.Arn
+      Artifacts: { Type: CODEPIPELINE }
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: buildspec-test.yml
+      Environment:
+        Type: LINUX_CONTAINER
+        Image: aws/codebuild/standard:7.0
+        ComputeType: BUILD_GENERAL1_SMALL
+      TimeoutInMinutes: 30
+
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
@@ -159,6 +175,19 @@ Resources:
                 BranchName: !Ref Branch
                 OutputArtifactFormat: CODE_ZIP
               OutputArtifacts:
+                - Name: SourceOutput
+              RunOrder: 1
+        - Name: Test
+          Actions:
+            - Name: RunTests
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: "1"
+              Configuration:
+                ProjectName: !Ref TestProject
+              InputArtifacts:
                 - Name: SourceOutput
               RunOrder: 1
         - Name: Deploy

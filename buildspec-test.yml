@@ -6,11 +6,11 @@ phases:
       python: 3.12
       nodejs: 22
     commands:
-      - pip install -r backend/requirements-dev.txt
-      - cd frontend && npm ci
+      - pip install -r "$CODEBUILD_SRC_DIR/backend/requirements-dev.txt"
+      - cd "$CODEBUILD_SRC_DIR/frontend" && npm ci
   build:
     commands:
-      - cd backend && pytest -q
-      - cd frontend && npm run typecheck
-      - cd frontend && npm test
-      - cd frontend && npm run build
+      - cd "$CODEBUILD_SRC_DIR/backend" && pytest -q
+      - cd "$CODEBUILD_SRC_DIR/frontend" && npm run typecheck
+      - cd "$CODEBUILD_SRC_DIR/frontend" && npm test
+      - cd "$CODEBUILD_SRC_DIR/frontend" && npm run build

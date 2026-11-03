@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { AREAS } from "../concepts/areas";
+import { hasDeep } from "../concepts/deep";
 import { isHandsOn } from "../concepts/links";
 import { CONCEPTS, coverageOf, type Coverage } from "../concepts/registry";
 import type { Level } from "../concepts/types";
@@ -79,6 +80,7 @@ export function ConceptsHub() {
                       <div className="flex flex-wrap items-center gap-1.5">
                         <span className={`chip ${COVERAGE_STYLE[k]}`}>{t(`cc.cov.${k}`)}</span>
                         <span className="chip">{t(`cc.level.${c.level}`)}</span>
+                        {hasDeep(c.id) && <span className="chip !border-brand/40 !bg-brand/10 !text-brand">{t("cc.deep.badge")}</span>}
                       </div>
                       <h3 className="mt-2 font-semibold leading-snug tracking-tight">{t(`concept.${c.id}.title`, c.title)}</h3>
                       <p className="mt-1 text-sm text-muted">{t(`concept.${c.id}.summary`, c.summary)}</p>
